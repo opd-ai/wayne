@@ -161,7 +161,7 @@ line (or use `toolchain go1.21.0`).
 
 ## 8. Order of execution (suggested)
 
-1. Fix `|| true` in game.go (trivial, highest signal-to-noise).
+1. - [x] Fix `|| true` in game.go (trivial, highest signal-to-noise).
 2. Fix bounds checks in `Button`, `TextInput`, `ScrollView` event handlers.
 3. Wire `Window.dispatcher` and adapt `EventDispatcher` to `PublicWidget`.
 4. Fix `Panel.HandleEvent` hit-testing.

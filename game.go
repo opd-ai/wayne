@@ -144,15 +144,10 @@ func (g *ebitenGame) processMouseInput() {
 	mxf, myf := float64(mx), float64(my)
 
 	// Mouse move
-	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) ||
-		ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) ||
-		ebiten.IsMouseButtonPressed(ebiten.MouseButtonMiddle) ||
-		true { // always emit move events
-		prev := a.lastMousePos()
-		if prev[0] != mx || prev[1] != my {
-			a.setLastMousePos(mx, my)
-			a.dispatchEvent(NewPointerEvent(PointerMove, mxf, myf, 0, ScrollAxisVertical, 0))
-		}
+	prev := a.lastMousePos()
+	if prev[0] != mx || prev[1] != my {
+		a.setLastMousePos(mx, my)
+		a.dispatchEvent(NewPointerEvent(PointerMove, mxf, myf, 0, ScrollAxisVertical, 0))
 	}
 
 	// Mouse button press/release
