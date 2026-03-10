@@ -7,6 +7,75 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
+// ebitenToWayneKeyMap maps ebiten.Key constants to wayne.Key constants.
+var ebitenToWayneKeyMap = map[ebiten.Key]Key{
+	// Special keys
+	ebiten.KeyEscape:     KeyEscape,
+	ebiten.KeyEnter:      KeyReturn,
+	ebiten.KeyTab:        KeyTab,
+	ebiten.KeyBackspace:  KeyBackspace,
+	ebiten.KeyDelete:     KeyDelete,
+	ebiten.KeyArrowLeft:  KeyLeft,
+	ebiten.KeyArrowUp:    KeyUp,
+	ebiten.KeyArrowRight: KeyRight,
+	ebiten.KeyArrowDown:  KeyDown,
+	ebiten.KeyHome:       KeyHome,
+	ebiten.KeyEnd:        KeyEnd,
+	ebiten.KeyPageUp:     KeyPageUp,
+	ebiten.KeyPageDown:   KeyPageDown,
+	ebiten.KeySpace:      KeySpace,
+
+	// Modifier keys
+	ebiten.KeyShiftLeft:    KeyShiftL,
+	ebiten.KeyShiftRight:   KeyShiftR,
+	ebiten.KeyControlLeft:  KeyControlL,
+	ebiten.KeyControlRight: KeyControlR,
+	ebiten.KeyAlt:          KeyAltL,
+	ebiten.KeyAltRight:     KeyAltR,
+	ebiten.KeyMetaLeft:     KeySuperL,
+	ebiten.KeyMetaRight:    KeySuperR,
+
+	// Letter keys (a-z → 0x0061-0x007A)
+	ebiten.KeyA: Key('a'),
+	ebiten.KeyB: Key('b'),
+	ebiten.KeyC: Key('c'),
+	ebiten.KeyD: Key('d'),
+	ebiten.KeyE: Key('e'),
+	ebiten.KeyF: Key('f'),
+	ebiten.KeyG: Key('g'),
+	ebiten.KeyH: Key('h'),
+	ebiten.KeyI: Key('i'),
+	ebiten.KeyJ: Key('j'),
+	ebiten.KeyK: Key('k'),
+	ebiten.KeyL: Key('l'),
+	ebiten.KeyM: Key('m'),
+	ebiten.KeyN: Key('n'),
+	ebiten.KeyO: Key('o'),
+	ebiten.KeyP: Key('p'),
+	ebiten.KeyQ: Key('q'),
+	ebiten.KeyR: Key('r'),
+	ebiten.KeyS: Key('s'),
+	ebiten.KeyT: Key('t'),
+	ebiten.KeyU: Key('u'),
+	ebiten.KeyV: Key('v'),
+	ebiten.KeyW: Key('w'),
+	ebiten.KeyX: Key('x'),
+	ebiten.KeyY: Key('y'),
+	ebiten.KeyZ: Key('z'),
+
+	// Digit keys (0-9 → 0x0030-0x0039)
+	ebiten.KeyDigit0: Key('0'),
+	ebiten.KeyDigit1: Key('1'),
+	ebiten.KeyDigit2: Key('2'),
+	ebiten.KeyDigit3: Key('3'),
+	ebiten.KeyDigit4: Key('4'),
+	ebiten.KeyDigit5: Key('5'),
+	ebiten.KeyDigit6: Key('6'),
+	ebiten.KeyDigit7: Key('7'),
+	ebiten.KeyDigit8: Key('8'),
+	ebiten.KeyDigit9: Key('9'),
+}
+
 // ebitenGame implements the ebiten.Game interface for wayne's main loop.
 type ebitenGame struct {
 	app *App
@@ -190,129 +259,8 @@ func currentModifiers() Modifier {
 
 // ebitenKeyToWayne maps an ebiten.Key to a wayne Key (X11 keysym-compatible).
 func ebitenKeyToWayne(k ebiten.Key) Key {
-	switch k {
-	case ebiten.KeyEscape:
-		return KeyEscape
-	case ebiten.KeyEnter:
-		return KeyReturn
-	case ebiten.KeyTab:
-		return KeyTab
-	case ebiten.KeyBackspace:
-		return KeyBackspace
-	case ebiten.KeyDelete:
-		return KeyDelete
-	case ebiten.KeyArrowLeft:
-		return KeyLeft
-	case ebiten.KeyArrowUp:
-		return KeyUp
-	case ebiten.KeyArrowRight:
-		return KeyRight
-	case ebiten.KeyArrowDown:
-		return KeyDown
-	case ebiten.KeyHome:
-		return KeyHome
-	case ebiten.KeyEnd:
-		return KeyEnd
-	case ebiten.KeyPageUp:
-		return KeyPageUp
-	case ebiten.KeyPageDown:
-		return KeyPageDown
-	case ebiten.KeySpace:
-		return KeySpace
-	case ebiten.KeyShiftLeft:
-		return KeyShiftL
-	case ebiten.KeyShiftRight:
-		return KeyShiftR
-	case ebiten.KeyControlLeft:
-		return KeyControlL
-	case ebiten.KeyControlRight:
-		return KeyControlR
-	case ebiten.KeyAlt:
-		return KeyAltL
-	case ebiten.KeyAltRight:
-		return KeyAltR
-	case ebiten.KeyMetaLeft:
-		return KeySuperL
-	case ebiten.KeyMetaRight:
-		return KeySuperR
-
-	// Letter keys (a-z → 0x0061-0x007A).
-	case ebiten.KeyA:
-		return Key('a')
-	case ebiten.KeyB:
-		return Key('b')
-	case ebiten.KeyC:
-		return Key('c')
-	case ebiten.KeyD:
-		return Key('d')
-	case ebiten.KeyE:
-		return Key('e')
-	case ebiten.KeyF:
-		return Key('f')
-	case ebiten.KeyG:
-		return Key('g')
-	case ebiten.KeyH:
-		return Key('h')
-	case ebiten.KeyI:
-		return Key('i')
-	case ebiten.KeyJ:
-		return Key('j')
-	case ebiten.KeyK:
-		return Key('k')
-	case ebiten.KeyL:
-		return Key('l')
-	case ebiten.KeyM:
-		return Key('m')
-	case ebiten.KeyN:
-		return Key('n')
-	case ebiten.KeyO:
-		return Key('o')
-	case ebiten.KeyP:
-		return Key('p')
-	case ebiten.KeyQ:
-		return Key('q')
-	case ebiten.KeyR:
-		return Key('r')
-	case ebiten.KeyS:
-		return Key('s')
-	case ebiten.KeyT:
-		return Key('t')
-	case ebiten.KeyU:
-		return Key('u')
-	case ebiten.KeyV:
-		return Key('v')
-	case ebiten.KeyW:
-		return Key('w')
-	case ebiten.KeyX:
-		return Key('x')
-	case ebiten.KeyY:
-		return Key('y')
-	case ebiten.KeyZ:
-		return Key('z')
-
-	// Digit keys (0-9 → 0x0030-0x0039).
-	case ebiten.KeyDigit0:
-		return Key('0')
-	case ebiten.KeyDigit1:
-		return Key('1')
-	case ebiten.KeyDigit2:
-		return Key('2')
-	case ebiten.KeyDigit3:
-		return Key('3')
-	case ebiten.KeyDigit4:
-		return Key('4')
-	case ebiten.KeyDigit5:
-		return Key('5')
-	case ebiten.KeyDigit6:
-		return Key('6')
-	case ebiten.KeyDigit7:
-		return Key('7')
-	case ebiten.KeyDigit8:
-		return Key('8')
-	case ebiten.KeyDigit9:
-		return Key('9')
-
-	default:
-		return Key(k)
+	if wayneKey, ok := ebitenToWayneKeyMap[k]; ok {
+		return wayneKey
 	}
+	return Key(k)
 }
