@@ -170,6 +170,6 @@ line (or use `toolchain go1.21.0`).
 7. - [x] Fix `SetTheme` child propagation in `Panel`.
 8. - [x] Fix `DrawText` font size; add `ScrollView` clipping.
 9. - [x] Apply `WindowConfig` extra fields to Ebitengine.
-10. Fix `LoadFont`/`LoadImage` after `Close()`.
+10. - [x] Fix `LoadFont`/`LoadImage` after `Close()`.
 11. Downgrade `go.mod` to `go 1.21`.
 12. Add tests (layout, event routing, color/theme).

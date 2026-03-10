@@ -136,6 +136,10 @@ func (rm *ResourceManager) LoadFont(path string, size float64) (*Font, error) {
 // Returns an error if the file does not exist, is not accessible, or contains
 // unsupported image data. Error messages include the file path for debugging.
 func (rm *ResourceManager) LoadImage(path string) (*Image, error) {
+	if rm.closed.Load() {
+		return nil, ErrResourceManagerClosed
+	}
+
 	if path == "" {
 		return nil, fmt.Errorf("image path cannot be empty")
 	}

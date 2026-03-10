@@ -315,6 +315,17 @@ func TestLoadImageErrors(t *testing.T) {
 	}
 }
 
+// TestLoadImageAfterClose tests that LoadImage returns ErrResourceManagerClosed after cleanup.
+func TestLoadImageAfterClose(t *testing.T) {
+	rm := newResourceManager()
+	rm.cleanup()
+
+	_, err := rm.LoadImage("test.png")
+	if err != ErrResourceManagerClosed {
+		t.Errorf("LoadImage after cleanup: expected ErrResourceManagerClosed, got %v", err)
+	}
+}
+
 // TestLoadImageFromReaderErrors tests error handling for LoadImageFromReader.
 func TestLoadImageFromReaderErrors(t *testing.T) {
 	rm := newResourceManager()
