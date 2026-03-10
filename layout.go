@@ -184,10 +184,49 @@ func (p *Panel) Bounds() (width, height int) {
 }
 
 // HandleEvent passes events to children and returns true if any child consumed it.
+// For pointer and touch events, only forwards to children whose bounds contain the event coordinates.
 func (p *Panel) HandleEvent(evt Event) bool {
-	for _, child := range p.children {
-		if child.HandleEvent(evt) {
-			return true
+	switch evt.Type() {
+	case EventTypePointer:
+		pe := evt.(*PointerEvent)
+		// For pointer events, check bounds and forward to topmost containing child
+		for i := len(p.children) - 1; i >= 0; i-- {
+			child := p.children[i]
+			if bpw, ok := child.(interface{ Position() (int, int) }); ok {
+				x, y := bpw.Position()
+				w, h := child.Bounds()
+				if contains(x, y, w, h, pe.X(), pe.Y()) {
+					if child.HandleEvent(evt) {
+						return true
+					}
+					// Only forward to first matching child (z-order topmost)
+					break
+				}
+			}
+		}
+	case EventTypeTouch:
+		te := evt.(*TouchEvent)
+		// For touch events, check bounds and forward to topmost containing child
+		for i := len(p.children) - 1; i >= 0; i-- {
+			child := p.children[i]
+			if bpw, ok := child.(interface{ Position() (int, int) }); ok {
+				x, y := bpw.Position()
+				w, h := child.Bounds()
+				if contains(x, y, w, h, te.X(), te.Y()) {
+					if child.HandleEvent(evt) {
+						return true
+					}
+					// Only forward to first matching child (z-order topmost)
+					break
+				}
+			}
+		}
+	default:
+		// For non-spatial events (keyboard, window, custom), broadcast to all children
+		for _, child := range p.children {
+			if child.HandleEvent(evt) {
+				return true
+			}
 		}
 	}
 	return false

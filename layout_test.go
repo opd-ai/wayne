@@ -306,3 +306,145 @@ func TestGridZeroColumns(t *testing.T) {
 
 	NewGrid(0)
 }
+
+// TestPanelHandleEventBoundsCheck verifies that Panel only forwards pointer events
+// to children whose bounds contain the event coordinates.
+func TestPanelHandleEventBoundsCheck(t *testing.T) {
+	panel := NewPanel(Size{Width: 100, Height: 100})
+	panel.SetBounds(0, 0, 400, 400)
+
+	// Create two buttons at different positions
+	btn1 := NewButton("Button 1", Size{Width: 100, Height: 30})
+	btn1.SetBounds(10, 10, 100, 30)
+	btn1Clicked := false
+	btn1.OnClick(func() {
+		btn1Clicked = true
+	})
+
+	btn2 := NewButton("Button 2", Size{Width: 100, Height: 30})
+	btn2.SetBounds(150, 10, 100, 30)
+	btn2Clicked := false
+	btn2.OnClick(func() {
+		btn2Clicked = true
+	})
+
+	panel.Add(btn1)
+	panel.Add(btn2)
+
+	// Click on btn1's area (50, 20)
+	pressEvt := NewPointerEvent(PointerButtonPress, 50, 20, PointerButtonLeft, 0, 0)
+	panel.HandleEvent(pressEvt)
+
+	releaseEvt := NewPointerEvent(PointerButtonRelease, 50, 20, PointerButtonLeft, 0, 0)
+	panel.HandleEvent(releaseEvt)
+
+	if !btn1Clicked {
+		t.Error("Button 1 should be clicked when event is within its bounds")
+	}
+	if btn2Clicked {
+		t.Error("Button 2 should NOT be clicked when event is outside its bounds")
+	}
+
+	// Reset
+	btn1Clicked = false
+	btn2Clicked = false
+
+	// Click on btn2's area (180, 20)
+	pressEvt2 := NewPointerEvent(PointerButtonPress, 180, 20, PointerButtonLeft, 0, 0)
+	panel.HandleEvent(pressEvt2)
+
+	releaseEvt2 := NewPointerEvent(PointerButtonRelease, 180, 20, PointerButtonLeft, 0, 0)
+	panel.HandleEvent(releaseEvt2)
+
+	if btn1Clicked {
+		t.Error("Button 1 should NOT be clicked when event is outside its bounds")
+	}
+	if !btn2Clicked {
+		t.Error("Button 2 should be clicked when event is within its bounds")
+	}
+
+	// Reset
+	btn1Clicked = false
+	btn2Clicked = false
+
+	// Click outside both buttons (300, 300)
+	pressEvt3 := NewPointerEvent(PointerButtonPress, 300, 300, PointerButtonLeft, 0, 0)
+	panel.HandleEvent(pressEvt3)
+
+	releaseEvt3 := NewPointerEvent(PointerButtonRelease, 300, 300, PointerButtonLeft, 0, 0)
+	panel.HandleEvent(releaseEvt3)
+
+	if btn1Clicked || btn2Clicked {
+		t.Error("No button should be clicked when event is outside all child bounds")
+	}
+}
+
+// TestPanelHandleEventTouchBoundsCheck verifies that Panel only forwards touch events
+// to children whose bounds contain the event coordinates.
+func TestPanelHandleEventTouchBoundsCheck(t *testing.T) {
+	panel := NewPanel(Size{Width: 100, Height: 100})
+	panel.SetBounds(0, 0, 400, 400)
+
+	// Create a button
+	btn := NewButton("Button", Size{Width: 100, Height: 30})
+	btn.SetBounds(10, 10, 100, 30)
+
+	eventReceived := false
+	btn.OnEvent(func(evt Event) bool {
+		if evt.Type() == EventTypeTouch {
+			eventReceived = true
+		}
+		return true
+	})
+
+	panel.Add(btn)
+
+	// Touch within button bounds
+	touchEvt := NewTouchEvent(TouchDown, 1, 50, 20)
+	panel.HandleEvent(touchEvt)
+
+	if !eventReceived {
+		t.Error("Button should receive touch event when touch is within its bounds")
+	}
+
+	// Reset
+	eventReceived = false
+
+	// Touch outside button bounds
+	touchEvt2 := NewTouchEvent(TouchDown, 2, 200, 200)
+	panel.HandleEvent(touchEvt2)
+
+	if eventReceived {
+		t.Error("Button should NOT receive touch event when touch is outside its bounds")
+	}
+}
+
+// TestPanelHandleEventKeyBroadcast verifies that Panel broadcasts keyboard events
+// to all children regardless of position (non-spatial events).
+func TestPanelHandleEventKeyBroadcast(t *testing.T) {
+	panel := NewPanel(Size{Width: 100, Height: 100})
+	panel.SetBounds(0, 0, 400, 400)
+
+	// Create a widget that consumes key events
+	btn := NewButton("Button", Size{Width: 100, Height: 30})
+	btn.SetBounds(10, 10, 100, 30)
+
+	keyReceived := false
+	btn.OnEvent(func(evt Event) bool {
+		if evt.Type() == EventTypeKey {
+			keyReceived = true
+			return true
+		}
+		return false
+	})
+
+	panel.Add(btn)
+
+	// Send key event (non-spatial)
+	keyEvt := NewKeyEvent(KeyPress, KeyReturn, 0, '\n')
+	panel.HandleEvent(keyEvt)
+
+	if !keyReceived {
+		t.Error("Button should receive keyboard event (broadcast to all children)")
+	}
+}

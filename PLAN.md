@@ -164,7 +164,7 @@ line (or use `toolchain go1.21.0`).
 1. - [x] Fix `|| true` in game.go (trivial, highest signal-to-noise).
 2. - [x] Fix bounds checks in `Button`, `TextInput`, `ScrollView` event handlers.
 3. - [x] Wire `Window.dispatcher` and adapt `EventDispatcher` to `PublicWidget`.
-4. Fix `Panel.HandleEvent` hit-testing.
+4. - [x] Fix `Panel.HandleEvent` hit-testing.
 5. Emit `PointerEnter`/`PointerLeave`; track last-touch positions for `TouchUp`.
 6. Fix `App.SetTheme` propagation and `SetAlign` layout.
 7. Fix `SetTheme` child propagation in `Panel`.
