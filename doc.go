@@ -1,10 +1,15 @@
 //go:build windows || darwin || android || ios
 
-// Package wayne provides a 100% API-compatible alternative to the opd-ai/wain
+// Package wayne provides an API-compatible alternative to the opd-ai/wain
 // widget system, targeting Windows, macOS, Android, and iOS.
 //
 // Wayne uses Ebitengine (github.com/hajimehoshi/ebiten/v2) as its rendering
 // and windowing backend, replacing wain's Linux-specific Wayland/X11 backend.
+//
+// Public API compatibility: All public widget interfaces, constructors, and
+// types match wain's API surface, enabling source-level migration by changing
+// the import path. See COMPATIBILITY.md for details on known differences and
+// migration strategies.
 //
 // # Quick Start
 //

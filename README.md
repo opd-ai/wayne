@@ -1,9 +1,9 @@
 # wayne
-wain-like API for irrelevant platforms
+API-compatible cross-platform GUI for Windows, macOS, Android, iOS
 
 ## Platform Support
 
-**wayne** provides cross-platform GUI widgets using [Ebitengine](https://ebitengine.org/) as the rendering backend.
+**wayne** provides cross-platform GUI widgets using [Ebitengine](https://ebitengine.org/) as the rendering backend. It maintains API compatibility with [opd-ai/wain](https://github.com/opd-ai/wain), enabling source-level migration for applications targeting non-Linux platforms.
 
 ### Supported Platforms
 
