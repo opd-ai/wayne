@@ -150,12 +150,12 @@ specifically. Users can now use any Go 1.24+ toolchain.
 
 ## 7. Testing
 
-- Add unit tests for layout resolution (`resolveTree`) covering `FlowRow`,
+- [x] Add unit tests for layout resolution (`resolveTree`) covering `FlowRow`,
   `FlowColumn`, `Grid`, padding, and gap.
-- Add unit tests for event routing: ensure `Panel.HandleEvent` only forwards to
+- [x] Add unit tests for event routing: ensure `Panel.HandleEvent` only forwards to
   children whose bounds contain the event coordinates.
-- Add tests for `Color`, `Theme`, and `StyleOverride` merging.
-- Run `GOOS=windows go vet ./...` as a CI gate (already passes; keep it green).
+- [x] Add tests for `Color`, `Theme`, and `StyleOverride` merging.
+- [x] Run `GOOS=windows go vet ./...` as a CI gate (already passes; keep it green).
 
 ---
 
@@ -172,4 +172,4 @@ specifically. Users can now use any Go 1.24+ toolchain.
 9. - [x] Apply `WindowConfig` extra fields to Ebitengine.
 10. - [x] Fix `LoadFont`/`LoadImage` after `Close()`.
 11. - [x] Downgrade `go.mod` to `go 1.21`.
-12. Add tests (layout, event routing, color/theme).
+12. - [x] Add tests (layout, event routing, color/theme).
