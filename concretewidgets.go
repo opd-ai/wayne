@@ -19,7 +19,8 @@ type drawContext struct {
 func prepareDrawContext(c Canvas, widget interface {
 	Position() (int, int)
 	Bounds() (int, int)
-}, themeOverride *Theme) *drawContext {
+}, themeOverride *Theme,
+) *drawContext {
 	x, y := widget.Position()
 	w, h := widget.Bounds()
 	if w <= 0 || h <= 0 {
@@ -199,9 +200,9 @@ func (b *Button) Draw(c Canvas) {
 	if b.IsFocused() {
 		focusColor := ctx.theme.Accent
 		// Draw a 2-pixel border around the button
-		c.DrawLine(ctx.x, ctx.y, ctx.x+ctx.w, ctx.y, focusColor, 2)           // top
+		c.DrawLine(ctx.x, ctx.y, ctx.x+ctx.w, ctx.y, focusColor, 2)             // top
 		c.DrawLine(ctx.x, ctx.y+ctx.h, ctx.x+ctx.w, ctx.y+ctx.h, focusColor, 2) // bottom
-		c.DrawLine(ctx.x, ctx.y, ctx.x, ctx.y+ctx.h, focusColor, 2)           // left
+		c.DrawLine(ctx.x, ctx.y, ctx.x, ctx.y+ctx.h, focusColor, 2)             // left
 		c.DrawLine(ctx.x+ctx.w, ctx.y, ctx.x+ctx.w, ctx.y+ctx.h, focusColor, 2) // right
 	}
 
