@@ -10,7 +10,7 @@ review-comment that surfaced it.
 
 ## 1. Dead code / Wiring gaps
 
-### 1a. Wire `Window.dispatcher` (app.go line 270)
+### 1a. - [x] Wire `Window.dispatcher` (app.go line 270)
 **Problem:** `App.dispatchEvent` tries to use `win.dispatcher`, but
 `Window.dispatcher` is never initialised, so hit-testing and focus management
 are dead code.  
@@ -52,7 +52,7 @@ by adding the float64-based `Contains/Children/HandlePointer/HandleKey/HandleTou
 
 ## 2. Incorrect event routing (events dispatched without bounds-checking)
 
-### 2a. `Panel.HandleEvent` broadcasts to all children (layout.go line 181)
+### 2a. - [x] `Panel.HandleEvent` broadcasts to all children (layout.go line 181)
 **Problem:** Every pointer / touch event reaches every child widget regardless
 of where the cursor is.  Buttons and text inputs can be activated by clicks
 anywhere on the panel.  
@@ -81,12 +81,12 @@ bounds.  Conversely, unfocus when a press occurs outside the bounds.
 
 ## 3. Game-loop / input translation bugs
 
-### 3a. `|| true` makes mouse-move condition unconditional (game.go line 76)
+### 3a. - [x] `|| true` makes mouse-move condition unconditional (game.go line 76)
 **Problem:** The guard `if mx != lastMX || my != lastMY || true` always fires,
 defeating the delta optimisation.  
 **Fix:** Remove `|| true`.
 
-### 3b. `PointerEnter` / `PointerLeave` are never emitted (game.go line 82)
+### 3b. - [x] `PointerEnter` / `PointerLeave` are never emitted (game.go line 82)
 **Problem:** Button hover state relies on `PointerEnter`/`PointerLeave`; neither
 is ever dispatched, so hover visuals never activate.  
 **Fix:** Track the widget that was "under the cursor" on the previous frame.
@@ -94,7 +94,7 @@ When the hovered widget changes, emit `PointerLeave` for the old widget and
 `PointerEnter` for the new one before emitting `PointerMove`.  A simple
 last-hovered pointer is enough for now.
 
-### 3c. `TouchUp` events carry (0, 0) coordinates (game.go line 157)
+### 3c. - [x] `TouchUp` events carry (0, 0) coordinates (game.go line 157)
 **Problem:** `ebiten.AppendJustReleasedTouchIDs` gives no position; the code
 emits `TouchEvent{x:0, y:0}`, breaking hit-testing on release.  
 **Fix:** Keep a `map[ebiten.TouchID][2]float64` that records the last-known
@@ -105,7 +105,7 @@ Use that map to supply coordinates in the `TouchEnded` handler.
 
 ## 4. Resource & lifecycle correctness
 
-### 4a. `LoadFont`/`LoadImage` after `Close()` doesn't return `ErrNotRunning` (app.go line 198)
+### 4a. - [x] `LoadFont`/`LoadImage` after `Close()` doesn't return `ErrNotRunning` (app.go line 198)
 **Problem:** `Close()` calls `resources.cleanup()` but does not nil out
 `a.resources`, so subsequent calls succeed against a cleaned-up manager.  
 **Fix:** Set `a.resources = nil` at the end of `Close()` (or introduce an
@@ -115,14 +115,14 @@ explicit `closed atomic.Bool` and check it before resource operations).
 
 ## 5. Rendering gaps
 
-### 5a. `DrawText` ignores `Font.size` (render.go line 107)
+### 5a. - [x] `DrawText` ignores `Font.size` (render.go line 107)
 **Problem:** When a `*Font` is passed, the text face is used as-is regardless
 of the size stored in the `Font`.  
 **Fix (Ebitengine v2 / text/v2):** Use `text.NewGoXFaceWithOptions` or a
 `text.Face` wrapper that respects the requested size.  At minimum, document
 that size scaling is not yet implemented if a quick fix is not feasible.
 
-### 5b. `ScrollView.Draw` does not clip children to the viewport (concretewidgets.go line 506)
+### 5b. - [x] `ScrollView.Draw` does not clip children to the viewport (concretewidgets.go line 506)
 **Problem:** Child widgets can render outside the scroll region.  
 **Fix:** Render children to an offscreen `*ebiten.Image` the size of the
 viewport and `DrawImage` only the visible slice onto the main canvas.
