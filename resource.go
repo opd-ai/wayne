@@ -10,6 +10,7 @@ import (
 	"io"
 	"os"
 	"sync"
+	"sync/atomic"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"golang.org/x/image/font/basicfont"
@@ -23,6 +24,9 @@ var (
 
 	// ErrInvalidFontData is returned when font data is malformed.
 	ErrInvalidFontData = errors.New("wayne: invalid font data")
+
+	// ErrResourceManagerClosed is returned when attempting to load resources after cleanup.
+	ErrResourceManagerClosed = errors.New("wayne: resource manager is closed")
 )
 
 // Font represents a loaded font resource.
@@ -50,7 +54,8 @@ func (img *Image) Size() (width, height int) {
 
 // ResourceManager manages fonts and images for an application.
 type ResourceManager struct {
-	mu sync.RWMutex
+	mu     sync.RWMutex
+	closed atomic.Bool
 
 	defaultFont *Font
 
@@ -88,6 +93,10 @@ func (rm *ResourceManager) DefaultFont() *Font {
 // Currently returns the default embedded font with the requested size.
 // Custom TTF loading may be added in a future version.
 func (rm *ResourceManager) LoadFont(path string, size float64) (*Font, error) {
+	if rm.closed.Load() {
+		return nil, ErrResourceManagerClosed
+	}
+
 	rm.mu.Lock()
 	defer rm.mu.Unlock()
 
@@ -118,6 +127,10 @@ func (rm *ResourceManager) LoadImage(path string) (*Image, error) {
 
 // LoadImageFromReader loads an image from an io.Reader.
 func (rm *ResourceManager) LoadImageFromReader(r io.Reader, filenameHint string) (*Image, error) {
+	if rm.closed.Load() {
+		return nil, ErrResourceManagerClosed
+	}
+
 	img, format, err := image.Decode(r)
 	if err != nil {
 		return nil, err
@@ -144,13 +157,24 @@ func (rm *ResourceManager) LoadImageFromReader(r io.Reader, filenameHint string)
 
 // cleanup releases all loaded resources.
 func (rm *ResourceManager) cleanup() {
+	defer func() {
+		if r := recover(); r != nil {
+			// Ignore panics during cleanup to ensure resources are still marked closed
+		}
+	}()
+
+	rm.closed.Store(true)
+
 	rm.mu.Lock()
 	defer rm.mu.Unlock()
 
 	for id := range rm.fonts {
 		delete(rm.fonts, id)
 	}
-	for id := range rm.images {
+	for id, img := range rm.images {
+		if img.eimg != nil {
+			img.eimg.Deallocate()
+		}
 		delete(rm.images, id)
 	}
 	rm.defaultFont = nil
