@@ -34,9 +34,14 @@ type baseEvent struct {
 	consumed  bool
 }
 
+// Timestamp returns the time when the event was created.
 func (e *baseEvent) Timestamp() time.Time { return e.timestamp }
-func (e *baseEvent) Consumed() bool       { return e.consumed }
-func (e *baseEvent) Consume()             { e.consumed = true }
+
+// Consumed returns true if this event has been consumed by a handler.
+func (e *baseEvent) Consumed() bool { return e.consumed }
+
+// Consume marks this event as consumed, preventing further propagation.
+func (e *baseEvent) Consume() { e.consumed = true }
 
 // PointerEventType specifies the type of pointer event.
 type PointerEventType int
@@ -88,13 +93,26 @@ type PointerEvent struct {
 	value     float64
 }
 
-func (e *PointerEvent) Type() EventType             { return EventTypePointer }
+// Type returns the general event type (EventTypePointer).
+func (e *PointerEvent) Type() EventType { return EventTypePointer }
+
+// EventType returns the specific pointer event type (move, press, release, scroll).
 func (e *PointerEvent) EventType() PointerEventType { return e.eventType }
-func (e *PointerEvent) X() float64                  { return e.x }
-func (e *PointerEvent) Y() float64                  { return e.y }
-func (e *PointerEvent) Button() PointerButton       { return e.button }
-func (e *PointerEvent) Axis() ScrollAxis            { return e.axis }
-func (e *PointerEvent) Value() float64              { return e.value }
+
+// X returns the horizontal coordinate of the pointer event.
+func (e *PointerEvent) X() float64 { return e.x }
+
+// Y returns the vertical coordinate of the pointer event.
+func (e *PointerEvent) Y() float64 { return e.y }
+
+// Button returns the mouse button associated with this pointer event.
+func (e *PointerEvent) Button() PointerButton { return e.button }
+
+// Axis returns the scroll axis for scroll events (vertical or horizontal).
+func (e *PointerEvent) Axis() ScrollAxis { return e.axis }
+
+// Value returns the scroll amount for scroll events.
+func (e *PointerEvent) Value() float64 { return e.value }
 
 // NewPointerEvent creates a new PointerEvent with the given parameters.
 func NewPointerEvent(evtType PointerEventType, x, y float64, button PointerButton, axis ScrollAxis, value float64) *PointerEvent {
@@ -173,11 +191,20 @@ type KeyEvent struct {
 	r         rune
 }
 
-func (e *KeyEvent) Type() EventType         { return EventTypeKey }
+// Type returns the general event type (EventTypeKey).
+func (e *KeyEvent) Type() EventType { return EventTypeKey }
+
+// EventType returns the specific key event type (press, release, or repeat).
 func (e *KeyEvent) EventType() KeyEventType { return e.eventType }
-func (e *KeyEvent) Key() Key                { return e.key }
-func (e *KeyEvent) Modifiers() Modifier     { return e.modifiers }
-func (e *KeyEvent) Rune() rune              { return e.r }
+
+// Key returns the key symbol associated with this keyboard event.
+func (e *KeyEvent) Key() Key { return e.key }
+
+// Modifiers returns the keyboard modifiers active during this event.
+func (e *KeyEvent) Modifiers() Modifier { return e.modifiers }
+
+// Rune returns the Unicode character produced by this key event.
+func (e *KeyEvent) Rune() rune { return e.r }
 
 // IsPress returns true if this is a key press or repeat event.
 func (e *KeyEvent) IsPress() bool {
@@ -220,7 +247,10 @@ type TouchEvent struct {
 	x, y      float64
 }
 
-func (e *TouchEvent) Type() EventType           { return EventTypeTouch }
+// Type returns the general event type (EventTypeTouch).
+func (e *TouchEvent) Type() EventType { return EventTypeTouch }
+
+// EventType returns the specific touch event type (began, moved, ended, cancelled).
 func (e *TouchEvent) EventType() TouchEventType { return e.eventType }
 
 // TouchID returns the unique identifier for this touch point.
@@ -229,7 +259,10 @@ func (e *TouchEvent) TouchID() int32 { return e.id }
 // ID returns the unique identifier for this touch point.
 func (e *TouchEvent) ID() int32 { return e.id }
 
+// X returns the horizontal coordinate of the touch event.
 func (e *TouchEvent) X() float64 { return e.x }
+
+// Y returns the vertical coordinate of the touch event.
 func (e *TouchEvent) Y() float64 { return e.y }
 
 // Phase returns the phase of this touch event.
@@ -271,11 +304,20 @@ type WindowEvent struct {
 	scale     float64
 }
 
-func (e *WindowEvent) Type() EventType            { return EventTypeWindow }
+// Type returns the general event type (EventTypeWindow).
+func (e *WindowEvent) Type() EventType { return EventTypeWindow }
+
+// EventType returns the specific window event type (resize, close, focus, etc.).
 func (e *WindowEvent) EventType() WindowEventType { return e.eventType }
-func (e *WindowEvent) Width() int                 { return e.width }
-func (e *WindowEvent) Height() int                { return e.height }
-func (e *WindowEvent) Scale() float64             { return e.scale }
+
+// Width returns the window width in pixels for resize events.
+func (e *WindowEvent) Width() int { return e.width }
+
+// Height returns the window height in pixels for resize events.
+func (e *WindowEvent) Height() int { return e.height }
+
+// Scale returns the window scale factor for scale change events.
+func (e *WindowEvent) Scale() float64 { return e.scale }
 
 // CustomEventPayload is an opaque payload for application-defined custom events.
 type CustomEventPayload interface{}
@@ -286,7 +328,10 @@ type CustomEvent struct {
 	data CustomEventPayload
 }
 
-func (e *CustomEvent) Type() EventType          { return EventTypeCustom }
+// Type returns the general event type (EventTypeCustom).
+func (e *CustomEvent) Type() EventType { return EventTypeCustom }
+
+// Data returns the application-defined payload for this custom event.
 func (e *CustomEvent) Data() CustomEventPayload { return e.data }
 
 // NewCustomEvent creates a new custom event with the given payload.
