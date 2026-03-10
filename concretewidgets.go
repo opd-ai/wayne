@@ -168,10 +168,10 @@ func (b *Button) Draw(c Canvas) {
 	if b.IsFocused() {
 		focusColor := theme.Accent
 		// Draw a 2-pixel border around the button
-		c.DrawLine(x, y, x+w, y, focusColor, 2)         // top
-		c.DrawLine(x, y+h, x+w, y+h, focusColor, 2)     // bottom
-		c.DrawLine(x, y, x, y+h, focusColor, 2)         // left
-		c.DrawLine(x+w, y, x+w, y+h, focusColor, 2)     // right
+		c.DrawLine(x, y, x+w, y, focusColor, 2)     // top
+		c.DrawLine(x, y+h, x+w, y+h, focusColor, 2) // bottom
+		c.DrawLine(x, y, x, y+h, focusColor, 2)     // left
+		c.DrawLine(x+w, y, x+w, y+h, focusColor, 2) // right
 	}
 
 	if b.label != "" {
@@ -442,7 +442,7 @@ func (t *TextInput) Draw(c Canvas) {
 		)
 	}
 	c.FillRoundedRect(x, y, w, h, theme.BorderRadius, bg)
-	
+
 	// Border (brighter when focused)
 	borderColor := theme.Border
 	if t.IsFocused() {
