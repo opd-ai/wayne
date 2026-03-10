@@ -63,8 +63,8 @@ func TestColorWithAlpha(t *testing.T) {
 // TestColorConstants verifies that predefined color constants have correct values.
 func TestColorConstants(t *testing.T) {
 	tests := []struct {
-		name  string
-		color Color
+		name       string
+		color      Color
 		r, g, b, a uint8
 	}{
 		{"Transparent", Transparent, 0, 0, 0, 0},
@@ -80,8 +80,8 @@ func TestColorConstants(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.color.R != tt.r || tt.color.G != tt.g || 
-			   tt.color.B != tt.b || tt.color.A != tt.a {
+			if tt.color.R != tt.r || tt.color.G != tt.g ||
+				tt.color.B != tt.b || tt.color.A != tt.a {
 				t.Errorf("%s color incorrect: got RGBA(%d,%d,%d,%d), want RGBA(%d,%d,%d,%d)",
 					tt.name, tt.color.R, tt.color.G, tt.color.B, tt.color.A,
 					tt.r, tt.g, tt.b, tt.a)
