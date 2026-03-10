@@ -19,14 +19,14 @@ are dead code.
 via `Window.SetRoot`, call `win.dispatcher.SetWidgetRoot(...)` so hit-tests
 resolve correctly.
 
-### 1b. `App.SetTheme` has no effect (app.go line 108)
+### 1b. - [x] `App.SetTheme` has no effect (app.go line 108)
 **Problem:** `a.theme` is stored but never read; all widgets fall back to
 `DefaultDark()` independently.  
 **Fix:** Thread `App.theme` into `resolveTree` / `Draw` calls (e.g. pass a
 `*Theme` argument down the call chain, or expose a `CurrentTheme()` method and
 have each widget call it when `widget.theme == nil`).
 
-### 1c. `SetAlign` on `Panel` is a silent no-op (layout.go line 235)
+### 1c. - [x] `SetAlign` on `Panel` is a silent no-op (layout.go line 235)
 **Problem:** `Panel.align` is stored but never consulted in `resolveChildren`.  
 **Fix:** Read `p.align` in `resolveChildren` and adjust the cross-axis position
 of each child for `AlignCenter`, `AlignEnd`, and `AlignStretch`.
@@ -166,7 +166,7 @@ line (or use `toolchain go1.21.0`).
 3. - [x] Wire `Window.dispatcher` and adapt `EventDispatcher` to `PublicWidget`.
 4. - [x] Fix `Panel.HandleEvent` hit-testing.
 5. - [x] Emit `PointerEnter`/`PointerLeave`; track last-touch positions for `TouchUp`.
-6. Fix `App.SetTheme` propagation and `SetAlign` layout.
+6. - [x] Fix `App.SetTheme` propagation and `SetAlign` layout.
 7. Fix `SetTheme` child propagation in `Panel`.
 8. Fix `DrawText` font size; add `ScrollView` clipping.
 9. Apply `WindowConfig` extra fields to Ebitengine.

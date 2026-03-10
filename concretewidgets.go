@@ -117,7 +117,7 @@ func (b *Button) Draw(c Canvas) {
 		return
 	}
 
-	theme := DefaultDark()
+	theme := c.Theme()
 	if b.theme != nil {
 		theme = *b.theme
 	}
@@ -215,7 +215,7 @@ func (l *Label) Draw(c Canvas) {
 		return
 	}
 
-	theme := DefaultDark()
+	theme := c.Theme()
 	if l.theme != nil {
 		theme = *l.theme
 	}
@@ -395,7 +395,7 @@ func (t *TextInput) Draw(c Canvas) {
 		return
 	}
 
-	theme := DefaultDark()
+	theme := c.Theme()
 	if t.theme != nil {
 		theme = *t.theme
 	}
@@ -530,7 +530,7 @@ func (s *ScrollView) Draw(c Canvas) {
 		return
 	}
 
-	theme := DefaultDark()
+	theme := c.Theme()
 	if s.theme != nil {
 		theme = *s.theme
 	}

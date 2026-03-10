@@ -59,6 +59,9 @@ type Canvas interface {
 
 	// BoxShadow renders a box shadow around the given rectangle.
 	BoxShadow(x, y, width, height, offsetX, offsetY, blur int, color Color)
+
+	// Theme returns the application-wide theme for this rendering context.
+	Theme() Theme
 }
 
 // BasePublicWidget provides default implementations for the PublicWidget interface.

@@ -27,12 +27,13 @@ func colorToRGBA(c Color) color.RGBA {
 // ebitenCanvas implements the Canvas interface using an *ebiten.Image as the
 // drawing target.
 type ebitenCanvas struct {
-	dst *ebiten.Image
+	dst   *ebiten.Image
+	theme Theme
 }
 
-// newEbitenCanvas creates a Canvas backed by an ebiten.Image.
-func newEbitenCanvas(dst *ebiten.Image) Canvas {
-	return &ebitenCanvas{dst: dst}
+// newEbitenCanvas creates a Canvas backed by an ebiten.Image with the given theme.
+func newEbitenCanvas(dst *ebiten.Image, theme Theme) Canvas {
+	return &ebitenCanvas{dst: dst, theme: theme}
 }
 
 // FillRect fills a solid rectangle.
@@ -187,4 +188,9 @@ func (c *ebitenCanvas) BoxShadow(x, y, width, height, offsetX, offsetY, blur int
 	shadowX := x + offsetX
 	shadowY := y + offsetY
 	c.FillRoundedRect(shadowX-blur, shadowY-blur, width+2*blur, height+2*blur, blur, shadowCol)
+}
+
+// Theme returns the application-wide theme for this rendering context.
+func (c *ebitenCanvas) Theme() Theme {
+	return c.theme
 }

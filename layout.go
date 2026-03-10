@@ -158,7 +158,37 @@ func (p *Panel) resolveChildren(parentX, parentY, parentW, parentH int) {
 	for _, child := range p.children {
 		childW, childH := computeChildPixelSize(child, contentW, contentH)
 
-		resolveTree(child, cursorX, cursorY, childW, childH)
+		// Apply cross-axis alignment
+		alignedX := cursorX
+		alignedY := cursorY
+
+		if p.flowDir == FlowRow {
+			// For horizontal flow, align on the vertical (cross) axis
+			switch p.align {
+			case AlignCenter:
+				alignedY = contentY + (contentH-childH)/2
+			case AlignEnd:
+				alignedY = contentY + contentH - childH
+			case AlignStretch:
+				childH = contentH
+				alignedY = contentY
+			// AlignStart is the default (alignedY already = cursorY = contentY)
+			}
+		} else {
+			// For vertical flow, align on the horizontal (cross) axis
+			switch p.align {
+			case AlignCenter:
+				alignedX = contentX + (contentW-childW)/2
+			case AlignEnd:
+				alignedX = contentX + contentW - childW
+			case AlignStretch:
+				childW = contentW
+				alignedX = contentX
+			// AlignStart is the default (alignedX already = cursorX = contentX)
+			}
+		}
+
+		resolveTree(child, alignedX, alignedY, childW, childH)
 
 		if p.flowDir == FlowRow {
 			cursorX += childW + gap
@@ -234,7 +264,7 @@ func (p *Panel) HandleEvent(evt Event) bool {
 
 // Draw renders the panel background and all children.
 func (p *Panel) Draw(c Canvas) {
-	theme := DefaultDark()
+	theme := c.Theme()
 	if p.theme != nil {
 		theme = *p.theme
 	}

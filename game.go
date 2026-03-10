@@ -116,8 +116,13 @@ func (g *ebitenGame) Draw(screen *ebiten.Image) {
 	childW, childH := computeChildPixelSize(root, sw, sh)
 	resolveTree(root, 0, 0, childW, childH)
 
-	// Draw to the screen.
-	canvas := newEbitenCanvas(screen)
+	// Get the app theme
+	a.mu.Lock()
+	appTheme := a.theme
+	a.mu.Unlock()
+
+	// Draw to the screen with the app theme.
+	canvas := newEbitenCanvas(screen, appTheme)
 	root.Draw(canvas)
 }
 
