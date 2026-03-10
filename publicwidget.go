@@ -15,6 +15,12 @@ type PublicWidget interface {
 
 	// Draw renders the widget to the provided canvas.
 	Draw(Canvas)
+
+	// SetFocused sets the widget's keyboard focus state.
+	SetFocused(focused bool)
+
+	// IsFocused returns true if the widget currently has keyboard focus.
+	IsFocused() bool
 }
 
 // Container extends PublicWidget for widgets that can contain child widgets.
@@ -32,6 +38,15 @@ type Container interface {
 type Themeable interface {
 	// SetTheme applies a custom theme to this widget.
 	SetTheme(Theme)
+}
+
+// Focusable is the interface for widgets that can receive keyboard focus.
+type Focusable interface {
+	PublicWidget
+
+	// CanTakeFocus returns true if the widget can currently receive focus.
+	// Disabled or hidden widgets should return false.
+	CanTakeFocus() bool
 }
 
 // Canvas provides a high-level drawing API for widget rendering.
@@ -104,6 +119,7 @@ type BasePublicWidget struct {
 	width, height int
 	children      []PublicWidget
 	visible       bool
+	focused       bool
 
 	onEvent func(Event) bool
 }
@@ -170,4 +186,14 @@ func (w *BasePublicWidget) IsVisible() bool {
 // OnEvent registers a callback to handle events for this widget.
 func (w *BasePublicWidget) OnEvent(handler func(Event) bool) {
 	w.onEvent = handler
+}
+
+// SetFocused sets the widget's keyboard focus state.
+func (w *BasePublicWidget) SetFocused(focused bool) {
+	w.focused = focused
+}
+
+// IsFocused returns true if the widget currently has keyboard focus.
+func (w *BasePublicWidget) IsFocused() bool {
+	return w.focused
 }

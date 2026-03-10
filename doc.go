@@ -28,6 +28,33 @@
 //
 //	app.Run()
 //
+// # Keyboard Focus and Tab Navigation
+//
+// Wayne supports keyboard focus management with automatic Tab navigation.
+// Widgets that implement the Focusable interface (Button, TextInput) can
+// receive focus and respond to keyboard events.
+//
+// Focus chain is automatically built from the widget tree when SetRoot is called.
+// Users can navigate between focusable widgets using Tab (forward) and Shift+Tab
+// (backward). Focused buttons can be activated with Enter or Space keys.
+//
+//	// Focus is automatically managed
+//	btn1 := wayne.NewButton("First", wayne.Size{Width: 30, Height: 10})
+//	btn2 := wayne.NewButton("Second", wayne.Size{Width: 30, Height: 10})
+//	input := wayne.NewTextInput("Type here", wayne.Size{Width: 50, Height: 8})
+//
+//	col := wayne.NewColumn()
+//	col.Add(btn1)
+//	col.Add(input)
+//	col.Add(btn2)
+//	win.SetRoot(col)  // Focus chain: btn1 → input → btn2
+//
+// Programmatic focus control is available via the window's event dispatcher:
+//
+//	win.SetRoot(col)
+//	// Set focus to a specific widget
+//	win.dispatcher.SetFocus(input)
+//
 // # Widget Sizing Convention
 //
 // Widgets with text content (Button, Label, TextInput) require explicit Size

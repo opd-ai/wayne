@@ -70,8 +70,27 @@ func (b *Button) SetTheme(theme Theme) {
 	b.theme = &theme
 }
 
-// HandleEvent processes pointer events for button interaction.
+// CanTakeFocus returns true if the button can currently receive keyboard focus.
+func (b *Button) CanTakeFocus() bool {
+	return b.enabled
+}
+
+// HandleEvent processes pointer and keyboard events for button interaction.
 func (b *Button) HandleEvent(evt Event) bool {
+	// Handle keyboard events for focused buttons
+	if ke, ok := evt.(*KeyEvent); ok {
+		if b.IsFocused() && b.enabled && ke.EventType() == KeyPress {
+			if ke.Key() == KeyReturn || ke.Key() == KeySpace {
+				if b.onClick != nil {
+					b.onClick()
+				}
+				return true
+			}
+		}
+		return false
+	}
+
+	// Handle pointer events
 	pe, ok := evt.(*PointerEvent)
 	if !ok {
 		return false
@@ -144,6 +163,16 @@ func (b *Button) Draw(c Canvas) {
 	}
 
 	c.FillRoundedRect(x, y, w, h, theme.BorderRadius, bgColor)
+
+	// Draw focus indicator (border)
+	if b.IsFocused() {
+		focusColor := theme.Accent
+		// Draw a 2-pixel border around the button
+		c.DrawLine(x, y, x+w, y, focusColor, 2)         // top
+		c.DrawLine(x, y+h, x+w, y+h, focusColor, 2)     // bottom
+		c.DrawLine(x, y, x, y+h, focusColor, 2)         // left
+		c.DrawLine(x+w, y, x+w, y+h, focusColor, 2)     // right
+	}
 
 	if b.label != "" {
 		// Center text (approximate: basicfont is 7px wide per char, 13px tall)
@@ -255,7 +284,6 @@ type TextInput struct {
 	placeholder string
 	size        Size
 	onChange    func(string)
-	focused     bool
 	cursorPos   int
 	theme       *Theme
 }
@@ -296,14 +324,14 @@ func (t *TextInput) SetPlaceholder(placeholder string) {
 	t.placeholder = placeholder
 }
 
-// SetFocus sets the keyboard focus state.
-func (t *TextInput) SetFocus(focused bool) {
-	t.focused = focused
-}
-
 // SetTheme applies a theme to this text input.
 func (t *TextInput) SetTheme(theme Theme) {
 	t.theme = &theme
+}
+
+// CanTakeFocus returns true (text inputs can always receive focus).
+func (t *TextInput) CanTakeFocus() bool {
+	return true
 }
 
 // HandleEvent processes keyboard and pointer events for text input.
@@ -312,7 +340,7 @@ func (t *TextInput) HandleEvent(evt Event) bool {
 	case *PointerEvent:
 		return t.handlePointerEvent(e)
 	case *KeyEvent:
-		if !t.focused {
+		if !t.IsFocused() {
 			return false
 		}
 		if e.EventType() == KeyPress || e.EventType() == KeyRepeat {
@@ -327,10 +355,10 @@ func (t *TextInput) handlePointerEvent(pe *PointerEvent) bool {
 		x, y := t.Position()
 		w, h := t.Bounds()
 		if contains(x, y, w, h, pe.X(), pe.Y()) {
-			t.focused = true
+			t.SetFocused(true)
 			return true
 		}
-		t.focused = false
+		t.SetFocused(false)
 	}
 	return false
 }
@@ -406,7 +434,7 @@ func (t *TextInput) Draw(c Canvas) {
 
 	// Background
 	bg := theme.Background
-	if t.focused {
+	if t.IsFocused() {
 		bg = RGB(
 			uint8(min(255, int(bg.R)+15)),
 			uint8(min(255, int(bg.G)+15)),
@@ -414,10 +442,16 @@ func (t *TextInput) Draw(c Canvas) {
 		)
 	}
 	c.FillRoundedRect(x, y, w, h, theme.BorderRadius, bg)
-	c.DrawLine(x, y, x+w, y, theme.Border, theme.BorderWidth)
-	c.DrawLine(x+w, y, x+w, y+h, theme.Border, theme.BorderWidth)
-	c.DrawLine(x, y+h, x+w, y+h, theme.Border, theme.BorderWidth)
-	c.DrawLine(x, y, x, y+h, theme.Border, theme.BorderWidth)
+	
+	// Border (brighter when focused)
+	borderColor := theme.Border
+	if t.IsFocused() {
+		borderColor = theme.Accent
+	}
+	c.DrawLine(x, y, x+w, y, borderColor, theme.BorderWidth)
+	c.DrawLine(x+w, y, x+w, y+h, borderColor, theme.BorderWidth)
+	c.DrawLine(x, y+h, x+w, y+h, borderColor, theme.BorderWidth)
+	c.DrawLine(x, y, x, y+h, borderColor, theme.BorderWidth)
 
 	// Text
 	displayText := t.text
@@ -432,7 +466,7 @@ func (t *TextInput) Draw(c Canvas) {
 	}
 
 	// Cursor
-	if t.focused {
+	if t.IsFocused() {
 		cursorX := x + 4 + t.cursorPos*7
 		c.DrawLine(cursorX, y+2, cursorX, y+h-2, theme.Foreground, 1)
 	}

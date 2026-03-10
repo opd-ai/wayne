@@ -30,6 +30,22 @@ func (d *EventDispatcher) SetWidgetRoot(root PublicWidget) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.widgetRoot = root
+	// Auto-build focus chain from widget tree
+	d.focusManager.SetChainFromRoot(root)
+}
+
+// SetFocus sets focus to a specific widget.
+func (d *EventDispatcher) SetFocus(w PublicWidget) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	d.focusManager.Focus(w)
+}
+
+// FocusedWidget returns the currently focused widget.
+func (d *EventDispatcher) FocusedWidget() PublicWidget {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.focusManager.Focused()
 }
 
 // OnPointer registers a pointer event handler.
@@ -111,9 +127,27 @@ func (d *EventDispatcher) dispatchKey(evt *KeyEvent) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	// TODO: Tab navigation and focus management require Widget interface migration
-	// For now, dispatch key events to registered handlers only
+	// Handle Tab navigation for focus management
+	if evt.EventType() == KeyPress && evt.Key() == KeyTab {
+		if evt.Modifiers()&ModShift != 0 {
+			d.focusManager.FocusPrev()
+		} else {
+			d.focusManager.FocusNext()
+		}
+		evt.Consume()
+		return
+	}
 
+	// Dispatch key event to focused widget first
+	if focused := d.focusManager.Focused(); focused != nil {
+		if pw, ok := focused.(PublicWidget); ok {
+			if pw.HandleEvent(evt) {
+				return
+			}
+		}
+	}
+
+	// Then dispatch to registered handlers
 	for _, h := range d.keyHandlers {
 		if evt.Consumed() {
 			return
@@ -194,7 +228,7 @@ func (d *EventDispatcher) hitTest(w PublicWidget, x, y int) PublicWidget {
 // FocusManager manages keyboard focus and tab order.
 type FocusManager struct {
 	mu         sync.RWMutex
-	chain      []Widget
+	chain      []PublicWidget
 	focusedIdx int
 }
 
@@ -204,17 +238,44 @@ func NewFocusManager() *FocusManager {
 }
 
 // SetChain sets the focus chain (tab order).
-func (fm *FocusManager) SetChain(widgets []Widget) {
+func (fm *FocusManager) SetChain(widgets []PublicWidget) {
 	fm.mu.Lock()
 	defer fm.mu.Unlock()
 	fm.chain = widgets
 	fm.focusedIdx = -1
 }
 
-// Focus sets focus to a specific widget.
-func (fm *FocusManager) Focus(w Widget) {
+// SetChainFromRoot builds a focus chain from a widget tree.
+// It collects all Focusable widgets in depth-first order.
+func (fm *FocusManager) SetChainFromRoot(root PublicWidget) {
 	fm.mu.Lock()
 	defer fm.mu.Unlock()
+	fm.chain = nil
+	fm.focusedIdx = -1
+	fm.collectFocusable(root)
+}
+
+// collectFocusable recursively collects focusable widgets.
+func (fm *FocusManager) collectFocusable(w PublicWidget) {
+	if focusable, ok := w.(Focusable); ok && focusable.CanTakeFocus() {
+		fm.chain = append(fm.chain, w)
+	}
+	if container, ok := w.(Container); ok {
+		for _, child := range container.Children() {
+			fm.collectFocusable(child)
+		}
+	}
+}
+
+// Focus sets focus to a specific widget.
+func (fm *FocusManager) Focus(w PublicWidget) {
+	fm.mu.Lock()
+	defer fm.mu.Unlock()
+	// Clear previous focus
+	if fm.focusedIdx >= 0 && fm.focusedIdx < len(fm.chain) {
+		fm.chain[fm.focusedIdx].SetFocused(false)
+	}
+	// Find and focus the target widget
 	for i, widget := range fm.chain {
 		if widget == w {
 			fm.focusedIdx = i
@@ -256,7 +317,7 @@ func (fm *FocusManager) FocusPrev() {
 }
 
 // Focused returns the currently focused widget.
-func (fm *FocusManager) Focused() Widget {
+func (fm *FocusManager) Focused() PublicWidget {
 	fm.mu.RLock()
 	defer fm.mu.RUnlock()
 	if fm.focusedIdx >= 0 && fm.focusedIdx < len(fm.chain) {
