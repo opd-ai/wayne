@@ -293,58 +293,80 @@ func (t *TextInput) SetTheme(theme Theme) {
 func (t *TextInput) HandleEvent(evt Event) bool {
 	switch e := evt.(type) {
 	case *PointerEvent:
-		if e.EventType() == PointerButtonPress {
-			t.focused = true
-			return true
-		}
+		return t.handlePointerEvent(e)
 	case *KeyEvent:
 		if !t.focused {
 			return false
 		}
 		if e.EventType() == KeyPress || e.EventType() == KeyRepeat {
-			switch e.Key() {
-			case KeyBackspace:
-				runes := []rune(t.text)
-				if t.cursorPos > 0 {
-					runes = append(runes[:t.cursorPos-1], runes[t.cursorPos:]...)
-					t.cursorPos--
-					t.text = string(runes)
-					if t.onChange != nil {
-						t.onChange(t.text)
-					}
-				}
-				return true
-			case KeyLeft:
-				if t.cursorPos > 0 {
-					t.cursorPos--
-				}
-				return true
-			case KeyRight:
-				if t.cursorPos < len([]rune(t.text)) {
-					t.cursorPos++
-				}
-				return true
-			case KeyHome:
-				t.cursorPos = 0
-				return true
-			case KeyEnd:
-				t.cursorPos = len([]rune(t.text))
-				return true
-			default:
-				if r := e.Rune(); r != 0 && r >= 0x20 {
-					runes := []rune(t.text)
-					runes = append(runes[:t.cursorPos], append([]rune{r}, runes[t.cursorPos:]...)...)
-					t.text = string(runes)
-					t.cursorPos++
-					if t.onChange != nil {
-						t.onChange(t.text)
-					}
-					return true
-				}
-			}
+			return t.handleKeyEvent(e)
 		}
 	}
 	return false
+}
+
+func (t *TextInput) handlePointerEvent(pe *PointerEvent) bool {
+	if pe.EventType() == PointerButtonPress {
+		t.focused = true
+		return true
+	}
+	return false
+}
+
+func (t *TextInput) handleKeyEvent(ke *KeyEvent) bool {
+	switch ke.Key() {
+	case KeyBackspace:
+		return t.handleBackspace()
+	case KeyLeft, KeyRight, KeyHome, KeyEnd:
+		return t.handleCursorMovement(ke.Key())
+	default:
+		if r := ke.Rune(); r != 0 && r >= 0x20 {
+			return t.handleTextInput(r)
+		}
+	}
+	return false
+}
+
+func (t *TextInput) handleBackspace() bool {
+	runes := []rune(t.text)
+	if t.cursorPos > 0 {
+		runes = append(runes[:t.cursorPos-1], runes[t.cursorPos:]...)
+		t.cursorPos--
+		t.text = string(runes)
+		if t.onChange != nil {
+			t.onChange(t.text)
+		}
+	}
+	return true
+}
+
+func (t *TextInput) handleCursorMovement(key Key) bool {
+	switch key {
+	case KeyLeft:
+		if t.cursorPos > 0 {
+			t.cursorPos--
+		}
+	case KeyRight:
+		if t.cursorPos < len([]rune(t.text)) {
+			t.cursorPos++
+		}
+	case KeyHome:
+		t.cursorPos = 0
+	case KeyEnd:
+		t.cursorPos = len([]rune(t.text))
+	}
+	return true
+}
+
+func (t *TextInput) handleTextInput(r rune) bool {
+	runes := []rune(t.text)
+	runes = append(runes[:t.cursorPos], append([]rune{r}, runes[t.cursorPos:]...)...)
+	t.text = string(runes)
+	t.cursorPos++
+	if t.onChange != nil {
+		t.onChange(t.text)
+	}
+	return true
 }
 
 // Draw renders the text input to the canvas.
