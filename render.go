@@ -134,37 +134,122 @@ func (c *ebitenCanvas) DrawImage(img *Image, x, y, width, height int) {
 
 // LinearGradient fills a rectangle with a linear gradient.
 // angle is in degrees (0 = left-to-right, 90 = top-to-bottom).
+//
+// Implementation note: This method uses band rendering to approximate arbitrary-angle
+// gradients. Diagonal gradients use scan-line rendering with color interpolation based
+// on vector projection. For optimal performance and quality, prefer axis-aligned angles
+// (0°, 90°, 180°, 270°).
 func (c *ebitenCanvas) LinearGradient(x, y, width, height int, startColor, endColor Color, angle float64) {
 	if width <= 0 || height <= 0 {
 		return
 	}
-	// Approximate with horizontal or vertical bands of interpolated colors.
-	steps := width
-	isVertical := math.Abs(math.Sin(angle*math.Pi/180)) > 0.5
-	if isVertical {
-		steps = height
+
+	// Normalize angle to [0, 360)
+	angle = math.Mod(angle, 360)
+	if angle < 0 {
+		angle += 360
 	}
-	if steps <= 0 {
+
+	// Convert angle to radians
+	angleRad := angle * math.Pi / 180.0
+	dx := math.Cos(angleRad)
+	dy := math.Sin(angleRad)
+
+	// Compute rectangle center
+	centerX := float64(x) + float64(width)/2.0
+	centerY := float64(y) + float64(height)/2.0
+
+	// Project rectangle corners onto gradient direction to find extent
+	corners := [][2]float64{
+		{float64(x), float64(y)},
+		{float64(x + width), float64(y)},
+		{float64(x), float64(y + height)},
+		{float64(x + width), float64(y + height)},
+	}
+
+	minProj, maxProj := math.Inf(1), math.Inf(-1)
+	for _, corner := range corners {
+		proj := (corner[0]-centerX)*dx + (corner[1]-centerY)*dy
+		if proj < minProj {
+			minProj = proj
+		}
+		if proj > maxProj {
+			maxProj = proj
+		}
+	}
+
+	gradientLength := maxProj - minProj
+	if gradientLength == 0 {
 		return
 	}
 
-	for i := 0; i < steps; i++ {
-		t := float64(i) / float64(steps)
-		r := uint8(float64(startColor.R)*(1-t) + float64(endColor.R)*t)
-		g := uint8(float64(startColor.G)*(1-t) + float64(endColor.G)*t)
-		b := uint8(float64(startColor.B)*(1-t) + float64(endColor.B)*t)
-		a := uint8(float64(startColor.A)*(1-t) + float64(endColor.A)*t)
-		clr := color.RGBA{R: r, G: g, B: b, A: a}
+	// Optimize for axis-aligned gradients using band rendering
+	sinA := math.Abs(math.Sin(angleRad))
+	cosA := math.Abs(math.Cos(angleRad))
 
-		if isVertical {
-			vector.FillRect(c.dst, float32(x), float32(y+i), float32(width), 1, clr, false)
-		} else {
+	if cosA > 0.99 { // Nearly horizontal (0° or 180°)
+		steps := width
+		for i := 0; i < steps; i++ {
+			t := float64(i) / float64(steps)
+			if angle > 90 && angle < 270 {
+				t = 1 - t // Reverse for 180°
+			}
+			clr := interpolateColor(startColor, endColor, t)
 			vector.FillRect(c.dst, float32(x+i), float32(y), 1, float32(height), clr, false)
+		}
+	} else if sinA > 0.99 { // Nearly vertical (90° or 270°)
+		steps := height
+		for i := 0; i < steps; i++ {
+			t := float64(i) / float64(steps)
+			if angle > 180 {
+				t = 1 - t // Reverse for 270°
+			}
+			clr := interpolateColor(startColor, endColor, t)
+			vector.FillRect(c.dst, float32(x), float32(y+i), float32(width), 1, clr, false)
+		}
+	} else { // Diagonal gradient - use scanline approach
+		// Render row by row for better performance
+		for py := 0; py < height; py++ {
+			wy := float64(y + py)
+			for px := 0; px < width; px++ {
+				wx := float64(x + px)
+
+				// Project pixel position onto gradient direction
+				proj := (wx-centerX)*dx + (wy-centerY)*dy
+
+				// Normalize to [0, 1]
+				t := (proj - minProj) / gradientLength
+				if t < 0 {
+					t = 0
+				}
+				if t > 1 {
+					t = 1
+				}
+
+				clr := interpolateColor(startColor, endColor, t)
+				vector.FillRect(c.dst, float32(x+px), float32(y+py), 1, 1, clr, false)
+			}
 		}
 	}
 }
 
+// interpolateColor interpolates between two colors using parameter t [0, 1]
+func interpolateColor(start, end Color, t float64) color.RGBA {
+	return color.RGBA{
+		R: uint8(float64(start.R)*(1-t) + float64(end.R)*t),
+		G: uint8(float64(start.G)*(1-t) + float64(end.G)*t),
+		B: uint8(float64(start.B)*(1-t) + float64(end.B)*t),
+		A: uint8(float64(start.A)*(1-t) + float64(end.A)*t),
+	}
+}
+
 // RadialGradient fills a rectangle with a radial gradient.
+//
+// Implementation note: This method renders concentric circles to approximate
+// a radial gradient. The number of rings is dynamically computed based on the
+// gradient radius to balance quality and performance. Very large gradients
+// (>1000px diagonal) may show subtle banding on high-DPI displays. The gradient
+// is centered in the rectangle and extends to the corners.
 func (c *ebitenCanvas) RadialGradient(x, y, width, height int, centerColor, edgeColor Color) {
 	if width <= 0 || height <= 0 {
 		return
@@ -173,7 +258,12 @@ func (c *ebitenCanvas) RadialGradient(x, y, width, height int, centerColor, edge
 	cy := float64(y + height/2)
 	maxR := math.Sqrt(float64(width*width+height*height)) / 2.0
 
-	steps := 32 // number of rings
+	// Dynamic ring count: use at least 128 rings, or scale with radius for large gradients
+	steps := int(math.Max(128, maxR))
+	if steps > 512 {
+		steps = 512 // Cap at 512 for performance on very large gradients
+	}
+
 	for i := steps - 1; i >= 0; i-- {
 		t := float64(i) / float64(steps)
 		r := uint8(float64(centerColor.R)*t + float64(edgeColor.R)*(1-t))
@@ -187,6 +277,14 @@ func (c *ebitenCanvas) RadialGradient(x, y, width, height int, centerColor, edge
 }
 
 // BoxShadow renders a box shadow around the given rectangle.
+//
+// Implementation note: This method provides a simplified shadow approximation
+// using a rounded rectangle with reduced opacity. It does NOT implement Gaussian
+// blur or true soft shadows as found in CSS box-shadow. The 'blur' parameter
+// controls the shadow rectangle's corner radius and expansion, not blur kernel size.
+// For production-quality shadows, consider pre-rendering shadow images with proper
+// blur and using Canvas.DrawImage instead. This method is suitable for simple
+// drop-shadow effects.
 func (c *ebitenCanvas) BoxShadow(x, y, width, height, offsetX, offsetY, blur int, col Color) {
 	if width <= 0 || height <= 0 {
 		return

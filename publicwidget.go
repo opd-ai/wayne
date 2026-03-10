@@ -57,13 +57,25 @@ type Canvas interface {
 	// DrawImage renders an image at the given position and size.
 	DrawImage(img *Image, x, y, width, height int)
 
-	// LinearGradient fills a rectangle with a linear gradient.
+	// LinearGradient fills a rectangle with a linear gradient from startColor to endColor.
+	// The angle parameter specifies the gradient direction in degrees (0 = left-to-right,
+	// 90 = top-to-bottom, 180 = right-to-left, 270 = bottom-to-top).
+	//
+	// Note: Uses approximation rendering that may show banding on large gradients (>500px).
 	LinearGradient(x, y, width, height int, startColor, endColor Color, angle float64)
 
-	// RadialGradient fills a rectangle with a radial gradient.
+	// RadialGradient fills a rectangle with a radial gradient from centerColor to edgeColor.
+	// The gradient radiates from the rectangle's center to its corners.
+	//
+	// Note: Uses concentric circle approximation. Very large gradients (>1000px diagonal)
+	// may show subtle banding on high-DPI displays.
 	RadialGradient(x, y, width, height int, centerColor, edgeColor Color)
 
-	// BoxShadow renders a box shadow around the given rectangle.
+	// BoxShadow renders a simplified shadow around the given rectangle.
+	// offsetX and offsetY control shadow position, blur controls spread and corner radius.
+	//
+	// Note: This is a simplified approximation without Gaussian blur. Does not match CSS
+	// box-shadow semantics. For production-quality shadows, consider pre-rendered images.
 	BoxShadow(x, y, width, height, offsetX, offsetY, blur int, color Color)
 
 	// Theme returns the application-wide theme for this rendering context.
