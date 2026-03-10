@@ -7,6 +7,7 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"strings"
 	"sync"
 	"testing"
 )
@@ -215,6 +216,196 @@ func TestResourceManagerUnsupportedImageFormat(t *testing.T) {
 	_, err := rm.LoadImageFromReader(reader, "test.bmp")
 	if err == nil {
 		t.Error("LoadImageFromReader should fail for invalid image data")
+	}
+}
+
+// TestLoadFontErrors tests error handling for LoadFont.
+func TestLoadFontErrors(t *testing.T) {
+	tests := []struct {
+		name        string
+		setupRM     func() *ResourceManager
+		path        string
+		size        float64
+		expectError string
+	}{
+		{
+			name:        "empty path",
+			setupRM:     newResourceManager,
+			path:        "",
+			size:        12.0,
+			expectError: "font path cannot be empty",
+		},
+		{
+			name:        "zero size",
+			setupRM:     newResourceManager,
+			path:        "test.ttf",
+			size:        0,
+			expectError: "font size must be positive",
+		},
+		{
+			name:        "negative size",
+			setupRM:     newResourceManager,
+			path:        "test.ttf",
+			size:        -10.0,
+			expectError: "font size must be positive",
+		},
+		{
+			name: "closed resource manager",
+			setupRM: func() *ResourceManager {
+				rm := newResourceManager()
+				rm.cleanup()
+				return rm
+			},
+			path:        "test.ttf",
+			size:        12.0,
+			expectError: "resource manager is closed",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rm := tt.setupRM()
+			_, err := rm.LoadFont(tt.path, tt.size)
+			if err == nil {
+				t.Fatalf("LoadFont should fail for %s", tt.name)
+			}
+			if tt.expectError != "" && !strings.Contains(err.Error(), tt.expectError) {
+				t.Errorf("LoadFont error: expected to contain %q, got %q", tt.expectError, err.Error())
+			}
+		})
+	}
+}
+
+// TestLoadImageErrors tests error handling for LoadImage.
+func TestLoadImageErrors(t *testing.T) {
+	rm := newResourceManager()
+
+	tests := []struct {
+		name        string
+		path        string
+		expectError string
+	}{
+		{
+			name:        "empty path",
+			path:        "",
+			expectError: "image path cannot be empty",
+		},
+		{
+			name:        "non-existent file",
+			path:        "/nonexistent/path/to/image.png",
+			expectError: "not accessible",
+		},
+		{
+			name:        "directory instead of file",
+			path:        ".",
+			expectError: "failed to load image",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := rm.LoadImage(tt.path)
+			if err == nil {
+				t.Fatalf("LoadImage should fail for %s", tt.name)
+			}
+			if tt.expectError != "" && !strings.Contains(err.Error(), tt.expectError) {
+				t.Errorf("LoadImage error: expected to contain %q, got %q", tt.expectError, err.Error())
+			}
+		})
+	}
+}
+
+// TestLoadImageFromReaderErrors tests error handling for LoadImageFromReader.
+func TestLoadImageFromReaderErrors(t *testing.T) {
+	rm := newResourceManager()
+
+	tests := []struct {
+		name        string
+		data        []byte
+		filename    string
+		expectError string
+	}{
+		{
+			name:        "invalid image data",
+			data:        []byte("not an image"),
+			filename:    "test.png",
+			expectError: "failed to decode image",
+		},
+		{
+			name:        "corrupt PNG header",
+			data:        []byte("\x89PNG\r\n\x1a\nGARBAGE"),
+			filename:    "corrupt.png",
+			expectError: "failed to decode image",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			reader := bytes.NewReader(tt.data)
+			_, err := rm.LoadImageFromReader(reader, tt.filename)
+			if err == nil {
+				t.Fatalf("LoadImageFromReader should fail for %s", tt.name)
+			}
+			if tt.expectError != "" && !strings.Contains(err.Error(), tt.expectError) {
+				t.Errorf("LoadImageFromReader error: expected to contain %q, got %q", tt.expectError, err.Error())
+			}
+			// Verify filename appears in error message
+			if tt.filename != "" && !strings.Contains(err.Error(), tt.filename) {
+				t.Errorf("Error message should contain filename %q, got %q", tt.filename, err.Error())
+			}
+		})
+	}
+}
+
+// TestLoadImageErrorContext tests that error messages include helpful context.
+func TestLoadImageErrorContext(t *testing.T) {
+	rm := newResourceManager()
+
+	// Test that file path appears in error message
+	_, err := rm.LoadImage("/nonexistent/test.png")
+	if err == nil {
+		t.Fatal("LoadImage should fail for nonexistent file")
+	}
+	if !strings.Contains(err.Error(), "/nonexistent/test.png") {
+		t.Errorf("Error message should contain file path, got: %v", err)
+	}
+
+	// Test that format appears in error message for unsupported formats
+	invalidData := []byte("not an image")
+	reader := bytes.NewReader(invalidData)
+	_, err = rm.LoadImageFromReader(reader, "test.xyz")
+	if err == nil {
+		t.Fatal("LoadImageFromReader should fail for invalid data")
+	}
+	if !strings.Contains(err.Error(), "test.xyz") {
+		t.Errorf("Error message should contain filename hint, got: %v", err)
+	}
+}
+
+// TestLoadImageGIFSupport tests that GIF images are supported.
+func TestLoadImageGIFSupport(t *testing.T) {
+	rm := newResourceManager()
+
+	// Create a minimal valid GIF (1x1 pixel, white)
+	gifData := []byte{
+		0x47, 0x49, 0x46, 0x38, 0x39, 0x61, // GIF89a
+		0x01, 0x00, 0x01, 0x00, // width=1, height=1
+		0x80, 0x00, 0x00, // global color table flag, background, aspect
+		0xFF, 0xFF, 0xFF, // white color
+		0x00, 0x00, 0x00, // black color
+		0x2C, 0x00, 0x00, 0x00, 0x00, // image descriptor
+		0x01, 0x00, 0x01, 0x00, 0x00, // image width=1, height=1
+		0x02, 0x02, 0x44, 0x01, 0x00, // image data
+		0x3B, // trailer
+	}
+
+	reader := bytes.NewReader(gifData)
+	img, err := rm.LoadImageFromReader(reader, "test.gif")
+	if err != nil {
+		t.Fatalf("LoadImageFromReader should support GIF format: %v", err)
+	}
+	if img == nil {
+		t.Fatal("LoadImageFromReader returned nil for valid GIF")
 	}
 }
 

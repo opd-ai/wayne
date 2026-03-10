@@ -235,6 +235,13 @@ func (a *App) NewWindow(cfg WindowConfig) (*Window, error) {
 }
 
 // LoadFont loads a font from the specified path at the given size.
+//
+// Supported formats: TrueType (.ttf), OpenType (.otf) - currently not implemented,
+// falls back to embedded font.
+//
+// Size is specified in points and must be positive.
+//
+// Returns an error if the app is not running or if the font parameters are invalid.
 func (a *App) LoadFont(path string, size float64) (*Font, error) {
 	if a.resources == nil {
 		return nil, ErrNotRunning
@@ -243,6 +250,11 @@ func (a *App) LoadFont(path string, size float64) (*Font, error) {
 }
 
 // LoadImage loads an image from the specified path.
+//
+// Supported formats: PNG, JPEG, GIF (via standard library image decoders).
+//
+// Returns an error if the app is not running, the file does not exist,
+// or the image format is unsupported.
 func (a *App) LoadImage(path string) (*Image, error) {
 	if a.resources == nil {
 		return nil, ErrNotRunning

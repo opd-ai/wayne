@@ -4,7 +4,9 @@ package wayne
 
 import (
 	"errors"
+	"fmt"
 	"image"
+	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
 	"io"
@@ -92,16 +94,30 @@ func (rm *ResourceManager) DefaultFont() *Font {
 //
 // Currently returns the default embedded font with the requested size.
 // Custom TTF loading may be added in a future version.
+//
+// Supported formats: TrueType (.ttf), OpenType (.otf) - currently not implemented,
+// falls back to embedded font.
+//
+// The path parameter is currently ignored but will be used in future versions.
+// Size is specified in points.
 func (rm *ResourceManager) LoadFont(path string, size float64) (*Font, error) {
 	if rm.closed.Load() {
 		return nil, ErrResourceManagerClosed
+	}
+
+	if path == "" {
+		return nil, fmt.Errorf("font path cannot be empty")
+	}
+
+	if size <= 0 {
+		return nil, fmt.Errorf("font size must be positive, got %f", size)
 	}
 
 	rm.mu.Lock()
 	defer rm.mu.Unlock()
 
 	if rm.defaultFont == nil {
-		return nil, ErrInvalidFontData
+		return nil, fmt.Errorf("default font not initialized: %w", ErrInvalidFontData)
 	}
 
 	font := &Font{
@@ -115,17 +131,40 @@ func (rm *ResourceManager) LoadFont(path string, size float64) (*Font, error) {
 
 // LoadImage loads an image from the specified path.
 //
-// Supported formats: PNG, JPEG.
+// Supported formats: PNG, JPEG, GIF (via standard library image decoders).
+//
+// Returns an error if the file does not exist, is not accessible, or contains
+// unsupported image data. Error messages include the file path for debugging.
 func (rm *ResourceManager) LoadImage(path string) (*Image, error) {
+	if path == "" {
+		return nil, fmt.Errorf("image path cannot be empty")
+	}
+
+	// Validate file accessibility before attempting to load
+	if _, err := os.Stat(path); err != nil {
+		return nil, fmt.Errorf("resource path %q not accessible: %w", path, err)
+	}
+
 	f, err := os.Open(path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to open image %q: %w", path, err)
 	}
 	defer f.Close()
-	return rm.LoadImageFromReader(f, path)
+
+	img, err := rm.LoadImageFromReader(f, path)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load image %q: %w", path, err)
+	}
+	return img, nil
 }
 
 // LoadImageFromReader loads an image from an io.Reader.
+//
+// Supported formats: PNG, JPEG, GIF. The filenameHint is used in error messages
+// for better debugging context.
+//
+// Returns ErrUnsupportedImageFormat for unsupported formats, or a descriptive
+// error for malformed image data.
 func (rm *ResourceManager) LoadImageFromReader(r io.Reader, filenameHint string) (*Image, error) {
 	if rm.closed.Load() {
 		return nil, ErrResourceManagerClosed
@@ -133,10 +172,18 @@ func (rm *ResourceManager) LoadImageFromReader(r io.Reader, filenameHint string)
 
 	img, format, err := image.Decode(r)
 	if err != nil {
-		return nil, err
+		if filenameHint != "" {
+			return nil, fmt.Errorf("failed to decode image from %q: %w", filenameHint, err)
+		}
+		return nil, fmt.Errorf("failed to decode image: %w", err)
 	}
-	if format != "png" && format != "jpeg" {
-		return nil, ErrUnsupportedImageFormat
+
+	// Check for supported formats
+	if format != "png" && format != "jpeg" && format != "gif" {
+		if filenameHint != "" {
+			return nil, fmt.Errorf("unsupported image format %q in %q: %w", format, filenameHint, ErrUnsupportedImageFormat)
+		}
+		return nil, fmt.Errorf("unsupported image format %q: %w", format, ErrUnsupportedImageFormat)
 	}
 
 	eimg := ebiten.NewImageFromImage(img)
