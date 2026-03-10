@@ -61,18 +61,18 @@ anywhere on the panel.
 `Bounds()`).  Only send the event to the topmost containing child; once a child
 consumes the event (`HandleEvent` returns `true`), stop iterating.
 
-### 2b. `Button.HandleEvent` has no bounds check (concretewidgets.go line 97)
+### 2b. ✅ `Button.HandleEvent` has no bounds check (concretewidgets.go line 97)
 **Problem:** Any press/release dispatched to the button fires the click, even
 if the pointer was elsewhere.  
 **Fix:** At the start of press/release handling, verify that
 `pe.X()/pe.Y()` is within `b.Position()` + `b.Bounds()`.
 
-### 2c. `TextInput` can steal focus without a bounds check (concretewidgets.go line 299)
+### 2c. ✅ `TextInput` can steal focus without a bounds check (concretewidgets.go line 299)
 **Problem:** `PointerButtonPress` always sets `focused = true`.  
 **Fix:** Only focus the input when `pe.X()/pe.Y()` is within the widget's
 bounds.  Conversely, unfocus when a press occurs outside the bounds.
 
-### 2d. `ScrollView.HandleEvent` scrolls regardless of pointer position (concretewidgets.go line 470)
+### 2d. ✅ `ScrollView.HandleEvent` scrolls regardless of pointer position (concretewidgets.go line 470)
 **Problem:** All scroll views scroll on every `PointerScroll` event.  
 **Fix:** Check that the event coordinates fall within `sv.Position()` +
 `sv.Bounds()` before adjusting `sv.scrollY`.  Only handle the relevant axis.
@@ -162,7 +162,7 @@ line (or use `toolchain go1.21.0`).
 ## 8. Order of execution (suggested)
 
 1. - [x] Fix `|| true` in game.go (trivial, highest signal-to-noise).
-2. Fix bounds checks in `Button`, `TextInput`, `ScrollView` event handlers.
+2. - [x] Fix bounds checks in `Button`, `TextInput`, `ScrollView` event handlers.
 3. Wire `Window.dispatcher` and adapt `EventDispatcher` to `PublicWidget`.
 4. Fix `Panel.HandleEvent` hit-testing.
 5. Emit `PointerEnter`/`PointerLeave`; track last-touch positions for `TouchUp`.

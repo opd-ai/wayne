@@ -83,11 +83,21 @@ func (b *Button) HandleEvent(evt Event) bool {
 		return true
 	case PointerButtonPress:
 		if pe.Button() == PointerButtonLeft && b.enabled {
+			x, y := b.Position()
+			w, h := b.Bounds()
+			if !contains(x, y, w, h, pe.X(), pe.Y()) {
+				return false
+			}
 			b.pressed = true
 			return true
 		}
 	case PointerButtonRelease:
 		if pe.Button() == PointerButtonLeft && b.pressed && b.enabled {
+			x, y := b.Position()
+			w, h := b.Bounds()
+			if !contains(x, y, w, h, pe.X(), pe.Y()) {
+				return false
+			}
 			b.pressed = false
 			if b.onClick != nil {
 				b.onClick()
@@ -310,8 +320,13 @@ func (t *TextInput) HandleEvent(evt Event) bool {
 
 func (t *TextInput) handlePointerEvent(pe *PointerEvent) bool {
 	if pe.EventType() == PointerButtonPress {
-		t.focused = true
-		return true
+		x, y := t.Position()
+		w, h := t.Bounds()
+		if contains(x, y, w, h, pe.X(), pe.Y()) {
+			t.focused = true
+			return true
+		}
+		t.focused = false
 	}
 	return false
 }
@@ -491,8 +506,12 @@ func (s *ScrollView) Children() []PublicWidget {
 // HandleEvent processes scroll events.
 func (s *ScrollView) HandleEvent(evt Event) bool {
 	if pe, ok := evt.(*PointerEvent); ok && pe.EventType() == PointerScroll {
-		s.SetScrollOffset(s.scrollY + int(pe.Value()*20))
-		return true
+		x, y := s.Position()
+		w, h := s.Bounds()
+		if contains(x, y, w, h, pe.X(), pe.Y()) {
+			s.SetScrollOffset(s.scrollY + int(pe.Value()*20))
+			return true
+		}
 	}
 	// Propagate to children
 	for _, child := range s.children {
@@ -616,3 +635,9 @@ func (s *Spacer) HandleEvent(_ Event) bool { return false }
 
 // Draw does nothing (spacers are invisible).
 func (s *Spacer) Draw(_ Canvas) {}
+
+// contains checks if a point (px, py) is within a widget's bounds.
+func contains(x, y, w, h int, px, py float64) bool {
+	return px >= float64(x) && px < float64(x+w) &&
+		py >= float64(y) && py < float64(y+h)
+}
