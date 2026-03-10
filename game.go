@@ -195,12 +195,12 @@ func (g *ebitenGame) processKeyboardInput() {
 	for _, ebKey := range justPressedKeys {
 		wKey := ebitenKeyToWayne(ebKey)
 		mods := currentModifiers()
-		var r rune
+		var inputRune rune
 		if len(inputChars) > 0 {
-			r = inputChars[0]
+			inputRune = inputChars[0]
 			inputChars = inputChars[1:]
 		}
-		a.dispatchEvent(NewKeyEvent(KeyPress, wKey, mods, r))
+		a.dispatchEvent(NewKeyEvent(KeyPress, wKey, mods, inputRune))
 	}
 
 	// Any remaining input chars (typed without a direct key mapping).
