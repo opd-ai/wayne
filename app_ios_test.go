@@ -18,7 +18,7 @@ func TestIOSSmokeTest(t *testing.T) {
 	}
 
 	app := NewAppWithConfig(*cfg)
-if app == nil {
+	if app == nil {
 		t.Fatal("NewAppWithConfig returned nil")
 	}
 
@@ -52,7 +52,7 @@ func TestIOSBasicWidgetCreation(t *testing.T) {
 	}
 
 	app := NewAppWithConfig(*cfg)
-if app == nil {
+	if app == nil {
 		t.Fatal("NewAppWithConfig returned nil")
 	}
 
@@ -76,7 +76,7 @@ if app == nil {
 	input.SetPlaceholder("Test Input")
 
 	panel := NewPanel(Size{Width: 400, Height: 300})
-panel.SetFlowDirection(FlowColumn)
+	panel.SetFlowDirection(FlowColumn)
 	panel.Add(btn)
 	panel.Add(lbl)
 	panel.Add(input)
