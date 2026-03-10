@@ -14,8 +14,6 @@ github.com/hajimehoshi/ebiten/v2 v2.9.9 h1:JdDag6Ndj12iD4lxQGG8kbsrh7ssj4Sbzth6r
 github.com/hajimehoshi/ebiten/v2 v2.9.9/go.mod h1:DAt4tnkYYpCvu3x9i1X/nK/vOruNXIlYq/tBXxnhrXM=
 github.com/jezek/xgb v1.1.1 h1:bE/r8ZZtSv7l9gk6nU0mYx51aXrvnyb44892TwSaqS4=
 github.com/jezek/xgb v1.1.1/go.mod h1:nrhwO0FX/enq75I7Y7G8iN1ubpSGZEiA3v9e9GyRFlk=
-github.com/opd-ai/wain v0.0.0-20260309234308-c8e970047c7d h1:8n8ZogfaBRRSnQXt9s7aAcyR0ZaOK2mO5M8ccaL8bSA=
-github.com/opd-ai/wain v0.0.0-20260309234308-c8e970047c7d/go.mod h1:c48diUFbVIWBNAh0uCC04FQfaMdFP3Dy9q+uw8alSEw=
 github.com/pierrec/lz4/v4 v4.1.22 h1:cKFw6uJDK+/gfw5BcDL0JL5aBsAFdsIT18eRtLj7VIU=
 github.com/pierrec/lz4/v4 v4.1.22/go.mod h1:gZWDp/Ze/IJXGXf23ltt2EXimqmTUXEy0GFuRQyBid4=
 github.com/rivo/uniseg v0.4.7 h1:WUdvkW8uEhrYfLC4ZzdpI2ztxP1I582+49Oc5Mq64VQ=

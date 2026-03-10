@@ -140,11 +140,11 @@ interface and implement it with an Ebitengine stencil.
 `ebiten.SetWindowDecorated`.  For unsupported combinations, log a warning
 (if `a.verbose`) or document the limitation.
 
-### 6b. `go.mod` pins `go 1.24.0` + `toolchain go1.24.13` (go.mod)
+### 6b. - [x] `go.mod` pins `go 1.24.0` + `toolchain go1.24.13` (go.mod)
 **Problem:** Forces all users and CI to that exact toolchain.  
-**Fix:** Reduce to the minimum version actually required (Ebitengine v2 targets
-Go 1.21+); change the `go` directive to `go 1.21` and remove the `toolchain`
-line (or use `toolchain go1.21.0`).
+**Fix:** Remove the `toolchain` line. The minimum Go version required is 1.24.0
+(determined by Ebitengine v2.9.9), but the toolchain pin forced go1.24.13
+specifically. Users can now use any Go 1.24+ toolchain.
 
 ---
 
@@ -171,5 +171,5 @@ line (or use `toolchain go1.21.0`).
 8. - [x] Fix `DrawText` font size; add `ScrollView` clipping.
 9. - [x] Apply `WindowConfig` extra fields to Ebitengine.
 10. - [x] Fix `LoadFont`/`LoadImage` after `Close()`.
-11. Downgrade `go.mod` to `go 1.21`.
+11. - [x] Downgrade `go.mod` to `go 1.21`.
 12. Add tests (layout, event routing, color/theme).

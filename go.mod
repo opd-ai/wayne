@@ -2,8 +2,6 @@ module github.com/opd-ai/wayne
 
 go 1.24.0
 
-toolchain go1.24.13
-
 require (
 	github.com/hajimehoshi/ebiten/v2 v2.9.9
 	golang.org/x/image v0.36.0
@@ -15,7 +13,6 @@ require (
 	github.com/ebitengine/purego v0.9.0 // indirect
 	github.com/go-text/typesetting v0.3.0 // indirect
 	github.com/jezek/xgb v1.1.1 // indirect
-	github.com/opd-ai/wain v0.0.0-20260309234308-c8e970047c7d // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.36.0 // indirect
