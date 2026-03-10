@@ -6,6 +6,41 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+// drawContext holds resolved draw parameters for a widget.
+type drawContext struct {
+	x, y   int
+	w, h   int
+	theme  Theme
+	canvas Canvas
+}
+
+// prepareDrawContext resolves position, bounds, and theme for a widget with an optional theme override.
+// Returns nil if the widget has zero or negative dimensions (nothing to draw).
+func prepareDrawContext(c Canvas, widget interface {
+	Position() (int, int)
+	Bounds() (int, int)
+}, themeOverride *Theme) *drawContext {
+	x, y := widget.Position()
+	w, h := widget.Bounds()
+	if w <= 0 || h <= 0 {
+		return nil
+	}
+
+	theme := c.Theme()
+	if themeOverride != nil {
+		theme = *themeOverride
+	}
+
+	return &drawContext{
+		x:      x,
+		y:      y,
+		w:      w,
+		h:      h,
+		theme:  theme,
+		canvas: c,
+	}
+}
+
 // Button is a clickable button widget with text and onClick callback.
 //
 // Example:
@@ -136,55 +171,49 @@ func (b *Button) HandleEvent(evt Event) bool {
 
 // Draw renders the button to the canvas.
 func (b *Button) Draw(c Canvas) {
-	x, y := b.Position()
-	w, h := b.Bounds()
-	if w <= 0 || h <= 0 {
+	ctx := prepareDrawContext(c, b, b.theme)
+	if ctx == nil {
 		return
 	}
 
-	theme := c.Theme()
-	if b.theme != nil {
-		theme = *b.theme
-	}
-
-	bgColor := theme.Accent
+	bgColor := ctx.theme.Accent
 	if !b.enabled {
-		bgColor = theme.Border
+		bgColor = ctx.theme.Border
 	} else if b.pressed {
 		bgColor = RGB(
-			uint8(max(0, int(theme.Accent.R)-20)),
-			uint8(max(0, int(theme.Accent.G)-20)),
-			uint8(max(0, int(theme.Accent.B)-20)),
+			uint8(max(0, int(ctx.theme.Accent.R)-20)),
+			uint8(max(0, int(ctx.theme.Accent.G)-20)),
+			uint8(max(0, int(ctx.theme.Accent.B)-20)),
 		)
 	} else if b.hovered {
 		bgColor = RGB(
-			uint8(min(255, int(theme.Accent.R)+20)),
-			uint8(min(255, int(theme.Accent.G)+20)),
-			uint8(min(255, int(theme.Accent.B)+20)),
+			uint8(min(255, int(ctx.theme.Accent.R)+20)),
+			uint8(min(255, int(ctx.theme.Accent.G)+20)),
+			uint8(min(255, int(ctx.theme.Accent.B)+20)),
 		)
 	}
 
-	c.FillRoundedRect(x, y, w, h, theme.BorderRadius, bgColor)
+	c.FillRoundedRect(ctx.x, ctx.y, ctx.w, ctx.h, ctx.theme.BorderRadius, bgColor)
 
 	// Draw focus indicator (border)
 	if b.IsFocused() {
-		focusColor := theme.Accent
+		focusColor := ctx.theme.Accent
 		// Draw a 2-pixel border around the button
-		c.DrawLine(x, y, x+w, y, focusColor, 2)     // top
-		c.DrawLine(x, y+h, x+w, y+h, focusColor, 2) // bottom
-		c.DrawLine(x, y, x, y+h, focusColor, 2)     // left
-		c.DrawLine(x+w, y, x+w, y+h, focusColor, 2) // right
+		c.DrawLine(ctx.x, ctx.y, ctx.x+ctx.w, ctx.y, focusColor, 2)           // top
+		c.DrawLine(ctx.x, ctx.y+ctx.h, ctx.x+ctx.w, ctx.y+ctx.h, focusColor, 2) // bottom
+		c.DrawLine(ctx.x, ctx.y, ctx.x, ctx.y+ctx.h, focusColor, 2)           // left
+		c.DrawLine(ctx.x+ctx.w, ctx.y, ctx.x+ctx.w, ctx.y+ctx.h, focusColor, 2) // right
 	}
 
 	if b.label != "" {
 		// Center text (approximate: basicfont is 7px wide per char, 13px tall)
 		textW := len(b.label) * 7
-		textX := x + (w-textW)/2
-		textY := y + (h-13)/2
-		if textY < y {
-			textY = y + 2
+		textX := ctx.x + (ctx.w-textW)/2
+		textY := ctx.y + (ctx.h-13)/2
+		if textY < ctx.y {
+			textY = ctx.y + 2
 		}
-		c.DrawText(b.label, textX, textY, nil, theme.Foreground)
+		c.DrawText(b.label, textX, textY, nil, ctx.theme.Foreground)
 	}
 }
 
@@ -250,24 +279,17 @@ func (l *Label) Draw(c Canvas) {
 		return
 	}
 
-	theme := c.Theme()
-	if l.theme != nil {
-		theme = *l.theme
+	ctx := prepareDrawContext(c, l, l.theme)
+	if ctx == nil {
+		return
 	}
 
-	col := theme.Foreground
+	col := ctx.theme.Foreground
 	if l.textColor != nil {
 		col = *l.textColor
 	}
 
-	x, y := l.Position()
-	w, h := l.Bounds()
-	_ = h
-	if w <= 0 {
-		return
-	}
-
-	c.DrawText(l.text, x, y, nil, col)
+	c.DrawText(l.text, ctx.x, ctx.y, nil, col)
 }
 
 // TextInput is a single-line editable text field.
@@ -423,19 +445,13 @@ func (t *TextInput) handleTextInput(r rune) bool {
 
 // Draw renders the text input to the canvas.
 func (t *TextInput) Draw(c Canvas) {
-	x, y := t.Position()
-	w, h := t.Bounds()
-	if w <= 0 || h <= 0 {
+	ctx := prepareDrawContext(c, t, t.theme)
+	if ctx == nil {
 		return
 	}
 
-	theme := c.Theme()
-	if t.theme != nil {
-		theme = *t.theme
-	}
-
 	// Background
-	bg := theme.Background
+	bg := ctx.theme.Background
 	if t.IsFocused() {
 		bg = RGB(
 			uint8(min(255, int(bg.R)+15)),
@@ -443,34 +459,34 @@ func (t *TextInput) Draw(c Canvas) {
 			uint8(min(255, int(bg.B)+15)),
 		)
 	}
-	c.FillRoundedRect(x, y, w, h, theme.BorderRadius, bg)
+	c.FillRoundedRect(ctx.x, ctx.y, ctx.w, ctx.h, ctx.theme.BorderRadius, bg)
 
 	// Border (brighter when focused)
-	borderColor := theme.Border
+	borderColor := ctx.theme.Border
 	if t.IsFocused() {
-		borderColor = theme.Accent
+		borderColor = ctx.theme.Accent
 	}
-	c.DrawLine(x, y, x+w, y, borderColor, theme.BorderWidth)
-	c.DrawLine(x+w, y, x+w, y+h, borderColor, theme.BorderWidth)
-	c.DrawLine(x, y+h, x+w, y+h, borderColor, theme.BorderWidth)
-	c.DrawLine(x, y, x, y+h, borderColor, theme.BorderWidth)
+	c.DrawLine(ctx.x, ctx.y, ctx.x+ctx.w, ctx.y, borderColor, ctx.theme.BorderWidth)
+	c.DrawLine(ctx.x+ctx.w, ctx.y, ctx.x+ctx.w, ctx.y+ctx.h, borderColor, ctx.theme.BorderWidth)
+	c.DrawLine(ctx.x, ctx.y+ctx.h, ctx.x+ctx.w, ctx.y+ctx.h, borderColor, ctx.theme.BorderWidth)
+	c.DrawLine(ctx.x, ctx.y, ctx.x, ctx.y+ctx.h, borderColor, ctx.theme.BorderWidth)
 
 	// Text
 	displayText := t.text
-	textColor := theme.Foreground
+	textColor := ctx.theme.Foreground
 	if displayText == "" && t.placeholder != "" {
 		displayText = t.placeholder
-		textColor = theme.Border
+		textColor = ctx.theme.Border
 	}
 
 	if displayText != "" {
-		c.DrawText(displayText, x+4, y+2, nil, textColor)
+		c.DrawText(displayText, ctx.x+4, ctx.y+2, nil, textColor)
 	}
 
 	// Cursor
 	if t.IsFocused() {
-		cursorX := x + 4 + t.cursorPos*7
-		c.DrawLine(cursorX, y+2, cursorX, y+h-2, theme.Foreground, 1)
+		cursorX := ctx.x + 4 + t.cursorPos*7
+		c.DrawLine(cursorX, ctx.y+2, cursorX, ctx.y+ctx.h-2, ctx.theme.Foreground, 1)
 	}
 }
 
@@ -564,25 +580,19 @@ func (s *ScrollView) HandleEvent(evt Event) bool {
 
 // Draw renders the scroll view and its visible children with clipping.
 func (s *ScrollView) Draw(c Canvas) {
-	x, y := s.Position()
-	w, h := s.Bounds()
-	if w <= 0 || h <= 0 {
+	ctx := prepareDrawContext(c, s, s.theme)
+	if ctx == nil {
 		return
 	}
 
-	theme := c.Theme()
-	if s.theme != nil {
-		theme = *s.theme
-	}
-
-	c.FillRect(x, y, w, h, theme.Background)
+	c.FillRect(ctx.x, ctx.y, ctx.w, ctx.h, ctx.theme.Background)
 
 	// Create an offscreen buffer for the viewport to implement clipping
-	viewport := ebiten.NewImage(w, h)
+	viewport := ebiten.NewImage(ctx.w, ctx.h)
 	defer viewport.Deallocate()
 
 	// Render children to the offscreen viewport
-	viewportCanvas := newEbitenCanvas(viewport, theme)
+	viewportCanvas := newEbitenCanvas(viewport, ctx.theme)
 	for _, child := range s.children {
 		cx, cy := 0, 0
 		if bp, ok := child.(interface{ Position() (int, int) }); ok {
@@ -594,7 +604,7 @@ func (s *ScrollView) Draw(c Canvas) {
 		adjustedY := cy - s.scrollY
 
 		// Only draw children that are visible within the viewport
-		if adjustedY+ch >= 0 && adjustedY < h {
+		if adjustedY+ch >= 0 && adjustedY < ctx.h {
 			// Temporarily adjust child position for viewport-relative rendering
 			if bp, ok := child.(interface{ SetBounds(int, int, int, int) }); ok {
 				bp.SetBounds(cx, adjustedY, cw, ch)
@@ -608,7 +618,7 @@ func (s *ScrollView) Draw(c Canvas) {
 	// Draw the clipped viewport to the main canvas
 	if ec, ok := c.(*ebitenCanvas); ok {
 		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(x), float64(y))
+		op.GeoM.Translate(float64(ctx.x), float64(ctx.y))
 		ec.dst.DrawImage(viewport, op)
 	}
 }
