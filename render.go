@@ -98,11 +98,19 @@ func (c *ebitenCanvas) DrawText(text string, x, y int, f *Font, col Color) {
 	}
 
 	face := defaultFontFace
+	scale := 1.0
 	if f != nil && f.face != nil {
 		face = f.face
+		// Scale text based on requested font size relative to default (13pt)
+		if f.size > 0 {
+			scale = f.size / 13.0
+		}
 	}
 
 	op := &textv2.DrawOptions{}
+	if scale != 1.0 {
+		op.GeoM.Scale(scale, scale)
+	}
 	op.GeoM.Translate(float64(x), float64(y))
 	op.ColorScale.ScaleWithColor(colorToRGBA(col))
 	textv2.Draw(c.dst, text, face, op)

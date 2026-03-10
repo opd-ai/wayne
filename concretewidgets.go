@@ -2,6 +2,10 @@
 
 package wayne
 
+import (
+	"github.com/hajimehoshi/ebiten/v2"
+)
+
 // Button is a clickable button widget with text and onClick callback.
 //
 // Example:
@@ -522,7 +526,7 @@ func (s *ScrollView) HandleEvent(evt Event) bool {
 	return false
 }
 
-// Draw renders the scroll view and its visible children.
+// Draw renders the scroll view and its visible children with clipping.
 func (s *ScrollView) Draw(c Canvas) {
 	x, y := s.Position()
 	w, h := s.Bounds()
@@ -536,18 +540,40 @@ func (s *ScrollView) Draw(c Canvas) {
 	}
 
 	c.FillRect(x, y, w, h, theme.Background)
+
+	// Create an offscreen buffer for the viewport to implement clipping
+	viewport := ebiten.NewImage(w, h)
+	defer viewport.Deallocate()
+
+	// Render children to the offscreen viewport
+	viewportCanvas := newEbitenCanvas(viewport, theme)
 	for _, child := range s.children {
 		cx, cy := 0, 0
 		if bp, ok := child.(interface{ Position() (int, int) }); ok {
 			cx, cy = bp.Position()
 		}
 		cw, ch := child.Bounds()
-		// Only draw children that are visible within the scroll view.
-		if cy+ch > y && cy < y+h {
-			_ = cx
-			_ = cw
-			child.Draw(c)
+
+		// Translate child position by scroll offset
+		adjustedY := cy - s.scrollY
+
+		// Only draw children that are visible within the viewport
+		if adjustedY+ch >= 0 && adjustedY < h {
+			// Temporarily adjust child position for viewport-relative rendering
+			if bp, ok := child.(interface{ SetBounds(int, int, int, int) }); ok {
+				bp.SetBounds(cx, adjustedY, cw, ch)
+				child.Draw(viewportCanvas)
+				// Restore original position
+				bp.SetBounds(cx, cy, cw, ch)
+			}
 		}
+	}
+
+	// Draw the clipped viewport to the main canvas
+	if ec, ok := c.(*ebitenCanvas); ok {
+		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(float64(x), float64(y))
+		ec.dst.DrawImage(viewport, op)
 	}
 }
 

@@ -1,14 +1,14 @@
 {
   "metadata": {
     "repository": "/home/user/go/src/github.com/opd-ai/wayne",
-    "generated_at": "2026-03-10T08:01:18.738189871-04:00",
-    "analysis_time": 39344296,
+    "generated_at": "2026-03-10T08:05:49.355745337-04:00",
+    "analysis_time": 39182186,
     "files_processed": 13,
     "tool_version": "1.0.0",
     "go_version": ""
   },
   "overview": {
-    "total_lines_of_code": 1280,
+    "total_lines_of_code": 1285,
     "total_functions": 37,
     "total_methods": 186,
     "total_structs": 34,
@@ -17,6 +17,435 @@
     "total_files": 13
   },
   "functions": [
+    {
+      "name": "init",
+      "package": "wayne",
+      "file": "render.go",
+      "line": 18,
+      "is_exported": false,
+      "is_method": false,
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": false,
+        "comment_length": 0,
+        "has_example": false,
+        "quality_score": 0
+      }
+    },
+    {
+      "name": "colorToRGBA",
+      "package": "wayne",
+      "file": "render.go",
+      "line": 23,
+      "is_exported": false,
+      "is_method": false,
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.8
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 67,
+        "has_example": false,
+        "quality_score": 0.268
+      }
+    },
+    {
+      "name": "newEbitenCanvas",
+      "package": "wayne",
+      "file": "render.go",
+      "line": 35,
+      "is_exported": false,
+      "is_method": false,
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 2,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 1.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 81,
+        "has_example": false,
+        "quality_score": 0.32400000000000007
+      }
+    },
+    {
+      "name": "FillRect",
+      "package": "wayne",
+      "file": "render.go",
+      "line": 40,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*ebitenCanvas",
+      "lines": {
+        "total": 7,
+        "code": 7,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 2,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 1
+      },
+      "complexity": {
+        "cyclomatic": 2,
+        "cognitive": 2,
+        "nesting_depth": 1,
+        "overall": 3.1
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 34,
+        "has_example": false,
+        "quality_score": 0.136
+      }
+    },
+    {
+      "name": "FillRoundedRect",
+      "package": "wayne",
+      "file": "render.go",
+      "line": 51,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*ebitenCanvas",
+      "lines": {
+        "total": 27,
+        "code": 21,
+        "comments": 3,
+        "blank": 3
+      },
+      "signature": {
+        "parameter_count": 2,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 1
+      },
+      "complexity": {
+        "cyclomatic": 4,
+        "cognitive": 4,
+        "nesting_depth": 1,
+        "overall": 5.7
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 76,
+        "has_example": false,
+        "quality_score": 0.30400000000000005
+      }
+    },
+    {
+      "name": "DrawLine",
+      "package": "wayne",
+      "file": "render.go",
+      "line": 82,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*ebitenCanvas",
+      "lines": {
+        "total": 8,
+        "code": 8,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 3,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 1.5
+      },
+      "complexity": {
+        "cyclomatic": 2,
+        "cognitive": 2,
+        "nesting_depth": 1,
+        "overall": 3.1
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 47,
+        "has_example": false,
+        "quality_score": 0.188
+      }
+    },
+    {
+      "name": "DrawText",
+      "package": "wayne",
+      "file": "render.go",
+      "line": 95,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*ebitenCanvas",
+      "lines": {
+        "total": 13,
+        "code": 11,
+        "comments": 0,
+        "blank": 2
+      },
+      "signature": {
+        "parameter_count": 4,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 2
+      },
+      "complexity": {
+        "cyclomatic": 3,
+        "cognitive": 3,
+        "nesting_depth": 1,
+        "overall": 4.4
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 118,
+        "has_example": false,
+        "quality_score": 0.4
+      }
+    },
+    {
+      "name": "DrawImage",
+      "package": "wayne",
+      "file": "render.go",
+      "line": 112,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*ebitenCanvas",
+      "lines": {
+        "total": 12,
+        "code": 12,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 2,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 1
+      },
+      "complexity": {
+        "cyclomatic": 3,
+        "cognitive": 3,
+        "nesting_depth": 1,
+        "overall": 4.4
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 59,
+        "has_example": false,
+        "quality_score": 0.236
+      }
+    },
+    {
+      "name": "LinearGradient",
+      "package": "wayne",
+      "file": "render.go",
+      "line": 129,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*ebitenCanvas",
+      "lines": {
+        "total": 27,
+        "code": 24,
+        "comments": 1,
+        "blank": 2
+      },
+      "signature": {
+        "parameter_count": 3,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 1.5
+      },
+      "complexity": {
+        "cyclomatic": 6,
+        "cognitive": 6,
+        "nesting_depth": 2,
+        "overall": 8.8
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 118,
+        "has_example": false,
+        "quality_score": 0.4
+      }
+    },
+    {
+      "name": "RadialGradient",
+      "package": "wayne",
+      "file": "render.go",
+      "line": 160,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*ebitenCanvas",
+      "lines": {
+        "total": 18,
+        "code": 17,
+        "comments": 0,
+        "blank": 1
+      },
+      "signature": {
+        "parameter_count": 2,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 1
+      },
+      "complexity": {
+        "cyclomatic": 3,
+        "cognitive": 3,
+        "nesting_depth": 1,
+        "overall": 4.4
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 57,
+        "has_example": false,
+        "quality_score": 0.22799999999999998
+      }
+    },
+    {
+      "name": "BoxShadow",
+      "package": "wayne",
+      "file": "render.go",
+      "line": 182,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*ebitenCanvas",
+      "lines": {
+        "total": 8,
+        "code": 7,
+        "comments": 1,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 2,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 1
+      },
+      "complexity": {
+        "cyclomatic": 2,
+        "cognitive": 2,
+        "nesting_depth": 1,
+        "overall": 3.1
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 59,
+        "has_example": false,
+        "quality_score": 0.236
+      }
+    },
+    {
+      "name": "Theme",
+      "package": "wayne",
+      "file": "render.go",
+      "line": 194,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*ebitenCanvas",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 69,
+        "has_example": false,
+        "quality_score": 0.376
+      }
+    },
     {
       "name": "DefaultConfig",
       "package": "wayne",
@@ -915,6 +1344,147 @@
       }
     },
     {
+      "name": "DefaultDark",
+      "package": "wayne",
+      "file": "theme.go",
+      "line": 59,
+      "is_exported": true,
+      "is_method": false,
+      "lines": {
+        "total": 12,
+        "code": 12,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 45,
+        "has_example": false,
+        "quality_score": 0.28
+      }
+    },
+    {
+      "name": "DefaultLight",
+      "package": "wayne",
+      "file": "theme.go",
+      "line": 75,
+      "is_exported": true,
+      "is_method": false,
+      "lines": {
+        "total": 12,
+        "code": 12,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 47,
+        "has_example": false,
+        "quality_score": 0.28800000000000003
+      }
+    },
+    {
+      "name": "HighContrast",
+      "package": "wayne",
+      "file": "theme.go",
+      "line": 91,
+      "is_exported": true,
+      "is_method": false,
+      "lines": {
+        "total": 12,
+        "code": 12,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 62,
+        "has_example": false,
+        "quality_score": 0.348
+      }
+    },
+    {
+      "name": "applyToTheme",
+      "package": "wayne",
+      "file": "theme.go",
+      "line": 144,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "StyleOverride",
+      "lines": {
+        "total": 29,
+        "code": 29,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.8
+      },
+      "complexity": {
+        "cyclomatic": 10,
+        "cognitive": 10,
+        "nesting_depth": 1,
+        "overall": 13.5
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 82,
+        "has_example": false,
+        "quality_score": 0.42800000000000005
+      }
+    },
+    {
       "name": "Contains",
       "package": "wayne",
       "file": "widget.go",
@@ -1347,6 +1917,112 @@
       }
     },
     {
+      "name": "RGB",
+      "package": "wayne",
+      "file": "color.go",
+      "line": 19,
+      "is_exported": true,
+      "is_method": false,
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.8
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 66,
+        "has_example": false,
+        "quality_score": 0.264
+      }
+    },
+    {
+      "name": "RGBA",
+      "package": "wayne",
+      "file": "color.go",
+      "line": 24,
+      "is_exported": true,
+      "is_method": false,
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.8
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 66,
+        "has_example": false,
+        "quality_score": 0.264
+      }
+    },
+    {
+      "name": "WithAlpha",
+      "package": "wayne",
+      "file": "color.go",
+      "line": 29,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "Color",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.8
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 62,
+        "has_example": false,
+        "quality_score": 0.348
+      }
+    },
+    {
       "name": "Update",
       "package": "wayne",
       "file": "game.go",
@@ -1705,406 +2381,13 @@
       }
     },
     {
-      "name": "init",
+      "name": "Size",
       "package": "wayne",
-      "file": "render.go",
-      "line": 18,
-      "is_exported": false,
-      "is_method": false,
-      "lines": {
-        "total": 1,
-        "code": 1,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": false,
-        "comment_length": 0,
-        "has_example": false,
-        "quality_score": 0
-      }
-    },
-    {
-      "name": "colorToRGBA",
-      "package": "wayne",
-      "file": "render.go",
-      "line": 23,
-      "is_exported": false,
-      "is_method": false,
-      "lines": {
-        "total": 1,
-        "code": 1,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 1,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.8
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 67,
-        "has_example": false,
-        "quality_score": 0.268
-      }
-    },
-    {
-      "name": "newEbitenCanvas",
-      "package": "wayne",
-      "file": "render.go",
-      "line": 35,
-      "is_exported": false,
-      "is_method": false,
-      "lines": {
-        "total": 1,
-        "code": 1,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 2,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 1.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 81,
-        "has_example": false,
-        "quality_score": 0.32400000000000007
-      }
-    },
-    {
-      "name": "FillRect",
-      "package": "wayne",
-      "file": "render.go",
-      "line": 40,
+      "file": "resource.go",
+      "line": 39,
       "is_exported": true,
       "is_method": true,
-      "receiver_type": "*ebitenCanvas",
-      "lines": {
-        "total": 7,
-        "code": 7,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 2,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 1
-      },
-      "complexity": {
-        "cyclomatic": 2,
-        "cognitive": 2,
-        "nesting_depth": 1,
-        "overall": 3.1
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 34,
-        "has_example": false,
-        "quality_score": 0.136
-      }
-    },
-    {
-      "name": "FillRoundedRect",
-      "package": "wayne",
-      "file": "render.go",
-      "line": 51,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*ebitenCanvas",
-      "lines": {
-        "total": 27,
-        "code": 21,
-        "comments": 3,
-        "blank": 3
-      },
-      "signature": {
-        "parameter_count": 2,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 1
-      },
-      "complexity": {
-        "cyclomatic": 4,
-        "cognitive": 4,
-        "nesting_depth": 1,
-        "overall": 5.7
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 76,
-        "has_example": false,
-        "quality_score": 0.30400000000000005
-      }
-    },
-    {
-      "name": "DrawLine",
-      "package": "wayne",
-      "file": "render.go",
-      "line": 82,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*ebitenCanvas",
-      "lines": {
-        "total": 8,
-        "code": 8,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 3,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 1.5
-      },
-      "complexity": {
-        "cyclomatic": 2,
-        "cognitive": 2,
-        "nesting_depth": 1,
-        "overall": 3.1
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 47,
-        "has_example": false,
-        "quality_score": 0.188
-      }
-    },
-    {
-      "name": "DrawText",
-      "package": "wayne",
-      "file": "render.go",
-      "line": 95,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*ebitenCanvas",
-      "lines": {
-        "total": 13,
-        "code": 11,
-        "comments": 0,
-        "blank": 2
-      },
-      "signature": {
-        "parameter_count": 4,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 2
-      },
-      "complexity": {
-        "cyclomatic": 3,
-        "cognitive": 3,
-        "nesting_depth": 1,
-        "overall": 4.4
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 118,
-        "has_example": false,
-        "quality_score": 0.4
-      }
-    },
-    {
-      "name": "DrawImage",
-      "package": "wayne",
-      "file": "render.go",
-      "line": 112,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*ebitenCanvas",
-      "lines": {
-        "total": 12,
-        "code": 12,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 2,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 1
-      },
-      "complexity": {
-        "cyclomatic": 3,
-        "cognitive": 3,
-        "nesting_depth": 1,
-        "overall": 4.4
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 59,
-        "has_example": false,
-        "quality_score": 0.236
-      }
-    },
-    {
-      "name": "LinearGradient",
-      "package": "wayne",
-      "file": "render.go",
-      "line": 129,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*ebitenCanvas",
-      "lines": {
-        "total": 27,
-        "code": 24,
-        "comments": 1,
-        "blank": 2
-      },
-      "signature": {
-        "parameter_count": 3,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 1.5
-      },
-      "complexity": {
-        "cyclomatic": 6,
-        "cognitive": 6,
-        "nesting_depth": 2,
-        "overall": 8.8
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 118,
-        "has_example": false,
-        "quality_score": 0.4
-      }
-    },
-    {
-      "name": "RadialGradient",
-      "package": "wayne",
-      "file": "render.go",
-      "line": 160,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*ebitenCanvas",
-      "lines": {
-        "total": 18,
-        "code": 17,
-        "comments": 0,
-        "blank": 1
-      },
-      "signature": {
-        "parameter_count": 2,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 1
-      },
-      "complexity": {
-        "cyclomatic": 3,
-        "cognitive": 3,
-        "nesting_depth": 1,
-        "overall": 4.4
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 57,
-        "has_example": false,
-        "quality_score": 0.22799999999999998
-      }
-    },
-    {
-      "name": "BoxShadow",
-      "package": "wayne",
-      "file": "render.go",
-      "line": 182,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*ebitenCanvas",
-      "lines": {
-        "total": 8,
-        "code": 7,
-        "comments": 1,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 2,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 1
-      },
-      "complexity": {
-        "cyclomatic": 2,
-        "cognitive": 2,
-        "nesting_depth": 1,
-        "overall": 3.1
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 59,
-        "has_example": false,
-        "quality_score": 0.236
-      }
-    },
-    {
-      "name": "Theme",
-      "package": "wayne",
-      "file": "render.go",
-      "line": 194,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*ebitenCanvas",
+      "receiver_type": "*Font",
       "lines": {
         "total": 1,
         "code": 1,
@@ -2128,21 +2411,22 @@
       },
       "documentation": {
         "has_comment": true,
-        "comment_length": 69,
+        "comment_length": 38,
         "has_example": false,
-        "quality_score": 0.376
+        "quality_score": 0.252
       }
     },
     {
-      "name": "DefaultDark",
+      "name": "Size",
       "package": "wayne",
-      "file": "theme.go",
-      "line": 59,
+      "file": "resource.go",
+      "line": 51,
       "is_exported": true,
-      "is_method": false,
+      "is_method": true,
+      "receiver_type": "*Image",
       "lines": {
-        "total": 12,
-        "code": 12,
+        "total": 1,
+        "code": 1,
         "comments": 0,
         "blank": 0
       },
@@ -2169,15 +2453,51 @@
       }
     },
     {
-      "name": "DefaultLight",
+      "name": "newResourceManager",
       "package": "wayne",
-      "file": "theme.go",
-      "line": 75,
-      "is_exported": true,
+      "file": "resource.go",
+      "line": 70,
+      "is_exported": false,
       "is_method": false,
       "lines": {
-        "total": 12,
-        "code": 12,
+        "total": 11,
+        "code": 11,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 51,
+        "has_example": false,
+        "quality_score": 0.20400000000000001
+      }
+    },
+    {
+      "name": "DefaultFont",
+      "package": "wayne",
+      "file": "resource.go",
+      "line": 85,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*ResourceManager",
+      "lines": {
+        "total": 3,
+        "code": 3,
         "comments": 0,
         "blank": 0
       },
@@ -2204,74 +2524,147 @@
       }
     },
     {
-      "name": "HighContrast",
+      "name": "LoadFont",
       "package": "wayne",
-      "file": "theme.go",
-      "line": 91,
+      "file": "resource.go",
+      "line": 95,
       "is_exported": true,
-      "is_method": false,
+      "is_method": true,
+      "receiver_type": "*ResourceManager",
       "lines": {
-        "total": 12,
-        "code": 12,
+        "total": 18,
+        "code": 15,
         "comments": 0,
-        "blank": 0
+        "blank": 3
       },
       "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
+        "parameter_count": 2,
+        "return_count": 2,
         "has_variadic": false,
-        "returns_error": false,
+        "returns_error": true,
         "interface_parameters": 0,
         "generic_parameters": null,
-        "signature_complexity": 0.3
+        "signature_complexity": 1.6
       },
       "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
+        "cyclomatic": 3,
+        "cognitive": 3,
+        "nesting_depth": 1,
+        "overall": 4.4
       },
       "documentation": {
         "has_comment": true,
-        "comment_length": 62,
+        "comment_length": 188,
         "has_example": false,
-        "quality_score": 0.348
+        "quality_score": 0.5
       }
     },
     {
-      "name": "applyToTheme",
+      "name": "LoadImage",
       "package": "wayne",
-      "file": "theme.go",
-      "line": 144,
-      "is_exported": false,
+      "file": "resource.go",
+      "line": 119,
+      "is_exported": true,
       "is_method": true,
-      "receiver_type": "StyleOverride",
+      "receiver_type": "*ResourceManager",
       "lines": {
-        "total": 29,
-        "code": 29,
+        "total": 6,
+        "code": 6,
         "comments": 0,
         "blank": 0
       },
       "signature": {
         "parameter_count": 1,
-        "return_count": 1,
+        "return_count": 2,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 1.1
+      },
+      "complexity": {
+        "cyclomatic": 2,
+        "cognitive": 2,
+        "nesting_depth": 1,
+        "overall": 3.1
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 81,
+        "has_example": false,
+        "quality_score": 0.32400000000000007
+      }
+    },
+    {
+      "name": "LoadImageFromReader",
+      "package": "wayne",
+      "file": "resource.go",
+      "line": 129,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*ResourceManager",
+      "lines": {
+        "total": 26,
+        "code": 22,
+        "comments": 0,
+        "blank": 4
+      },
+      "signature": {
+        "parameter_count": 2,
+        "return_count": 2,
+        "has_variadic": false,
+        "returns_error": true,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 1.6
+      },
+      "complexity": {
+        "cyclomatic": 4,
+        "cognitive": 4,
+        "nesting_depth": 1,
+        "overall": 5.7
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 54,
+        "has_example": false,
+        "quality_score": 0.21600000000000003
+      }
+    },
+    {
+      "name": "cleanup",
+      "package": "wayne",
+      "file": "resource.go",
+      "line": 159,
+      "is_exported": false,
+      "is_method": true,
+      "receiver_type": "*ResourceManager",
+      "lines": {
+        "total": 21,
+        "code": 17,
+        "comments": 1,
+        "blank": 3
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 0,
         "has_variadic": false,
         "returns_error": false,
         "interface_parameters": 0,
         "generic_parameters": null,
-        "signature_complexity": 0.8
+        "signature_complexity": 0
       },
       "complexity": {
-        "cyclomatic": 10,
-        "cognitive": 10,
-        "nesting_depth": 1,
-        "overall": 13.5
+        "cyclomatic": 5,
+        "cognitive": 5,
+        "nesting_depth": 2,
+        "overall": 7.5
       },
       "documentation": {
         "has_comment": true,
-        "comment_length": 82,
+        "comment_length": 39,
         "has_example": false,
-        "quality_score": 0.42800000000000005
+        "quality_score": 0.15600000000000003
       }
     },
     {
@@ -3992,26 +4385,386 @@
       }
     },
     {
-      "name": "RGB",
+      "name": "Timestamp",
       "package": "wayne",
-      "file": "color.go",
-      "line": 19,
+      "file": "event.go",
+      "line": 38,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*baseEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 55,
+        "has_example": false,
+        "quality_score": 0.32000000000000006
+      }
+    },
+    {
+      "name": "Consumed",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 41,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*baseEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 68,
+        "has_example": false,
+        "quality_score": 0.372
+      }
+    },
+    {
+      "name": "Consume",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 44,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*baseEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 70,
+        "has_example": false,
+        "quality_score": 0.27999999999999997
+      }
+    },
+    {
+      "name": "Type",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 97,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*PointerEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 56,
+        "has_example": false,
+        "quality_score": 0.32400000000000007
+      }
+    },
+    {
+      "name": "EventType",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 100,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*PointerEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 82,
+        "has_example": false,
+        "quality_score": 0.42800000000000005
+      }
+    },
+    {
+      "name": "X",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 103,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*PointerEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 58,
+        "has_example": false,
+        "quality_score": 0.33199999999999996
+      }
+    },
+    {
+      "name": "Y",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 106,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*PointerEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 56,
+        "has_example": false,
+        "quality_score": 0.32400000000000007
+      }
+    },
+    {
+      "name": "Button",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 109,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*PointerEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 68,
+        "has_example": false,
+        "quality_score": 0.372
+      }
+    },
+    {
+      "name": "Axis",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 112,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*PointerEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 73,
+        "has_example": false,
+        "quality_score": 0.392
+      }
+    },
+    {
+      "name": "Value",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 115,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*PointerEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 51,
+        "has_example": false,
+        "quality_score": 0.30400000000000005
+      }
+    },
+    {
+      "name": "NewPointerEvent",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 118,
       "is_exported": true,
       "is_method": false,
       "lines": {
-        "total": 1,
-        "code": 1,
+        "total": 9,
+        "code": 9,
         "comments": 0,
         "blank": 0
       },
       "signature": {
-        "parameter_count": 1,
+        "parameter_count": 5,
         "return_count": 1,
         "has_variadic": false,
         "returns_error": false,
         "interface_parameters": 0,
         "generic_parameters": null,
-        "signature_complexity": 0.8
+        "signature_complexity": 2.8
       },
       "complexity": {
         "cyclomatic": 1,
@@ -4021,68 +4774,33 @@
       },
       "documentation": {
         "has_comment": true,
-        "comment_length": 66,
+        "comment_length": 70,
         "has_example": false,
-        "quality_score": 0.264
+        "quality_score": 0.38
       }
     },
     {
-      "name": "RGBA",
+      "name": "Type",
       "package": "wayne",
-      "file": "color.go",
-      "line": 24,
-      "is_exported": true,
-      "is_method": false,
-      "lines": {
-        "total": 1,
-        "code": 1,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 1,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.8
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 66,
-        "has_example": false,
-        "quality_score": 0.264
-      }
-    },
-    {
-      "name": "WithAlpha",
-      "package": "wayne",
-      "file": "color.go",
-      "line": 29,
+      "file": "event.go",
+      "line": 195,
       "is_exported": true,
       "is_method": true,
-      "receiver_type": "Color",
+      "receiver_type": "*KeyEvent",
       "lines": {
-        "total": 1,
-        "code": 1,
+        "total": 0,
+        "code": 0,
         "comments": 0,
         "blank": 0
       },
       "signature": {
-        "parameter_count": 1,
+        "parameter_count": 0,
         "return_count": 1,
         "has_variadic": false,
         "returns_error": false,
         "interface_parameters": 0,
         "generic_parameters": null,
-        "signature_complexity": 0.8
+        "signature_complexity": 0.3
       },
       "complexity": {
         "cyclomatic": 1,
@@ -4092,19 +4810,163 @@
       },
       "documentation": {
         "has_comment": true,
-        "comment_length": 62,
+        "comment_length": 52,
         "has_example": false,
-        "quality_score": 0.348
+        "quality_score": 0.30800000000000005
       }
     },
     {
-      "name": "Size",
+      "name": "EventType",
       "package": "wayne",
-      "file": "resource.go",
-      "line": 39,
+      "file": "event.go",
+      "line": 198,
       "is_exported": true,
       "is_method": true,
-      "receiver_type": "*Font",
+      "receiver_type": "*KeyEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 75,
+        "has_example": false,
+        "quality_score": 0.4
+      }
+    },
+    {
+      "name": "Key",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 201,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*KeyEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 64,
+        "has_example": false,
+        "quality_score": 0.356
+      }
+    },
+    {
+      "name": "Modifiers",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 204,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*KeyEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 67,
+        "has_example": false,
+        "quality_score": 0.368
+      }
+    },
+    {
+      "name": "Rune",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 207,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*KeyEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 63,
+        "has_example": false,
+        "quality_score": 0.352
+      }
+    },
+    {
+      "name": "IsPress",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 210,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*KeyEvent",
       "lines": {
         "total": 1,
         "code": 1,
@@ -4128,22 +4990,273 @@
       },
       "documentation": {
         "has_comment": true,
-        "comment_length": 38,
+        "comment_length": 61,
         "has_example": false,
-        "quality_score": 0.252
+        "quality_score": 0.344
       }
     },
     {
-      "name": "Size",
+      "name": "NewKeyEvent",
       "package": "wayne",
-      "file": "resource.go",
-      "line": 51,
+      "file": "event.go",
+      "line": 215,
+      "is_exported": true,
+      "is_method": false,
+      "lines": {
+        "total": 7,
+        "code": 7,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 4,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 2.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 36,
+        "has_example": false,
+        "quality_score": 0.144
+      }
+    },
+    {
+      "name": "Type",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 251,
       "is_exported": true,
       "is_method": true,
-      "receiver_type": "*Image",
+      "receiver_type": "*TouchEvent",
       "lines": {
-        "total": 1,
-        "code": 1,
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 54,
+        "has_example": false,
+        "quality_score": 0.31600000000000006
+      }
+    },
+    {
+      "name": "EventType",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 254,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*TouchEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 82,
+        "has_example": false,
+        "quality_score": 0.42800000000000005
+      }
+    },
+    {
+      "name": "TouchID",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 257,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*TouchEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 60,
+        "has_example": false,
+        "quality_score": 0.33999999999999997
+      }
+    },
+    {
+      "name": "ID",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 260,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*TouchEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 55,
+        "has_example": false,
+        "quality_score": 0.32000000000000006
+      }
+    },
+    {
+      "name": "X",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 263,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*TouchEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 56,
+        "has_example": false,
+        "quality_score": 0.32400000000000007
+      }
+    },
+    {
+      "name": "Y",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 266,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*TouchEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 54,
+        "has_example": false,
+        "quality_score": 0.31600000000000006
+      }
+    },
+    {
+      "name": "Phase",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 269,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*TouchEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
         "comments": 0,
         "blank": 0
       },
@@ -4170,15 +5283,51 @@
       }
     },
     {
-      "name": "newResourceManager",
+      "name": "NewTouchEvent",
       "package": "wayne",
-      "file": "resource.go",
-      "line": 70,
-      "is_exported": false,
+      "file": "event.go",
+      "line": 272,
+      "is_exported": true,
       "is_method": false,
       "lines": {
-        "total": 11,
-        "code": 11,
+        "total": 7,
+        "code": 7,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 3,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 1.8
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 40,
+        "has_example": false,
+        "quality_score": 0.16000000000000003
+      }
+    },
+    {
+      "name": "Type",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 308,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*WindowEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
         "comments": 0,
         "blank": 0
       },
@@ -4199,22 +5348,22 @@
       },
       "documentation": {
         "has_comment": true,
-        "comment_length": 51,
+        "comment_length": 55,
         "has_example": false,
-        "quality_score": 0.20400000000000001
+        "quality_score": 0.32000000000000006
       }
     },
     {
-      "name": "DefaultFont",
+      "name": "EventType",
       "package": "wayne",
-      "file": "resource.go",
-      "line": 85,
+      "file": "event.go",
+      "line": 311,
       "is_exported": true,
       "is_method": true,
-      "receiver_type": "*ResourceManager",
+      "receiver_type": "*WindowEvent",
       "lines": {
-        "total": 3,
-        "code": 3,
+        "total": 0,
+        "code": 0,
         "comments": 0,
         "blank": 0
       },
@@ -4235,69 +5384,355 @@
       },
       "documentation": {
         "has_comment": true,
-        "comment_length": 47,
+        "comment_length": 79,
         "has_example": false,
-        "quality_score": 0.28800000000000003
+        "quality_score": 0.41600000000000004
       }
     },
     {
-      "name": "LoadFont",
+      "name": "Width",
       "package": "wayne",
-      "file": "resource.go",
-      "line": 95,
+      "file": "event.go",
+      "line": 314,
       "is_exported": true,
       "is_method": true,
-      "receiver_type": "*ResourceManager",
+      "receiver_type": "*WindowEvent",
       "lines": {
-        "total": 18,
-        "code": 15,
+        "total": 0,
+        "code": 0,
         "comments": 0,
-        "blank": 3
+        "blank": 0
       },
       "signature": {
-        "parameter_count": 2,
-        "return_count": 2,
+        "parameter_count": 0,
+        "return_count": 1,
         "has_variadic": false,
-        "returns_error": true,
+        "returns_error": false,
         "interface_parameters": 0,
         "generic_parameters": null,
-        "signature_complexity": 1.6
+        "signature_complexity": 0.3
       },
       "complexity": {
-        "cyclomatic": 3,
-        "cognitive": 3,
-        "nesting_depth": 1,
-        "overall": 4.4
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
       },
       "documentation": {
         "has_comment": true,
-        "comment_length": 188,
+        "comment_length": 60,
         "has_example": false,
-        "quality_score": 0.5
+        "quality_score": 0.33999999999999997
       }
     },
     {
-      "name": "LoadImage",
+      "name": "Height",
       "package": "wayne",
-      "file": "resource.go",
-      "line": 119,
+      "file": "event.go",
+      "line": 317,
       "is_exported": true,
       "is_method": true,
-      "receiver_type": "*ResourceManager",
+      "receiver_type": "*WindowEvent",
       "lines": {
-        "total": 6,
-        "code": 6,
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 62,
+        "has_example": false,
+        "quality_score": 0.348
+      }
+    },
+    {
+      "name": "Scale",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 320,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*WindowEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 63,
+        "has_example": false,
+        "quality_score": 0.352
+      }
+    },
+    {
+      "name": "Type",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 332,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*CustomEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 55,
+        "has_example": false,
+        "quality_score": 0.32000000000000006
+      }
+    },
+    {
+      "name": "Data",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 335,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*CustomEvent",
+      "lines": {
+        "total": 0,
+        "code": 0,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 68,
+        "has_example": false,
+        "quality_score": 0.372
+      }
+    },
+    {
+      "name": "NewCustomEvent",
+      "package": "wayne",
+      "file": "event.go",
+      "line": 338,
+      "is_exported": true,
+      "is_method": false,
+      "lines": {
+        "total": 4,
+        "code": 4,
         "comments": 0,
         "blank": 0
       },
       "signature": {
         "parameter_count": 1,
-        "return_count": 2,
+        "return_count": 1,
         "has_variadic": false,
-        "returns_error": true,
+        "returns_error": false,
         "interface_parameters": 0,
         "generic_parameters": null,
-        "signature_complexity": 1.1
+        "signature_complexity": 0.8
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 66,
+        "has_example": false,
+        "quality_score": 0.264
+      }
+    },
+    {
+      "name": "NewBasePublicWidget",
+      "package": "wayne",
+      "file": "publicwidget.go",
+      "line": 100,
+      "is_exported": true,
+      "is_method": false,
+      "lines": {
+        "total": 5,
+        "code": 5,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.8
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 80,
+        "has_example": false,
+        "quality_score": 0.32000000000000006
+      }
+    },
+    {
+      "name": "Bounds",
+      "package": "wayne",
+      "file": "publicwidget.go",
+      "line": 109,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*BasePublicWidget",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 59,
+        "has_example": false,
+        "quality_score": 0.33599999999999997
+      }
+    },
+    {
+      "name": "Position",
+      "package": "wayne",
+      "file": "publicwidget.go",
+      "line": 114,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*BasePublicWidget",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 63,
+        "has_example": false,
+        "quality_score": 0.352
+      }
+    },
+    {
+      "name": "HandleEvent",
+      "package": "wayne",
+      "file": "publicwidget.go",
+      "line": 120,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*BasePublicWidget",
+      "lines": {
+        "total": 4,
+        "code": 4,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.8
       },
       "complexity": {
         "cyclomatic": 2,
@@ -4307,81 +5742,261 @@
       },
       "documentation": {
         "has_comment": true,
-        "comment_length": 81,
+        "comment_length": 136,
         "has_example": false,
-        "quality_score": 0.32400000000000007
+        "quality_score": 0.5
       }
     },
     {
-      "name": "LoadImageFromReader",
+      "name": "Draw",
       "package": "wayne",
-      "file": "resource.go",
-      "line": 129,
+      "file": "publicwidget.go",
+      "line": 128,
       "is_exported": true,
       "is_method": true,
-      "receiver_type": "*ResourceManager",
+      "receiver_type": "*BasePublicWidget",
       "lines": {
-        "total": 26,
-        "code": 22,
+        "total": 0,
+        "code": 0,
         "comments": 0,
-        "blank": 4
+        "blank": 0
       },
       "signature": {
-        "parameter_count": 2,
-        "return_count": 2,
-        "has_variadic": false,
-        "returns_error": true,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 1.6
-      },
-      "complexity": {
-        "cyclomatic": 4,
-        "cognitive": 4,
-        "nesting_depth": 1,
-        "overall": 5.7
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 54,
-        "has_example": false,
-        "quality_score": 0.21600000000000003
-      }
-    },
-    {
-      "name": "cleanup",
-      "package": "wayne",
-      "file": "resource.go",
-      "line": 159,
-      "is_exported": false,
-      "is_method": true,
-      "receiver_type": "*ResourceManager",
-      "lines": {
-        "total": 21,
-        "code": 17,
-        "comments": 1,
-        "blank": 3
-      },
-      "signature": {
-        "parameter_count": 0,
+        "parameter_count": 1,
         "return_count": 0,
         "has_variadic": false,
         "returns_error": false,
         "interface_parameters": 0,
         "generic_parameters": null,
-        "signature_complexity": 0
+        "signature_complexity": 0.5
       },
       "complexity": {
-        "cyclomatic": 5,
-        "cognitive": 5,
-        "nesting_depth": 2,
-        "overall": 7.5
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
       },
       "documentation": {
         "has_comment": true,
-        "comment_length": 39,
+        "comment_length": 57,
         "has_example": false,
-        "quality_score": 0.15600000000000003
+        "quality_score": 0.22799999999999998
+      }
+    },
+    {
+      "name": "Add",
+      "package": "wayne",
+      "file": "publicwidget.go",
+      "line": 131,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*BasePublicWidget",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.5
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 28,
+        "has_example": false,
+        "quality_score": 0.11200000000000002
+      }
+    },
+    {
+      "name": "Children",
+      "package": "wayne",
+      "file": "publicwidget.go",
+      "line": 136,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*BasePublicWidget",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 44,
+        "has_example": false,
+        "quality_score": 0.276
+      }
+    },
+    {
+      "name": "SetBounds",
+      "package": "wayne",
+      "file": "publicwidget.go",
+      "line": 141,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*BasePublicWidget",
+      "lines": {
+        "total": 4,
+        "code": 4,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.5
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 62,
+        "has_example": false,
+        "quality_score": 0.248
+      }
+    },
+    {
+      "name": "SetVisible",
+      "package": "wayne",
+      "file": "publicwidget.go",
+      "line": 149,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*BasePublicWidget",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.5
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 77,
+        "has_example": false,
+        "quality_score": 0.30800000000000005
+      }
+    },
+    {
+      "name": "IsVisible",
+      "package": "wayne",
+      "file": "publicwidget.go",
+      "line": 154,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*BasePublicWidget",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 0,
+        "return_count": 1,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.3
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 49,
+        "has_example": false,
+        "quality_score": 0.29600000000000004
+      }
+    },
+    {
+      "name": "OnEvent",
+      "package": "wayne",
+      "file": "publicwidget.go",
+      "line": 159,
+      "is_exported": true,
+      "is_method": true,
+      "receiver_type": "*BasePublicWidget",
+      "lines": {
+        "total": 1,
+        "code": 1,
+        "comments": 0,
+        "blank": 0
+      },
+      "signature": {
+        "parameter_count": 1,
+        "return_count": 0,
+        "has_variadic": false,
+        "returns_error": false,
+        "interface_parameters": 0,
+        "generic_parameters": null,
+        "signature_complexity": 0.5
+      },
+      "complexity": {
+        "cyclomatic": 1,
+        "cognitive": 1,
+        "nesting_depth": 0,
+        "overall": 1.3
+      },
+      "documentation": {
+        "has_comment": true,
+        "comment_length": 63,
+        "has_example": false,
+        "quality_score": 0.252
       }
     },
     {
@@ -5973,8 +7588,8 @@
       "is_method": true,
       "receiver_type": "*ScrollView",
       "lines": {
-        "total": 1,
-        "code": 1,
+        "total": 6,
+        "code": 6,
         "comments": 0,
         "blank": 0
       },
@@ -5988,10 +7603,10 @@
         "signature_complexity": 0.5
       },
       "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
+        "cyclomatic": 3,
+        "cognitive": 3,
+        "nesting_depth": 2,
+        "overall": 4.9
       },
       "documentation": {
         "has_comment": true,
@@ -6004,7 +7619,7 @@
       "name": "NewImageWidget",
       "package": "wayne",
       "file": "concretewidgets.go",
-      "line": 574,
+      "line": 579,
       "is_exported": true,
       "is_method": false,
       "lines": {
@@ -6039,7 +7654,7 @@
       "name": "sizeHint",
       "package": "wayne",
       "file": "concretewidgets.go",
-      "line": 582,
+      "line": 587,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*ImageWidget",
@@ -6075,7 +7690,7 @@
       "name": "SetImage",
       "package": "wayne",
       "file": "concretewidgets.go",
-      "line": 585,
+      "line": 590,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*ImageWidget",
@@ -6111,7 +7726,7 @@
       "name": "GetImage",
       "package": "wayne",
       "file": "concretewidgets.go",
-      "line": 590,
+      "line": 595,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*ImageWidget",
@@ -6147,7 +7762,7 @@
       "name": "HandleEvent",
       "package": "wayne",
       "file": "concretewidgets.go",
-      "line": 595,
+      "line": 600,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*ImageWidget",
@@ -6183,7 +7798,7 @@
       "name": "Draw",
       "package": "wayne",
       "file": "concretewidgets.go",
-      "line": 598,
+      "line": 603,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*ImageWidget",
@@ -6219,7 +7834,7 @@
       "name": "NewSpacer",
       "package": "wayne",
       "file": "concretewidgets.go",
-      "line": 623,
+      "line": 628,
       "is_exported": true,
       "is_method": false,
       "lines": {
@@ -6254,7 +7869,7 @@
       "name": "sizeHint",
       "package": "wayne",
       "file": "concretewidgets.go",
-      "line": 631,
+      "line": 636,
       "is_exported": false,
       "is_method": true,
       "receiver_type": "*Spacer",
@@ -6290,7 +7905,7 @@
       "name": "HandleEvent",
       "package": "wayne",
       "file": "concretewidgets.go",
-      "line": 634,
+      "line": 639,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*Spacer",
@@ -6326,7 +7941,7 @@
       "name": "Draw",
       "package": "wayne",
       "file": "concretewidgets.go",
-      "line": 637,
+      "line": 642,
       "is_exported": true,
       "is_method": true,
       "receiver_type": "*Spacer",
@@ -6362,7 +7977,7 @@
       "name": "contains",
       "package": "wayne",
       "file": "concretewidgets.go",
-      "line": 640,
+      "line": 645,
       "is_exported": false,
       "is_method": false,
       "lines": {
@@ -6391,1621 +8006,6 @@
         "comment_length": 65,
         "has_example": false,
         "quality_score": 0.26
-      }
-    },
-    {
-      "name": "NewBasePublicWidget",
-      "package": "wayne",
-      "file": "publicwidget.go",
-      "line": 100,
-      "is_exported": true,
-      "is_method": false,
-      "lines": {
-        "total": 5,
-        "code": 5,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 1,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.8
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 80,
-        "has_example": false,
-        "quality_score": 0.32000000000000006
-      }
-    },
-    {
-      "name": "Bounds",
-      "package": "wayne",
-      "file": "publicwidget.go",
-      "line": 109,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*BasePublicWidget",
-      "lines": {
-        "total": 1,
-        "code": 1,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 59,
-        "has_example": false,
-        "quality_score": 0.33599999999999997
-      }
-    },
-    {
-      "name": "Position",
-      "package": "wayne",
-      "file": "publicwidget.go",
-      "line": 114,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*BasePublicWidget",
-      "lines": {
-        "total": 1,
-        "code": 1,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 63,
-        "has_example": false,
-        "quality_score": 0.352
-      }
-    },
-    {
-      "name": "HandleEvent",
-      "package": "wayne",
-      "file": "publicwidget.go",
-      "line": 120,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*BasePublicWidget",
-      "lines": {
-        "total": 4,
-        "code": 4,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 1,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.8
-      },
-      "complexity": {
-        "cyclomatic": 2,
-        "cognitive": 2,
-        "nesting_depth": 1,
-        "overall": 3.1
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 136,
-        "has_example": false,
-        "quality_score": 0.5
-      }
-    },
-    {
-      "name": "Draw",
-      "package": "wayne",
-      "file": "publicwidget.go",
-      "line": 128,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*BasePublicWidget",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 1,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.5
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 57,
-        "has_example": false,
-        "quality_score": 0.22799999999999998
-      }
-    },
-    {
-      "name": "Add",
-      "package": "wayne",
-      "file": "publicwidget.go",
-      "line": 131,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*BasePublicWidget",
-      "lines": {
-        "total": 1,
-        "code": 1,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 1,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.5
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 28,
-        "has_example": false,
-        "quality_score": 0.11200000000000002
-      }
-    },
-    {
-      "name": "Children",
-      "package": "wayne",
-      "file": "publicwidget.go",
-      "line": 136,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*BasePublicWidget",
-      "lines": {
-        "total": 1,
-        "code": 1,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 44,
-        "has_example": false,
-        "quality_score": 0.276
-      }
-    },
-    {
-      "name": "SetBounds",
-      "package": "wayne",
-      "file": "publicwidget.go",
-      "line": 141,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*BasePublicWidget",
-      "lines": {
-        "total": 4,
-        "code": 4,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 1,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.5
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 62,
-        "has_example": false,
-        "quality_score": 0.248
-      }
-    },
-    {
-      "name": "SetVisible",
-      "package": "wayne",
-      "file": "publicwidget.go",
-      "line": 149,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*BasePublicWidget",
-      "lines": {
-        "total": 1,
-        "code": 1,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 1,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.5
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 77,
-        "has_example": false,
-        "quality_score": 0.30800000000000005
-      }
-    },
-    {
-      "name": "IsVisible",
-      "package": "wayne",
-      "file": "publicwidget.go",
-      "line": 154,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*BasePublicWidget",
-      "lines": {
-        "total": 1,
-        "code": 1,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 49,
-        "has_example": false,
-        "quality_score": 0.29600000000000004
-      }
-    },
-    {
-      "name": "OnEvent",
-      "package": "wayne",
-      "file": "publicwidget.go",
-      "line": 159,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*BasePublicWidget",
-      "lines": {
-        "total": 1,
-        "code": 1,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 1,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.5
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 63,
-        "has_example": false,
-        "quality_score": 0.252
-      }
-    },
-    {
-      "name": "Timestamp",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 38,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*baseEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 55,
-        "has_example": false,
-        "quality_score": 0.32000000000000006
-      }
-    },
-    {
-      "name": "Consumed",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 41,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*baseEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 68,
-        "has_example": false,
-        "quality_score": 0.372
-      }
-    },
-    {
-      "name": "Consume",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 44,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*baseEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 0,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 70,
-        "has_example": false,
-        "quality_score": 0.27999999999999997
-      }
-    },
-    {
-      "name": "Type",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 97,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*PointerEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 56,
-        "has_example": false,
-        "quality_score": 0.32400000000000007
-      }
-    },
-    {
-      "name": "EventType",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 100,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*PointerEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 82,
-        "has_example": false,
-        "quality_score": 0.42800000000000005
-      }
-    },
-    {
-      "name": "X",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 103,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*PointerEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 58,
-        "has_example": false,
-        "quality_score": 0.33199999999999996
-      }
-    },
-    {
-      "name": "Y",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 106,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*PointerEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 56,
-        "has_example": false,
-        "quality_score": 0.32400000000000007
-      }
-    },
-    {
-      "name": "Button",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 109,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*PointerEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 68,
-        "has_example": false,
-        "quality_score": 0.372
-      }
-    },
-    {
-      "name": "Axis",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 112,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*PointerEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 73,
-        "has_example": false,
-        "quality_score": 0.392
-      }
-    },
-    {
-      "name": "Value",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 115,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*PointerEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 51,
-        "has_example": false,
-        "quality_score": 0.30400000000000005
-      }
-    },
-    {
-      "name": "NewPointerEvent",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 118,
-      "is_exported": true,
-      "is_method": false,
-      "lines": {
-        "total": 9,
-        "code": 9,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 5,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 2.8
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 70,
-        "has_example": false,
-        "quality_score": 0.38
-      }
-    },
-    {
-      "name": "Type",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 195,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*KeyEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 52,
-        "has_example": false,
-        "quality_score": 0.30800000000000005
-      }
-    },
-    {
-      "name": "EventType",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 198,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*KeyEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 75,
-        "has_example": false,
-        "quality_score": 0.4
-      }
-    },
-    {
-      "name": "Key",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 201,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*KeyEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 64,
-        "has_example": false,
-        "quality_score": 0.356
-      }
-    },
-    {
-      "name": "Modifiers",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 204,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*KeyEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 67,
-        "has_example": false,
-        "quality_score": 0.368
-      }
-    },
-    {
-      "name": "Rune",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 207,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*KeyEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 63,
-        "has_example": false,
-        "quality_score": 0.352
-      }
-    },
-    {
-      "name": "IsPress",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 210,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*KeyEvent",
-      "lines": {
-        "total": 1,
-        "code": 1,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 61,
-        "has_example": false,
-        "quality_score": 0.344
-      }
-    },
-    {
-      "name": "NewKeyEvent",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 215,
-      "is_exported": true,
-      "is_method": false,
-      "lines": {
-        "total": 7,
-        "code": 7,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 4,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 2.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 36,
-        "has_example": false,
-        "quality_score": 0.144
-      }
-    },
-    {
-      "name": "Type",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 251,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*TouchEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 54,
-        "has_example": false,
-        "quality_score": 0.31600000000000006
-      }
-    },
-    {
-      "name": "EventType",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 254,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*TouchEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 82,
-        "has_example": false,
-        "quality_score": 0.42800000000000005
-      }
-    },
-    {
-      "name": "TouchID",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 257,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*TouchEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 60,
-        "has_example": false,
-        "quality_score": 0.33999999999999997
-      }
-    },
-    {
-      "name": "ID",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 260,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*TouchEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 55,
-        "has_example": false,
-        "quality_score": 0.32000000000000006
-      }
-    },
-    {
-      "name": "X",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 263,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*TouchEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 56,
-        "has_example": false,
-        "quality_score": 0.32400000000000007
-      }
-    },
-    {
-      "name": "Y",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 266,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*TouchEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 54,
-        "has_example": false,
-        "quality_score": 0.31600000000000006
-      }
-    },
-    {
-      "name": "Phase",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 269,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*TouchEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 45,
-        "has_example": false,
-        "quality_score": 0.28
-      }
-    },
-    {
-      "name": "NewTouchEvent",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 272,
-      "is_exported": true,
-      "is_method": false,
-      "lines": {
-        "total": 7,
-        "code": 7,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 3,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 1.8
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 40,
-        "has_example": false,
-        "quality_score": 0.16000000000000003
-      }
-    },
-    {
-      "name": "Type",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 308,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*WindowEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 55,
-        "has_example": false,
-        "quality_score": 0.32000000000000006
-      }
-    },
-    {
-      "name": "EventType",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 311,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*WindowEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 79,
-        "has_example": false,
-        "quality_score": 0.41600000000000004
-      }
-    },
-    {
-      "name": "Width",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 314,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*WindowEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 60,
-        "has_example": false,
-        "quality_score": 0.33999999999999997
-      }
-    },
-    {
-      "name": "Height",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 317,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*WindowEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 62,
-        "has_example": false,
-        "quality_score": 0.348
-      }
-    },
-    {
-      "name": "Scale",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 320,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*WindowEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 63,
-        "has_example": false,
-        "quality_score": 0.352
-      }
-    },
-    {
-      "name": "Type",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 332,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*CustomEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 55,
-        "has_example": false,
-        "quality_score": 0.32000000000000006
-      }
-    },
-    {
-      "name": "Data",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 335,
-      "is_exported": true,
-      "is_method": true,
-      "receiver_type": "*CustomEvent",
-      "lines": {
-        "total": 0,
-        "code": 0,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 0,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.3
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 68,
-        "has_example": false,
-        "quality_score": 0.372
-      }
-    },
-    {
-      "name": "NewCustomEvent",
-      "package": "wayne",
-      "file": "event.go",
-      "line": 338,
-      "is_exported": true,
-      "is_method": false,
-      "lines": {
-        "total": 4,
-        "code": 4,
-        "comments": 0,
-        "blank": 0
-      },
-      "signature": {
-        "parameter_count": 1,
-        "return_count": 1,
-        "has_variadic": false,
-        "returns_error": false,
-        "interface_parameters": 0,
-        "generic_parameters": null,
-        "signature_complexity": 0.8
-      },
-      "complexity": {
-        "cyclomatic": 1,
-        "cognitive": 1,
-        "nesting_depth": 0,
-        "overall": 1.3
-      },
-      "documentation": {
-        "has_comment": true,
-        "comment_length": 66,
-        "has_example": false,
-        "quality_score": 0.264
       }
     }
   ],
@@ -8114,7 +8114,7 @@
   "duplication": {
     "clone_pairs": 1,
     "duplicated_lines": 12,
-    "duplication_ratio": 0.0036418816388467377,
+    "duplication_ratio": 0.0036363636363636364,
     "largest_clone_size": 12,
     "clones": [
       {

@@ -168,7 +168,7 @@ line (or use `toolchain go1.21.0`).
 5. - [x] Emit `PointerEnter`/`PointerLeave`; track last-touch positions for `TouchUp`.
 6. - [x] Fix `App.SetTheme` propagation and `SetAlign` layout.
 7. - [x] Fix `SetTheme` child propagation in `Panel`.
-8. Fix `DrawText` font size; add `ScrollView` clipping.
+8. - [x] Fix `DrawText` font size; add `ScrollView` clipping.
 9. Apply `WindowConfig` extra fields to Ebitengine.
 10. Fix `LoadFont`/`LoadImage` after `Close()`.
 11. Downgrade `go.mod` to `go 1.21`.
