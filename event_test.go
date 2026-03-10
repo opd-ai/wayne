@@ -9,12 +9,12 @@ import (
 
 func TestPointerEventCreation(t *testing.T) {
 	tests := []struct {
-		name      string
-		evtType   PointerEventType
-		x, y      float64
-		button    PointerButton
-		axis      ScrollAxis
-		value     float64
+		name    string
+		evtType PointerEventType
+		x, y    float64
+		button  PointerButton
+		axis    ScrollAxis
+		value   float64
 	}{
 		{
 			name:    "pointer move",
@@ -83,39 +83,39 @@ func TestPointerEventCreation(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			evt := NewPointerEvent(tt.evtType, tt.x, tt.y, tt.button, tt.axis, tt.value)
-			
+
 			if evt == nil {
 				t.Fatal("NewPointerEvent returned nil")
 			}
-			
+
 			if evt.Type() != EventTypePointer {
 				t.Errorf("Expected Type() = EventTypePointer, got %v", evt.Type())
 			}
-			
+
 			if evt.EventType() != tt.evtType {
 				t.Errorf("Expected EventType() = %v, got %v", tt.evtType, evt.EventType())
 			}
-			
+
 			if evt.X() != tt.x {
 				t.Errorf("Expected X() = %f, got %f", tt.x, evt.X())
 			}
-			
+
 			if evt.Y() != tt.y {
 				t.Errorf("Expected Y() = %f, got %f", tt.y, evt.Y())
 			}
-			
+
 			if evt.Button() != tt.button {
 				t.Errorf("Expected Button() = %v, got %v", tt.button, evt.Button())
 			}
-			
+
 			if evt.Axis() != tt.axis {
 				t.Errorf("Expected Axis() = %v, got %v", tt.axis, evt.Axis())
 			}
-			
+
 			if evt.Value() != tt.value {
 				t.Errorf("Expected Value() = %f, got %f", tt.value, evt.Value())
 			}
-			
+
 			// Check timestamp is recent
 			if time.Since(evt.Timestamp()) > time.Second {
 				t.Error("Timestamp is too old")
@@ -208,31 +208,31 @@ func TestKeyEventCreation(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			evt := NewKeyEvent(tt.evtType, tt.key, tt.modifier, tt.char)
-			
+
 			if evt == nil {
 				t.Fatal("NewKeyEvent returned nil")
 			}
-			
+
 			if evt.Type() != EventTypeKey {
 				t.Errorf("Expected Type() = EventTypeKey, got %v", evt.Type())
 			}
-			
+
 			if evt.EventType() != tt.evtType {
 				t.Errorf("Expected EventType() = %v, got %v", tt.evtType, evt.EventType())
 			}
-			
+
 			if evt.Key() != tt.key {
 				t.Errorf("Expected Key() = %v, got %v", tt.key, evt.Key())
 			}
-			
+
 			if evt.Modifiers() != tt.modifier {
 				t.Errorf("Expected Modifier() = %v, got %v", tt.modifier, evt.Modifiers())
 			}
-			
+
 			if evt.Rune() != tt.char {
 				t.Errorf("Expected Rune() = %v, got %v", tt.char, evt.Rune())
 			}
-			
+
 			// Check timestamp is recent
 			if time.Since(evt.Timestamp()) > time.Second {
 				t.Error("Timestamp is too old")
@@ -288,31 +288,31 @@ func TestTouchEventCreation(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			evt := NewTouchEvent(tt.evtType, tt.id, tt.x, tt.y)
-			
+
 			if evt == nil {
 				t.Fatal("NewTouchEvent returned nil")
 			}
-			
+
 			if evt.Type() != EventTypeTouch {
 				t.Errorf("Expected Type() = EventTypeTouch, got %v", evt.Type())
 			}
-			
+
 			if evt.EventType() != tt.evtType {
 				t.Errorf("Expected EventType() = %v, got %v", tt.evtType, evt.EventType())
 			}
-			
+
 			if evt.ID() != tt.id {
 				t.Errorf("Expected ID() = %d, got %d", tt.id, evt.ID())
 			}
-			
+
 			if evt.X() != tt.x {
 				t.Errorf("Expected X() = %f, got %f", tt.x, evt.X())
 			}
-			
+
 			if evt.Y() != tt.y {
 				t.Errorf("Expected Y() = %f, got %f", tt.y, evt.Y())
 			}
-			
+
 			// Check timestamp is recent
 			if time.Since(evt.Timestamp()) > time.Second {
 				t.Error("Timestamp is too old")
@@ -323,13 +323,13 @@ func TestTouchEventCreation(t *testing.T) {
 
 func TestEventConsumption(t *testing.T) {
 	evt := NewPointerEvent(PointerMove, 100, 200, 0, 0, 0)
-	
+
 	if evt.Consumed() {
 		t.Error("Event should not be consumed initially")
 	}
-	
+
 	evt.Consume()
-	
+
 	if !evt.Consumed() {
 		t.Error("Event should be consumed after Consume() call")
 	}
@@ -339,9 +339,9 @@ func TestEventTimestamp(t *testing.T) {
 	before := time.Now()
 	evt := NewPointerEvent(PointerMove, 0, 0, 0, 0, 0)
 	after := time.Now()
-	
+
 	ts := evt.Timestamp()
-	
+
 	if ts.Before(before) || ts.After(after) {
 		t.Error("Event timestamp should be between before and after times")
 	}
@@ -416,11 +416,11 @@ func TestModifierCombinations(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			evt := NewKeyEvent(KeyPress, KeySpace, tt.modifier, ' ')
-			
+
 			hasShift := (evt.Modifiers() & ModShift) != 0
 			hasCtrl := (evt.Modifiers() & ModControl) != 0
 			hasAlt := (evt.Modifiers() & ModAlt) != 0
-			
+
 			if hasShift != tt.hasShift {
 				t.Errorf("Expected hasShift = %v, got %v", tt.hasShift, hasShift)
 			}

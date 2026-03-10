@@ -11,7 +11,7 @@ func TestNewApp(t *testing.T) {
 	if app == nil {
 		t.Fatal("NewApp() returned nil")
 	}
-	
+
 	if app.width != 800 {
 		t.Errorf("Expected default width 800, got %d", app.width)
 	}
@@ -31,38 +31,38 @@ func TestNewApp(t *testing.T) {
 
 func TestNewAppWithConfig(t *testing.T) {
 	tests := []struct {
-		name           string
-		config         AppConfig
-		expectedWidth  int
-		expectedHeight int
+		name            string
+		config          AppConfig
+		expectedWidth   int
+		expectedHeight  int
 		expectedVerbose bool
 	}{
 		{
-			name:           "custom dimensions",
-			config:         AppConfig{Width: 1024, Height: 768, Verbose: true},
-			expectedWidth:  1024,
-			expectedHeight: 768,
+			name:            "custom dimensions",
+			config:          AppConfig{Width: 1024, Height: 768, Verbose: true},
+			expectedWidth:   1024,
+			expectedHeight:  768,
 			expectedVerbose: true,
 		},
 		{
-			name:           "zero width defaults to 800",
-			config:         AppConfig{Width: 0, Height: 768},
-			expectedWidth:  800,
-			expectedHeight: 768,
+			name:            "zero width defaults to 800",
+			config:          AppConfig{Width: 0, Height: 768},
+			expectedWidth:   800,
+			expectedHeight:  768,
 			expectedVerbose: false,
 		},
 		{
-			name:           "zero height defaults to 600",
-			config:         AppConfig{Width: 1024, Height: 0},
-			expectedWidth:  1024,
-			expectedHeight: 600,
+			name:            "zero height defaults to 600",
+			config:          AppConfig{Width: 1024, Height: 0},
+			expectedWidth:   1024,
+			expectedHeight:  600,
 			expectedVerbose: false,
 		},
 		{
-			name:           "negative dimensions default",
-			config:         AppConfig{Width: -100, Height: -100},
-			expectedWidth:  800,
-			expectedHeight: 600,
+			name:            "negative dimensions default",
+			config:          AppConfig{Width: -100, Height: -100},
+			expectedWidth:   800,
+			expectedHeight:  600,
 			expectedVerbose: false,
 		},
 	}
@@ -102,9 +102,9 @@ func TestDefaultConfig(t *testing.T) {
 func TestAppSetTheme(t *testing.T) {
 	app := NewApp()
 	customTheme := DefaultLight()
-	
+
 	app.SetTheme(customTheme)
-	
+
 	// Theme should be stored
 	if app.theme.Background.R != customTheme.Background.R {
 		t.Error("Theme not properly set")
@@ -113,14 +113,14 @@ func TestAppSetTheme(t *testing.T) {
 
 func TestAppQuit(t *testing.T) {
 	app := NewApp()
-	
+
 	// Initially should not be quitting
 	if app.quitFlag.Load() {
 		t.Error("App should not be quitting initially")
 	}
-	
+
 	app.Quit()
-	
+
 	// After Quit() should be set
 	if !app.quitFlag.Load() {
 		t.Error("App should be quitting after Quit() call")
@@ -129,16 +129,16 @@ func TestAppQuit(t *testing.T) {
 
 func TestAppClose(t *testing.T) {
 	app := NewApp()
-	
+
 	// Should not panic
 	defer func() {
 		if r := recover(); r != nil {
 			t.Errorf("Close() panicked: %v", r)
 		}
 	}()
-	
+
 	app.Close()
-	
+
 	// After close, resources should be nil
 	if app.resources != nil {
 		t.Error("Resources should be nil after Close()")
@@ -151,7 +151,7 @@ func TestAppRunAfterRun(t *testing.T) {
 	if ErrAlreadyRunning == nil {
 		t.Error("ErrAlreadyRunning should be defined")
 	}
-	
+
 	if ErrAlreadyRunning.Error() != "wayne: app already running" {
 		t.Errorf("Unexpected error message: %s", ErrAlreadyRunning.Error())
 	}
@@ -161,7 +161,7 @@ func TestAppNotRunningError(t *testing.T) {
 	if ErrNotRunning == nil {
 		t.Error("ErrNotRunning should be defined")
 	}
-	
+
 	if ErrNotRunning.Error() != "wayne: app not running" {
 		t.Errorf("Unexpected error message: %s", ErrNotRunning.Error())
 	}
@@ -171,7 +171,7 @@ func TestAppInvalidWindowConfigError(t *testing.T) {
 	if ErrInvalidWindowConfig == nil {
 		t.Error("ErrInvalidWindowConfig should be defined")
 	}
-	
+
 	if ErrInvalidWindowConfig.Error() != "wayne: invalid window configuration" {
 		t.Errorf("Unexpected error message: %s", ErrInvalidWindowConfig.Error())
 	}
@@ -179,7 +179,7 @@ func TestAppInvalidWindowConfigError(t *testing.T) {
 
 func TestNewWindow(t *testing.T) {
 	app := NewApp()
-	
+
 	tests := []struct {
 		name   string
 		config WindowConfig
@@ -224,7 +224,7 @@ func TestNewWindow(t *testing.T) {
 
 func TestLoadFont(t *testing.T) {
 	app := NewApp()
-	
+
 	// Test with empty path
 	font, err := app.LoadFont("", 12)
 	if font != nil {
@@ -233,7 +233,7 @@ func TestLoadFont(t *testing.T) {
 	if err == nil {
 		t.Error("Expected error for empty font path")
 	}
-	
+
 	// Test with non-existent path
 	font, err = app.LoadFont("/nonexistent/font.ttf", 12)
 	if font != nil {
@@ -246,7 +246,7 @@ func TestLoadFont(t *testing.T) {
 
 func TestLoadImage(t *testing.T) {
 	app := NewApp()
-	
+
 	// Test with empty path
 	img, err := app.LoadImage("")
 	if img != nil {
@@ -255,7 +255,7 @@ func TestLoadImage(t *testing.T) {
 	if err == nil {
 		t.Error("Expected error for empty image path")
 	}
-	
+
 	// Test with non-existent path
 	img, err = app.LoadImage("/nonexistent/image.png")
 	if img != nil {
@@ -268,9 +268,9 @@ func TestLoadImage(t *testing.T) {
 
 func TestDefaultFont(t *testing.T) {
 	app := NewApp()
-	
+
 	font := app.DefaultFont()
-	
+
 	// Should return a font (embedded default)
 	if font == nil {
 		t.Error("DefaultFont should not return nil")
