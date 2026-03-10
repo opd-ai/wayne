@@ -133,7 +133,7 @@ interface and implement it with an Ebitengine stencil.
 
 ## 6. API / configuration correctness
 
-### 6a. `WindowConfig` fields `MinWidth`, `MaxWidth`, `Fullscreen`, `Decorations` are silently ignored (app.go line 167)
+### 6a. - [x] `WindowConfig` fields `MinWidth`, `MaxWidth`, `Fullscreen`, `Decorations` are silently ignored (app.go line 167)
 **Problem:** Callers who set these fields get no effect and no error.  
 **Fix:** In `App.NewWindow` (or in `App.Run`), apply supported fields via
 `ebiten.SetWindowSizeLimits`, `ebiten.SetFullscreen`, and
@@ -169,7 +169,7 @@ line (or use `toolchain go1.21.0`).
 6. - [x] Fix `App.SetTheme` propagation and `SetAlign` layout.
 7. - [x] Fix `SetTheme` child propagation in `Panel`.
 8. - [x] Fix `DrawText` font size; add `ScrollView` clipping.
-9. Apply `WindowConfig` extra fields to Ebitengine.
+9. - [x] Apply `WindowConfig` extra fields to Ebitengine.
 10. Fix `LoadFont`/`LoadImage` after `Close()`.
 11. Downgrade `go.mod` to `go 1.21`.
 12. Add tests (layout, event routing, color/theme).

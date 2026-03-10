@@ -68,6 +68,8 @@ type App struct {
 	primaryWindow *Window
 	dispatcher    *EventDispatcher
 
+	primaryConfig WindowConfig
+
 	quitFlag   atomic.Bool
 	notifyChan chan func()
 
@@ -135,6 +137,43 @@ func (a *App) Run() error {
 	ebiten.SetWindowSize(a.width, a.height)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 
+	// Apply primary window configuration
+	a.mu.Lock()
+	cfg := a.primaryConfig
+	a.mu.Unlock()
+
+	// Apply window size limits if specified
+	if cfg.MinWidth > 0 || cfg.MinHeight > 0 || cfg.MaxWidth > 0 || cfg.MaxHeight > 0 {
+		minW := cfg.MinWidth
+		minH := cfg.MinHeight
+		maxW := cfg.MaxWidth
+		maxH := cfg.MaxHeight
+
+		// Use -1 for unspecified limits (Ebitengine convention)
+		if minW <= 0 {
+			minW = -1
+		}
+		if minH <= 0 {
+			minH = -1
+		}
+		if maxW <= 0 {
+			maxW = -1
+		}
+		if maxH <= 0 {
+			maxH = -1
+		}
+
+		ebiten.SetWindowSizeLimits(minW, minH, maxW, maxH)
+	}
+
+	// Apply fullscreen setting
+	if cfg.Fullscreen {
+		ebiten.SetFullscreen(true)
+	}
+
+	// Note: Decorations field is not yet implemented due to ambiguity
+	// with bool zero value. Windows always have decorations.
+
 	g := &ebitenGame{app: a}
 	return ebiten.RunGame(g)
 }
@@ -179,6 +218,7 @@ func (a *App) NewWindow(cfg WindowConfig) (*Window, error) {
 	a.windows = append(a.windows, win)
 	if a.primaryWindow == nil {
 		a.primaryWindow = win
+		a.primaryConfig = cfg
 		// Resize the Ebitengine window for the first window.
 		if cfg.Width > 0 && cfg.Width != a.width {
 			a.width = cfg.Width
@@ -310,7 +350,9 @@ type WindowConfig struct {
 	// Fullscreen indicates whether the window should start fullscreen.
 	Fullscreen bool
 
-	// Decorations indicates whether the window should have decorations.
+	// Decorations controls window decorations (title bar, borders).
+	// Currently not implemented - windows always have decorations.
+	// This field is reserved for future use.
 	Decorations bool
 }
 
