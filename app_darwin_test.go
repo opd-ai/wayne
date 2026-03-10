@@ -27,14 +27,15 @@ if app == nil {
 	}
 
 	win, err := app.NewWindow(*winCfg)
-
+	if err != nil {
+		t.Fatalf("NewWindow failed: %v", err)
+	}
 	if win == nil {
 		t.Fatal("Window should not be nil")
 	}
 
 	// Note: Cannot verify rendering without Run()
 	// Widgets were created successfully (no panic)
-	}
 
 	// Note: Cannot call app.Run() in a test as it blocks indefinitely
 	// Production apps would call Run() in main()
@@ -59,6 +60,9 @@ if app == nil {
 	}
 
 	win, err := app.NewWindow(*winCfg)
+	if err != nil {
+		t.Fatalf("NewWindow failed: %v", err)
+	}
 
 	// Create basic widgets to verify platform compatibility
 	btn := NewButton("Test Button", Size{Width: 100, Height: 30})

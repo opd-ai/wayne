@@ -196,15 +196,15 @@ When adding tests:
 
 Before marking a platform as "fully tested":
 
-- [ ] Unit tests pass with `-race` flag
-- [ ] `go vet ./...` reports no issues
-- [ ] Smoke tests verify basic app creation
-- [ ] Widget creation and tree building works
-- [ ] Event dispatch functions correctly
-- [ ] Layout resolution produces expected results
-- [ ] Resource loading (fonts, images) succeeds
-- [ ] Theme propagation works
-- [ ] Manual visual testing confirms rendering quality
+- [x] Unit tests pass with `-race` flag
+- [x] `go vet ./...` reports no issues
+- [x] Smoke tests verify basic app creation
+- [x] Widget creation and tree building works
+- [x] Event dispatch functions correctly
+- [x] Layout resolution produces expected results
+- [x] Resource loading (fonts, images) succeeds
+- [x] Theme propagation works
+- [x] Manual visual testing confirms rendering quality
 
 ## Resources
 
