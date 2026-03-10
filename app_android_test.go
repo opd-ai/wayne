@@ -68,14 +68,15 @@ func TestAndroidBasicWidgetCreation(t *testing.T) {
 	}
 
 	// Create basic widgets to verify platform compatibility
-	btn := NewButton("Test Button", Size{Width: 100, Height: 30})
+	// Size uses percentages (0-100) of parent container
+	btn := NewButton("Test Button", Size{Width: 50, Height: 10})
 
-	lbl := NewLabel("Test Label", Size{Width: 100, Height: 20})
+	lbl := NewLabel("Test Label", Size{Width: 50, Height: 8})
 
-	input := NewTextInput("", Size{Width: 200, Height: 30})
+	input := NewTextInput("", Size{Width: 80, Height: 10})
 	input.SetPlaceholder("Test Input")
 
-	panel := NewPanel(Size{Width: 400, Height: 300})
+	panel := NewPanel(Size{Width: 100, Height: 100})
 	panel.SetFlowDirection(FlowColumn)
 	panel.Add(btn)
 	panel.Add(lbl)

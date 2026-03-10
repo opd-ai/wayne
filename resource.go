@@ -98,8 +98,9 @@ func (rm *ResourceManager) DefaultFont() *Font {
 // Supported formats: TrueType (.ttf), OpenType (.otf) - currently not implemented,
 // falls back to embedded font.
 //
-// The path parameter is currently ignored but will be used in future versions.
 // Size is specified in points.
+//
+// Returns an error if the path is empty, the file does not exist, or the size is invalid.
 func (rm *ResourceManager) LoadFont(path string, size float64) (*Font, error) {
 	if rm.closed.Load() {
 		return nil, ErrResourceManagerClosed
@@ -111,6 +112,11 @@ func (rm *ResourceManager) LoadFont(path string, size float64) (*Font, error) {
 
 	if size <= 0 {
 		return nil, fmt.Errorf("font size must be positive, got %f", size)
+	}
+
+	// Validate file accessibility before attempting to load
+	if _, err := os.Stat(path); err != nil {
+		return nil, fmt.Errorf("font path %q not accessible: %w", path, err)
 	}
 
 	rm.mu.Lock()

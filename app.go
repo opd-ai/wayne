@@ -189,8 +189,11 @@ func (a *App) Quit() {
 // Close releases resources associated with the app.
 // It does not stop a running event loop; call Quit() for that.
 func (a *App) Close() {
+	a.mu.Lock()
+	defer a.mu.Unlock()
 	if a.resources != nil {
 		a.resources.cleanup()
+		a.resources = nil
 	}
 }
 
