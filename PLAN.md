@@ -31,7 +31,7 @@ have each widget call it when `widget.theme == nil`).
 **Fix:** Read `p.align` in `resolveChildren` and adjust the cross-axis position
 of each child for `AlignCenter`, `AlignEnd`, and `AlignStretch`.
 
-### 1d. `SetTheme` only propagates to `*Panel` children (layout.go line 256)
+### 1d. - [x] `SetTheme` only propagates to `*Panel` children (layout.go line 256)
 **Problem:** `Button`, `Label`, `TextInput`, etc. will not inherit a theme set
 on their parent `Panel`.  
 **Fix:** Define a `Themeable` interface (`SetTheme(Theme)`) and use a type

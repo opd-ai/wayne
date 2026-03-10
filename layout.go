@@ -334,8 +334,8 @@ func (p *Panel) SetStyle(override StyleOverride) {
 func (p *Panel) SetTheme(theme Theme) {
 	p.theme = &theme
 	for _, child := range p.children {
-		if panel, ok := child.(*Panel); ok {
-			panel.SetTheme(theme)
+		if themeable, ok := child.(Themeable); ok {
+			themeable.SetTheme(theme)
 		}
 	}
 }

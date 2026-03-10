@@ -28,6 +28,12 @@ type Container interface {
 	Children() []PublicWidget
 }
 
+// Themeable is the interface for widgets that support theme customization.
+type Themeable interface {
+	// SetTheme applies a custom theme to this widget.
+	SetTheme(Theme)
+}
+
 // Canvas provides a high-level drawing API for widget rendering.
 //
 // Canvas abstracts over the internal rendering backend (Ebitengine). Methods
