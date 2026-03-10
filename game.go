@@ -63,9 +63,14 @@ func (g *ebitenGame) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 // processInput reads Ebitengine input state each tick and dispatches events to the app.
 func (g *ebitenGame) processInput() {
-	a := g.app
+	g.processMouseInput()
+	g.processKeyboardInput()
+	g.processTouchInput()
+}
 
-	// --- Mouse ---
+// processMouseInput handles mouse movement, button presses/releases, and scroll wheel events.
+func (g *ebitenGame) processMouseInput() {
+	a := g.app
 	mx, my := ebiten.CursorPosition()
 	mxf, myf := float64(mx), float64(my)
 
@@ -106,8 +111,12 @@ func (g *ebitenGame) processInput() {
 	if wy != 0 {
 		a.dispatchEvent(NewPointerEvent(PointerScroll, mxf, myf, 0, ScrollAxisVertical, wy))
 	}
+}
 
-	// --- Keyboard ---
+// processKeyboardInput handles keyboard key presses, releases, and text input.
+func (g *ebitenGame) processKeyboardInput() {
+	a := g.app
+
 	// Collect text input (printable characters).
 	var inputChars []rune
 	inputChars = ebiten.AppendInputChars(inputChars)
@@ -136,8 +145,12 @@ func (g *ebitenGame) processInput() {
 		mods := currentModifiers()
 		a.dispatchEvent(NewKeyEvent(KeyRelease, wKey, mods, 0))
 	}
+}
 
-	// --- Touch ---
+// processTouchInput handles touch events for mobile and touch-enabled devices.
+func (g *ebitenGame) processTouchInput() {
+	a := g.app
+
 	justPressedTouches := inpututil.AppendJustPressedTouchIDs(nil)
 	for _, tid := range justPressedTouches {
 		tx, ty := ebiten.TouchPosition(tid)
