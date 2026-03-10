@@ -172,7 +172,7 @@ func (p *Panel) resolveChildren(parentX, parentY, parentW, parentH int) {
 			case AlignStretch:
 				childH = contentH
 				alignedY = contentY
-			// AlignStart is the default (alignedY already = cursorY = contentY)
+				// AlignStart is the default (alignedY already = cursorY = contentY)
 			}
 		} else {
 			// For vertical flow, align on the horizontal (cross) axis
@@ -184,7 +184,7 @@ func (p *Panel) resolveChildren(parentX, parentY, parentW, parentH int) {
 			case AlignStretch:
 				childW = contentW
 				alignedX = contentX
-			// AlignStart is the default (alignedX already = cursorX = contentX)
+				// AlignStart is the default (alignedX already = cursorX = contentX)
 			}
 		}
 
