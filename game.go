@@ -303,4 +303,3 @@ func ebitenKeyToWayne(k ebiten.Key) Key {
 		return Key(k)
 	}
 }
-

@@ -64,9 +64,9 @@ type App struct {
 	theme     Theme
 	resources *ResourceManager
 
-	windows        []*Window
-	primaryWindow  *Window
-	dispatcher     *EventDispatcher
+	windows       []*Window
+	primaryWindow *Window
+	dispatcher    *EventDispatcher
 
 	quitFlag   atomic.Bool
 	notifyChan chan func()

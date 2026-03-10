@@ -405,10 +405,10 @@ func (t *TextInput) Draw(c Canvas) {
 type ScrollView struct {
 	BasePublicWidget
 
-	size        Size
-	scrollY     int
-	onScroll    func(offset int)
-	theme       *Theme
+	size     Size
+	scrollY  int
+	onScroll func(offset int)
+	theme    *Theme
 }
 
 // NewScrollView creates a new scrollable container.

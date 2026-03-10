@@ -155,5 +155,3 @@ func (rm *ResourceManager) cleanup() {
 	}
 	rm.defaultFont = nil
 }
-
-

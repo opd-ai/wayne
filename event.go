@@ -88,13 +88,13 @@ type PointerEvent struct {
 	value     float64
 }
 
-func (e *PointerEvent) Type() EventType              { return EventTypePointer }
-func (e *PointerEvent) EventType() PointerEventType  { return e.eventType }
-func (e *PointerEvent) X() float64                   { return e.x }
-func (e *PointerEvent) Y() float64                   { return e.y }
-func (e *PointerEvent) Button() PointerButton        { return e.button }
-func (e *PointerEvent) Axis() ScrollAxis             { return e.axis }
-func (e *PointerEvent) Value() float64               { return e.value }
+func (e *PointerEvent) Type() EventType             { return EventTypePointer }
+func (e *PointerEvent) EventType() PointerEventType { return e.eventType }
+func (e *PointerEvent) X() float64                  { return e.x }
+func (e *PointerEvent) Y() float64                  { return e.y }
+func (e *PointerEvent) Button() PointerButton       { return e.button }
+func (e *PointerEvent) Axis() ScrollAxis            { return e.axis }
+func (e *PointerEvent) Value() float64              { return e.value }
 
 // NewPointerEvent creates a new PointerEvent with the given parameters.
 func NewPointerEvent(evtType PointerEventType, x, y float64, button PointerButton, axis ScrollAxis, value float64) *PointerEvent {
@@ -173,11 +173,11 @@ type KeyEvent struct {
 	r         rune
 }
 
-func (e *KeyEvent) Type() EventType            { return EventTypeKey }
-func (e *KeyEvent) EventType() KeyEventType    { return e.eventType }
-func (e *KeyEvent) Key() Key                   { return e.key }
-func (e *KeyEvent) Modifiers() Modifier        { return e.modifiers }
-func (e *KeyEvent) Rune() rune                 { return e.r }
+func (e *KeyEvent) Type() EventType         { return EventTypeKey }
+func (e *KeyEvent) EventType() KeyEventType { return e.eventType }
+func (e *KeyEvent) Key() Key                { return e.key }
+func (e *KeyEvent) Modifiers() Modifier     { return e.modifiers }
+func (e *KeyEvent) Rune() rune              { return e.r }
 
 // IsPress returns true if this is a key press or repeat event.
 func (e *KeyEvent) IsPress() bool {
@@ -220,8 +220,8 @@ type TouchEvent struct {
 	x, y      float64
 }
 
-func (e *TouchEvent) Type() EventType            { return EventTypeTouch }
-func (e *TouchEvent) EventType() TouchEventType  { return e.eventType }
+func (e *TouchEvent) Type() EventType           { return EventTypeTouch }
+func (e *TouchEvent) EventType() TouchEventType { return e.eventType }
 
 // TouchID returns the unique identifier for this touch point.
 func (e *TouchEvent) TouchID() int32 { return e.id }
@@ -271,11 +271,11 @@ type WindowEvent struct {
 	scale     float64
 }
 
-func (e *WindowEvent) Type() EventType             { return EventTypeWindow }
-func (e *WindowEvent) EventType() WindowEventType  { return e.eventType }
-func (e *WindowEvent) Width() int                  { return e.width }
-func (e *WindowEvent) Height() int                 { return e.height }
-func (e *WindowEvent) Scale() float64              { return e.scale }
+func (e *WindowEvent) Type() EventType            { return EventTypeWindow }
+func (e *WindowEvent) EventType() WindowEventType { return e.eventType }
+func (e *WindowEvent) Width() int                 { return e.width }
+func (e *WindowEvent) Height() int                { return e.height }
+func (e *WindowEvent) Scale() float64             { return e.scale }
 
 // CustomEventPayload is an opaque payload for application-defined custom events.
 type CustomEventPayload interface{}
@@ -286,7 +286,7 @@ type CustomEvent struct {
 	data CustomEventPayload
 }
 
-func (e *CustomEvent) Type() EventType        { return EventTypeCustom }
+func (e *CustomEvent) Type() EventType          { return EventTypeCustom }
 func (e *CustomEvent) Data() CustomEventPayload { return e.data }
 
 // NewCustomEvent creates a new custom event with the given payload.
