@@ -79,6 +79,9 @@ var ebitenToWayneKeyMap = map[ebiten.Key]Key{
 // ebitenGame implements the ebiten.Game interface for wayne's main loop.
 type ebitenGame struct {
 	app *App
+
+	lastHoveredWidget PublicWidget
+	lastTouchPos      map[ebiten.TouchID][2]float64
 }
 
 // Update processes one tick of the game loop: handles input and dispatches events.
@@ -147,6 +150,19 @@ func (g *ebitenGame) processMouseInput() {
 	prev := a.lastMousePos()
 	if prev[0] != mx || prev[1] != my {
 		a.setLastMousePos(mx, my)
+
+		// Track hover state and emit PointerEnter/PointerLeave
+		currentHovered := g.findHoveredWidget(mx, my)
+		if currentHovered != g.lastHoveredWidget {
+			if g.lastHoveredWidget != nil {
+				a.dispatchEvent(NewPointerEvent(PointerLeave, mxf, myf, 0, ScrollAxisVertical, 0))
+			}
+			g.lastHoveredWidget = currentHovered
+			if currentHovered != nil {
+				a.dispatchEvent(NewPointerEvent(PointerEnter, mxf, myf, 0, ScrollAxisVertical, 0))
+			}
+		}
+
 		a.dispatchEvent(NewPointerEvent(PointerMove, mxf, myf, 0, ScrollAxisVertical, 0))
 	}
 
@@ -215,22 +231,39 @@ func (g *ebitenGame) processKeyboardInput() {
 func (g *ebitenGame) processTouchInput() {
 	a := g.app
 
+	// Initialize the touch position map if needed
+	if g.lastTouchPos == nil {
+		g.lastTouchPos = make(map[ebiten.TouchID][2]float64)
+	}
+
 	justPressedTouches := inpututil.AppendJustPressedTouchIDs(nil)
 	for _, tid := range justPressedTouches {
 		tx, ty := ebiten.TouchPosition(tid)
-		a.dispatchEvent(NewTouchEvent(TouchDown, int32(tid), float64(tx), float64(ty)))
+		txf, tyf := float64(tx), float64(ty)
+		g.lastTouchPos[tid] = [2]float64{txf, tyf}
+		a.dispatchEvent(NewTouchEvent(TouchDown, int32(tid), txf, tyf))
 	}
 
 	var activeTouches []ebiten.TouchID
 	activeTouches = ebiten.AppendTouchIDs(activeTouches)
 	for _, tid := range activeTouches {
 		tx, ty := ebiten.TouchPosition(tid)
-		a.dispatchEvent(NewTouchEvent(TouchMotion, int32(tid), float64(tx), float64(ty)))
+		txf, tyf := float64(tx), float64(ty)
+		g.lastTouchPos[tid] = [2]float64{txf, tyf}
+		a.dispatchEvent(NewTouchEvent(TouchMotion, int32(tid), txf, tyf))
 	}
 
 	justReleasedTouches := inpututil.AppendJustReleasedTouchIDs(nil)
 	for _, tid := range justReleasedTouches {
-		a.dispatchEvent(NewTouchEvent(TouchUp, int32(tid), 0, 0))
+		// Use the last known position for TouchUp events
+		pos, ok := g.lastTouchPos[tid]
+		var txf, tyf float64
+		if ok {
+			txf, tyf = pos[0], pos[1]
+		}
+		a.dispatchEvent(NewTouchEvent(TouchUp, int32(tid), txf, tyf))
+		// Clean up the position map
+		delete(g.lastTouchPos, tid)
 	}
 }
 
@@ -258,4 +291,26 @@ func ebitenKeyToWayne(k ebiten.Key) Key {
 		return wayneKey
 	}
 	return Key(k)
+}
+
+// findHoveredWidget performs hit-testing to find the widget under the given coordinates.
+func (g *ebitenGame) findHoveredWidget(x, y int) PublicWidget {
+	a := g.app
+	a.mu.Lock()
+	win := a.primaryWindow
+	a.mu.Unlock()
+
+	if win == nil || win.dispatcher == nil {
+		return nil
+	}
+
+	win.dispatcher.mu.RLock()
+	root := win.dispatcher.widgetRoot
+	win.dispatcher.mu.RUnlock()
+
+	if root == nil {
+		return nil
+	}
+
+	return win.dispatcher.hitTest(root, x, y)
 }
