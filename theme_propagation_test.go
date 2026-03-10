@@ -11,7 +11,7 @@ func TestPanelSetThemePropagation(t *testing.T) {
 	// Add different types of children
 	btn := NewButton("Test", Size{Width: 50, Height: 20})
 	label := NewLabel("Label", Size{Width: 50, Height: 20})
-	input := NewTextInput(Size{Width: 50, Height: 20})
+	input := NewTextInput("placeholder", Size{Width: 50, Height: 20})
 	scrollView := NewScrollView(Size{Width: 50, Height: 50})
 	childPanel := NewPanel(Size{Width: 50, Height: 50})
 
@@ -23,7 +23,7 @@ func TestPanelSetThemePropagation(t *testing.T) {
 
 	// Create a custom theme
 	customTheme := DefaultDark()
-	customTheme.Primary = NewColor(255, 0, 0, 255) // Red for testing
+	customTheme.Accent = RGB(255, 0, 0) // Red for testing
 
 	// Apply theme to panel
 	panel.SetTheme(customTheme)
@@ -34,6 +34,35 @@ func TestPanelSetThemePropagation(t *testing.T) {
 
 	// Apply theme again to test idempotency
 	panel.SetTheme(DefaultLight())
+}
+
+func TestScrollViewSetThemePropagation(t *testing.T) {
+	// Create a scroll view with child widgets
+	scrollView := NewScrollView(Size{Width: 100, Height: 100})
+
+	// Add different types of children to the scroll view
+	btn := NewButton("Test", Size{Width: 50, Height: 20})
+	label := NewLabel("Label", Size{Width: 50, Height: 20})
+	input := NewTextInput("placeholder", Size{Width: 50, Height: 20})
+	childPanel := NewPanel(Size{Width: 50, Height: 50})
+
+	scrollView.Add(btn)
+	scrollView.Add(label)
+	scrollView.Add(input)
+	scrollView.Add(childPanel)
+
+	// Create a custom theme
+	customTheme := DefaultDark()
+	customTheme.Accent = RGB(0, 255, 0) // Green for testing
+
+	// Apply theme to scroll view
+	scrollView.SetTheme(customTheme)
+
+	// Verify no panics and method completes successfully
+	// Theme propagation should work for ScrollView just like Panel
+
+	// Apply theme again to test idempotency
+	scrollView.SetTheme(DefaultLight())
 }
 
 func TestThemeableInterface(t *testing.T) {

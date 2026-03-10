@@ -554,6 +554,11 @@ func (s *ScrollView) Draw(c Canvas) {
 // SetTheme applies a theme to this scroll view.
 func (s *ScrollView) SetTheme(theme Theme) {
 	s.theme = &theme
+	for _, child := range s.children {
+		if themeable, ok := child.(Themeable); ok {
+			themeable.SetTheme(theme)
+		}
+	}
 }
 
 // ImageWidget displays an image resource.
