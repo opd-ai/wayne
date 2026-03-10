@@ -23,6 +23,16 @@
 //
 //	app.Run()
 //
+// # Widget Sizing Convention
+//
+// Widgets with text content (Button, Label, TextInput) require explicit Size
+// parameters. Spacers and containers (Panel, ScrollView, ImageWidget) also
+// require explicit Size. Container widgets (Row, Column, Stack, Grid) use
+// percentage-based defaults of 100x100 (full parent dimensions).
+//
+// All Size values are percentages (0-100) of the parent container. For example,
+// Size{Width: 50, Height: 100} means "50% of parent width, 100% of parent height".
+//
 // # Supported Platforms
 //
 // Wayne compiles on Windows, macOS, Android, and iOS.

@@ -25,6 +25,7 @@ type Button struct {
 
 // NewButton creates a new button with the specified label and percentage-based size.
 func NewButton(label string, size Size) *Button {
+	validateSize(size)
 	return &Button{
 		BasePublicWidget: NewBasePublicWidget(0, 0),
 		label:            label,
@@ -160,6 +161,7 @@ type Label struct {
 
 // NewLabel creates a new label with the specified text and percentage-based size.
 func NewLabel(text string, size Size) *Label {
+	validateSize(size)
 	return &Label{
 		BasePublicWidget: NewBasePublicWidget(0, 0),
 		text:             text,
@@ -246,6 +248,7 @@ type TextInput struct {
 
 // NewTextInput creates a new text input field with placeholder text and size.
 func NewTextInput(placeholder string, size Size) *TextInput {
+	validateSize(size)
 	return &TextInput{
 		BasePublicWidget: NewBasePublicWidget(0, 0),
 		placeholder:      placeholder,
@@ -435,6 +438,7 @@ type ScrollView struct {
 
 // NewScrollView creates a new scrollable container.
 func NewScrollView(size Size) *ScrollView {
+	validateSize(size)
 	return &ScrollView{
 		BasePublicWidget: NewBasePublicWidget(0, 0),
 		size:             size,
@@ -549,6 +553,7 @@ type ImageWidget struct {
 
 // NewImageWidget creates a new image display widget.
 func NewImageWidget(size Size) *ImageWidget {
+	validateSize(size)
 	return &ImageWidget{
 		BasePublicWidget: NewBasePublicWidget(0, 0),
 		size:             size,
@@ -597,6 +602,7 @@ type Spacer struct {
 
 // NewSpacer creates a new invisible spacer widget.
 func NewSpacer(size Size) *Spacer {
+	validateSize(size)
 	return &Spacer{
 		BasePublicWidget: NewBasePublicWidget(0, 0),
 		size:             size,

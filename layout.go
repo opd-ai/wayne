@@ -15,6 +15,17 @@ type Size struct {
 	Height float64 // Height as percentage of parent (0-100)
 }
 
+// validateSize checks that a Size has valid percentage values (0-100).
+// It panics if Width or Height are negative or exceed 100.
+func validateSize(size Size) {
+	if size.Width < 0 || size.Width > 100 {
+		panic("wayne: Size.Width must be between 0 and 100 (percentage of parent)")
+	}
+	if size.Height < 0 || size.Height > 100 {
+		panic("wayne: Size.Height must be between 0 and 100 (percentage of parent)")
+	}
+}
+
 // FlowDirection controls how a container arranges its child widgets.
 type FlowDirection int
 
@@ -113,6 +124,7 @@ type Panel struct {
 
 // NewPanel creates a new Panel with percentage-based dimensions.
 func NewPanel(size Size) *Panel {
+	validateSize(size)
 	return &Panel{
 		BasePublicWidget: NewBasePublicWidget(0, 0),
 		size:             size,
