@@ -276,3 +276,57 @@ func TestDefaultFont(t *testing.T) {
 		t.Error("DefaultFont should not return nil")
 	}
 }
+
+func TestWindowDecorations(t *testing.T) {
+	app := NewApp()
+
+	tests := []struct {
+		name        string
+		decorations *bool
+		description string
+	}{
+		{
+			name:        "nil decorations (default)",
+			decorations: nil,
+			description: "Default behavior - window should be decorated",
+		},
+		{
+			name:        "explicitly decorated",
+			decorations: boolPtr(true),
+			description: "Explicitly set to decorated",
+		},
+		{
+			name:        "borderless window",
+			decorations: boolPtr(false),
+			description: "Borderless window - no title bar or borders",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cfg := WindowConfig{
+				Title:       "Test Window",
+				Width:       640,
+				Height:      480,
+				Decorations: tt.decorations,
+			}
+
+			win, err := app.NewWindow(cfg)
+			if err != nil {
+				t.Fatalf("NewWindow failed: %v", err)
+			}
+			if win == nil {
+				t.Fatal("Expected window to be created")
+			}
+
+			// Verify the window was created successfully
+			// Note: We cannot easily test the actual decoration state without
+			// running the Ebitengine event loop, but we verify the API accepts
+			// the configuration without error.
+		})
+	}
+}
+
+func boolPtr(b bool) *bool {
+	return &b
+}

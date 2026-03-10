@@ -171,8 +171,10 @@ func (a *App) Run() error {
 		ebiten.SetFullscreen(true)
 	}
 
-	// Note: Decorations field is not yet implemented due to ambiguity
-	// with bool zero value. Windows always have decorations.
+	// Apply window decoration setting
+	if cfg.Decorations != nil {
+		ebiten.SetWindowDecorated(*cfg.Decorations)
+	}
 
 	g := &ebitenGame{app: a}
 	return ebiten.RunGame(g)
@@ -351,9 +353,13 @@ type WindowConfig struct {
 	Fullscreen bool
 
 	// Decorations controls window decorations (title bar, borders).
-	// Currently not implemented - windows always have decorations.
-	// This field is reserved for future use.
-	Decorations bool
+	// nil (default) = decorated window (default platform behavior)
+	// true = force decorated window
+	// false = borderless window (no title bar, borders)
+	//
+	// Note: On mobile platforms (Android, iOS), this setting has no effect
+	// as Ebitengine does not support window decoration control on mobile.
+	Decorations *bool
 }
 
 // Window represents a UI window.
