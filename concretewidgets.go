@@ -51,6 +51,8 @@ func (b *Button) SetLabel(text string) {
 }
 
 // SetText changes the button's displayed text (alias for SetLabel).
+//
+// Deprecated: Use SetLabel instead. SetText is retained for compatibility but will be removed in v2.0.0.
 func (b *Button) SetText(text string) {
 	b.label = text
 }
