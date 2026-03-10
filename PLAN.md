@@ -38,7 +38,7 @@ on their parent `Panel`.
 assertion loop over all `PublicWidget` children rather than a concrete type
 check.
 
-### 1e. `EventDispatcher` uses the internal `Widget` interface; no concrete widget implements it (dispatcher.go line 19)
+### 1e. - [x] `EventDispatcher` uses the internal `Widget` interface; no concrete widget implements it (dispatcher.go line 19)
 **Problem:** Hit-testing is written against `Widget` (float64 bounds) but all
 concrete widgets implement `PublicWidget` (int pixel bounds), so the dispatcher
 can never resolve a hit.  
@@ -163,7 +163,7 @@ line (or use `toolchain go1.21.0`).
 
 1. - [x] Fix `|| true` in game.go (trivial, highest signal-to-noise).
 2. - [x] Fix bounds checks in `Button`, `TextInput`, `ScrollView` event handlers.
-3. Wire `Window.dispatcher` and adapt `EventDispatcher` to `PublicWidget`.
+3. - [x] Wire `Window.dispatcher` and adapt `EventDispatcher` to `PublicWidget`.
 4. Fix `Panel.HandleEvent` hit-testing.
 5. Emit `PointerEnter`/`PointerLeave`; track last-touch positions for `TouchUp`.
 6. Fix `App.SetTheme` propagation and `SetAlign` layout.

@@ -15,7 +15,7 @@ type EventDispatcher struct {
 	customHandlers  []func(*CustomEvent)
 
 	focusManager *FocusManager
-	widgetRoot   Widget
+	widgetRoot   PublicWidget
 }
 
 // NewEventDispatcher creates a new event dispatcher.
@@ -26,7 +26,7 @@ func NewEventDispatcher() *EventDispatcher {
 }
 
 // SetWidgetRoot sets the root widget for hit-testing.
-func (d *EventDispatcher) SetWidgetRoot(root Widget) {
+func (d *EventDispatcher) SetWidgetRoot(root PublicWidget) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.widgetRoot = root
@@ -91,8 +91,8 @@ func (d *EventDispatcher) dispatchPointer(evt *PointerEvent) {
 	defer d.mu.RUnlock()
 
 	if d.widgetRoot != nil {
-		if target := d.hitTest(d.widgetRoot, evt.x, evt.y); target != nil {
-			target.HandlePointer(evt)
+		if target := d.hitTest(d.widgetRoot, int(evt.x), int(evt.y)); target != nil {
+			target.HandleEvent(evt)
 			if evt.Consumed() {
 				return
 			}
@@ -111,24 +111,8 @@ func (d *EventDispatcher) dispatchKey(evt *KeyEvent) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	// Tab navigation
-	if evt.eventType == KeyPress && evt.key == KeyTab {
-		if evt.modifiers&ModShift != 0 {
-			d.focusManager.FocusPrev()
-		} else {
-			d.focusManager.FocusNext()
-		}
-		evt.Consume()
-		return
-	}
-
-	// Dispatch to focused widget
-	if focused := d.focusManager.Focused(); focused != nil {
-		focused.HandleKey(evt)
-		if evt.Consumed() {
-			return
-		}
-	}
+	// TODO: Tab navigation and focus management require Widget interface migration
+	// For now, dispatch key events to registered handlers only
 
 	for _, h := range d.keyHandlers {
 		if evt.Consumed() {
@@ -143,8 +127,8 @@ func (d *EventDispatcher) dispatchTouch(evt *TouchEvent) {
 	defer d.mu.RUnlock()
 
 	if d.widgetRoot != nil {
-		if target := d.hitTest(d.widgetRoot, evt.x, evt.y); target != nil {
-			target.HandleTouch(evt)
+		if target := d.hitTest(d.widgetRoot, int(evt.x), int(evt.y)); target != nil {
+			target.HandleEvent(evt)
 			if evt.Consumed() {
 				return
 			}
@@ -181,15 +165,29 @@ func (d *EventDispatcher) dispatchCustom(evt *CustomEvent) {
 	}
 }
 
-func (d *EventDispatcher) hitTest(w Widget, x, y float64) Widget {
-	if !w.Contains(x, y) {
+func (d *EventDispatcher) hitTest(w PublicWidget, x, y int) PublicWidget {
+	// Get widget position and bounds
+	var px, py, width, height int
+	if positioner, ok := w.(interface{ Position() (int, int) }); ok {
+		px, py = positioner.Position()
+	}
+	width, height = w.Bounds()
+
+	// Check if point is within widget bounds
+	if x < px || x >= px+width || y < py || y >= py+height {
 		return nil
 	}
-	for i := len(w.Children()) - 1; i >= 0; i-- {
-		if child := d.hitTest(w.Children()[i], x, y); child != nil {
-			return child
+
+	// Check container children (bottom-up, so last child is checked first)
+	if container, ok := w.(Container); ok {
+		children := container.Children()
+		for i := len(children) - 1; i >= 0; i-- {
+			if child := d.hitTest(children[i], x, y); child != nil {
+				return child
+			}
 		}
 	}
+
 	return w
 }
 

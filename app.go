@@ -166,10 +166,11 @@ func (a *App) NewWindow(cfg WindowConfig) (*Window, error) {
 	}
 
 	win := &Window{
-		app:    a,
-		title:  cfg.Title,
-		width:  cfg.Width,
-		height: cfg.Height,
+		app:        a,
+		title:      cfg.Title,
+		width:      cfg.Width,
+		height:     cfg.Height,
+		dispatcher: NewEventDispatcher(),
 	}
 
 	a.mu.Lock()
@@ -354,6 +355,9 @@ func (w *Window) SetRoot(root PublicWidget) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	w.root = root
+	if w.dispatcher != nil {
+		w.dispatcher.SetWidgetRoot(root)
+	}
 }
 
 // Close closes the window. If this is the primary window, it quits the app.
