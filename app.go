@@ -1,5 +1,6 @@
 //go:build windows || darwin || android || ios
 
+// Package wayne provides cross-platform UI widgets. See doc.go for details.
 package wayne
 
 import (
