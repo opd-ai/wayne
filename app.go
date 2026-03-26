@@ -191,6 +191,7 @@ func (a *App) Quit() {
 func (a *App) Close() {
 	if a.resources != nil {
 		a.resources.cleanup()
+		a.resources = nil
 	}
 }
 

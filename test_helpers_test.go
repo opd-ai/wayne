@@ -41,14 +41,15 @@ func createTestAppWithWindow(t *testing.T, title string) (*App, *Window) {
 }
 
 // createTestWidgetPanel creates a Panel with basic widgets for testing.
+// Note: Size values are percentages (0-100) of parent, not pixel values.
 func createTestWidgetPanel(t *testing.T) *Panel {
 	t.Helper()
-	btn := NewButton("Test Button", Size{Width: 100, Height: 30})
-	lbl := NewLabel("Test Label", Size{Width: 100, Height: 20})
-	input := NewTextInput("", Size{Width: 200, Height: 30})
+	btn := NewButton("Test Button", Size{Width: 80, Height: 10})
+	lbl := NewLabel("Test Label", Size{Width: 80, Height: 8})
+	input := NewTextInput("", Size{Width: 80, Height: 10})
 	input.SetPlaceholder("Test Input")
 
-	panel := NewPanel(Size{Width: 400, Height: 300})
+	panel := NewPanel(Size{Width: 100, Height: 100})
 	panel.SetFlowDirection(FlowColumn)
 	panel.Add(btn)
 	panel.Add(lbl)

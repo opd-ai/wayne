@@ -16,6 +16,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"golang.org/x/image/font/basicfont"
+	"golang.org/x/image/font/opentype"
 
 	textv2 "github.com/hajimehoshi/ebiten/v2/text/v2"
 )
@@ -92,14 +93,10 @@ func (rm *ResourceManager) DefaultFont() *Font {
 
 // LoadFont loads a font from the specified path at the given size.
 //
-// Currently returns the default embedded font with the requested size.
-// Custom TTF loading may be added in a future version.
-//
-// Supported formats: TrueType (.ttf), OpenType (.otf) - currently not implemented,
-// falls back to embedded font.
-//
-// The path parameter is currently ignored but will be used in future versions.
+// Supported formats: TrueType (.ttf) and OpenType (.otf) fonts.
 // Size is specified in points.
+//
+// Returns ErrInvalidFontData if the file cannot be parsed as a valid font.
 func (rm *ResourceManager) LoadFont(path string, size float64) (*Font, error) {
 	if rm.closed.Load() {
 		return nil, ErrResourceManagerClosed
@@ -113,15 +110,33 @@ func (rm *ResourceManager) LoadFont(path string, size float64) (*Font, error) {
 		return nil, fmt.Errorf("font size must be positive, got %f", size)
 	}
 
+	// Read the font file
+	fontData, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read font file %q: %w", path, err)
+	}
+
+	// Parse the font
+	parsedFont, err := opentype.Parse(fontData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse font %q: %w", path, ErrInvalidFontData)
+	}
+
+	// Create a face with the requested size (72 DPI is standard for points)
+	face, err := opentype.NewFace(parsedFont, &opentype.FaceOptions{
+		Size:    size,
+		DPI:     72,
+		Hinting: 0, // No hinting for cleaner rendering
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to create font face for %q: %w", path, err)
+	}
+
 	rm.mu.Lock()
 	defer rm.mu.Unlock()
 
-	if rm.defaultFont == nil {
-		return nil, fmt.Errorf("default font not initialized: %w", ErrInvalidFontData)
-	}
-
 	font := &Font{
-		face: rm.defaultFont.face,
+		face: textv2.NewGoXFace(face),
 		size: size,
 	}
 	rm.fonts[rm.nextFontID] = font
