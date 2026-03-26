@@ -81,6 +81,7 @@ type ebitenGame struct {
 	app *App
 
 	lastHoveredWidget PublicWidget
+	lastHoverPos      [2]float64 // Coordinates where pointer last moved while hovering
 	lastTouchPos      map[ebiten.TouchID][2]float64
 }
 
@@ -160,12 +161,18 @@ func (g *ebitenGame) processMouseInput() {
 		currentHovered := g.findHoveredWidget(mx, my)
 		if currentHovered != g.lastHoveredWidget {
 			if g.lastHoveredWidget != nil {
-				a.dispatchEvent(NewPointerEvent(PointerLeave, mxf, myf, 0, ScrollAxisVertical, 0))
+				// Use the last known position inside the widget for PointerLeave
+				a.dispatchEvent(NewPointerEvent(PointerLeave, g.lastHoverPos[0], g.lastHoverPos[1], 0, ScrollAxisVertical, 0))
 			}
 			g.lastHoveredWidget = currentHovered
 			if currentHovered != nil {
 				a.dispatchEvent(NewPointerEvent(PointerEnter, mxf, myf, 0, ScrollAxisVertical, 0))
 			}
+		}
+
+		// Update the last hover position when over a widget
+		if g.lastHoveredWidget != nil {
+			g.lastHoverPos = [2]float64{mxf, myf}
 		}
 
 		a.dispatchEvent(NewPointerEvent(PointerMove, mxf, myf, 0, ScrollAxisVertical, 0))

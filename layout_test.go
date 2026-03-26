@@ -182,9 +182,9 @@ func TestPanelSetAlign(t *testing.T) {
 }
 
 func TestPanelHandleEvent(t *testing.T) {
-	panel := NewPanel(Size{Width: 400, Height: 400})
+	panel := NewPanel(Size{Width: 100, Height: 100})
 
-	btn := NewButton("Click", Size{Width: 100, Height: 30})
+	btn := NewButton("Click", Size{Width: 80, Height: 10})
 	clicked := false
 	btn.OnClick(func() {
 		clicked = true
@@ -209,7 +209,7 @@ func TestPanelHandleEvent(t *testing.T) {
 func TestRowAdd(t *testing.T) {
 	row := NewRow()
 
-	btn := NewButton("Test", Size{Width: 100, Height: 30})
+	btn := NewButton("Test", Size{Width: 80, Height: 10})
 	row.Add(btn)
 
 	if len(row.children) != 1 {
@@ -220,7 +220,7 @@ func TestRowAdd(t *testing.T) {
 func TestColumnAdd(t *testing.T) {
 	col := NewColumn()
 
-	label := NewLabel("Test", Size{Width: 200, Height: 40})
+	label := NewLabel("Test", Size{Width: 80, Height: 10})
 	col.Add(label)
 
 	if len(col.children) != 1 {
@@ -889,16 +889,17 @@ func TestResolveTreeNestedPanels(t *testing.T) {
 	}
 }
 
-// TestResolveTreeGrid verifies that Grid layout works correctly.
-// Note: Grid currently inherits Panel's linear flow, not true grid layout.
+// TestResolveTreeGrid verifies that Grid layout arranges children in rows and columns.
 func TestResolveTreeGrid(t *testing.T) {
 	grid := NewGrid(2)
 	grid.SetPadding(0)
 	grid.SetGap(0)
 
 	// Add 4 buttons (2x2 grid)
+	buttons := make([]*Button, 4)
 	for i := 0; i < 4; i++ {
 		btn := NewButton("Btn", Size{Width: 100, Height: 100})
+		buttons[i] = btn
 		grid.Add(btn)
 	}
 
@@ -912,7 +913,168 @@ func TestResolveTreeGrid(t *testing.T) {
 		t.Errorf("Grid bounds incorrect: got (%d,%d,%d,%d), want (0,0,200,200)", x, y, w, h)
 	}
 
-	// Note: Grid currently uses Panel's FlowColumn layout (default)
-	// so children stack vertically. A proper grid implementation would
-	// need custom resolveChildren logic.
+	// With 2 columns and 4 items, we get 2 rows. Cell size = 100x100.
+	// Button 0: col=0, row=0 → position (0,0)
+	// Button 1: col=1, row=0 → position (100,0)
+	// Button 2: col=0, row=1 → position (0,100)
+	// Button 3: col=1, row=1 → position (100,100)
+	expected := [][2]int{
+		{0, 0},
+		{100, 0},
+		{0, 100},
+		{100, 100},
+	}
+
+	for i, btn := range buttons {
+		bx, by := btn.Position()
+		if bx != expected[i][0] || by != expected[i][1] {
+			t.Errorf("Button %d position incorrect: got (%d,%d), want (%d,%d)", i, bx, by, expected[i][0], expected[i][1])
+		}
+	}
+}
+
+// TestResolveTreeGridWithGap verifies that Grid layout applies gap between cells.
+func TestResolveTreeGridWithGap(t *testing.T) {
+	grid := NewGrid(2)
+	grid.SetPadding(0)
+	grid.SetGap(10)
+
+	// Add 4 buttons (2x2 grid)
+	buttons := make([]*Button, 4)
+	for i := 0; i < 4; i++ {
+		btn := NewButton("Btn", Size{Width: 100, Height: 100})
+		buttons[i] = btn
+		grid.Add(btn)
+	}
+
+	// Resolve with 210x210 pixel bounds
+	// Cell size = (210 - 10 gap) / 2 = 100 per column, (210 - 10 gap) / 2 = 100 per row
+	resolveTree(grid, 0, 0, 210, 210)
+
+	// Button 0: col=0, row=0 → position (0,0)
+	// Button 1: col=1, row=0 → position (100+10=110,0)
+	// Button 2: col=0, row=1 → position (0,110)
+	// Button 3: col=1, row=1 → position (110,110)
+	expected := [][2]int{
+		{0, 0},
+		{110, 0},
+		{0, 110},
+		{110, 110},
+	}
+
+	for i, btn := range buttons {
+		bx, by := btn.Position()
+		if bx != expected[i][0] || by != expected[i][1] {
+			t.Errorf("Button %d position incorrect: got (%d,%d), want (%d,%d)", i, bx, by, expected[i][0], expected[i][1])
+		}
+	}
+}
+
+// TestResolveTreeGridIncomplete verifies Grid layout with incomplete last row.
+func TestResolveTreeGridIncomplete(t *testing.T) {
+	grid := NewGrid(3)
+	grid.SetPadding(0)
+	grid.SetGap(0)
+
+	// Add 5 buttons (3 columns, 2 rows, last row incomplete)
+	buttons := make([]*Button, 5)
+	for i := 0; i < 5; i++ {
+		btn := NewButton("Btn", Size{Width: 100, Height: 100})
+		buttons[i] = btn
+		grid.Add(btn)
+	}
+
+	// Resolve with 300x200 pixel bounds (cells: 100x100)
+	resolveTree(grid, 0, 0, 300, 200)
+
+	// 5 items, 3 columns → 2 rows
+	// Button 0: col=0, row=0 → (0,0)
+	// Button 1: col=1, row=0 → (100,0)
+	// Button 2: col=2, row=0 → (200,0)
+	// Button 3: col=0, row=1 → (0,100)
+	// Button 4: col=1, row=1 → (100,100)
+	expected := [][2]int{
+		{0, 0},
+		{100, 0},
+		{200, 0},
+		{0, 100},
+		{100, 100},
+	}
+
+	for i, btn := range buttons {
+		bx, by := btn.Position()
+		if bx != expected[i][0] || by != expected[i][1] {
+			t.Errorf("Button %d position incorrect: got (%d,%d), want (%d,%d)", i, bx, by, expected[i][0], expected[i][1])
+		}
+	}
+}
+
+// TestResolveTreeStack verifies that Stack layout places all children at the same position.
+func TestResolveTreeStack(t *testing.T) {
+stack := NewStack()
+stack.SetPadding(0)
+
+// Add 3 buttons
+buttons := make([]*Button, 3)
+for i := 0; i < 3; i++ {
+btn := NewButton("Btn", Size{Width: 100, Height: 100})
+buttons[i] = btn
+stack.Add(btn)
+}
+
+// Resolve with 200x200 pixel bounds
+resolveTree(stack, 0, 0, 200, 200)
+
+// All children should be at position (0,0)
+for i, btn := range buttons {
+bx, by := btn.Position()
+if bx != 0 || by != 0 {
+t.Errorf("Button %d position incorrect: got (%d,%d), want (0,0)", i, bx, by)
+}
+}
+}
+
+// TestResolveTreeStackWithPadding verifies that Stack layout respects padding.
+func TestResolveTreeStackWithPadding(t *testing.T) {
+stack := NewStack()
+stack.SetPadding(10)
+
+// Add 2 buttons
+buttons := make([]*Button, 2)
+for i := 0; i < 2; i++ {
+btn := NewButton("Btn", Size{Width: 100, Height: 100})
+buttons[i] = btn
+stack.Add(btn)
+}
+
+// Resolve with 200x200 pixel bounds
+resolveTree(stack, 0, 0, 200, 200)
+
+// All children should be at position (10,10) due to padding
+for i, btn := range buttons {
+bx, by := btn.Position()
+if bx != 10 || by != 10 {
+t.Errorf("Button %d position incorrect: got (%d,%d), want (10,10)", i, bx, by)
+}
+}
+}
+
+// TestResolveTreeStackAlignCenter verifies that Stack layout centers children.
+func TestResolveTreeStackAlignCenter(t *testing.T) {
+stack := NewStack()
+stack.SetPadding(0)
+stack.SetAlign(AlignCenter)
+
+// Add a 50% x 50% button
+btn := NewButton("Btn", Size{Width: 50, Height: 50})
+stack.Add(btn)
+
+// Resolve with 200x200 pixel bounds
+resolveTree(stack, 0, 0, 200, 200)
+
+// Button should be centered: (200-100)/2=50 for both axes
+bx, by := btn.Position()
+if bx != 50 || by != 50 {
+t.Errorf("Button position incorrect: got (%d,%d), want (50,50)", bx, by)
+}
 }

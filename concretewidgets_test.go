@@ -7,7 +7,7 @@ import (
 )
 
 func TestButtonClick(t *testing.T) {
-	btn := NewButton("Test", Size{Width: 100, Height: 30})
+	btn := NewButton("Test", Size{Width: 80, Height: 10})
 
 	if btn == nil {
 		t.Fatal("NewButton returned nil")
@@ -36,7 +36,7 @@ func TestButtonClick(t *testing.T) {
 }
 
 func TestButtonHoverState(t *testing.T) {
-	btn := NewButton("Test", Size{Width: 100, Height: 30})
+	btn := NewButton("Test", Size{Width: 80, Height: 10})
 
 	if btn.hovered {
 		t.Error("Button should not be hovered initially")
@@ -58,7 +58,7 @@ func TestButtonHoverState(t *testing.T) {
 }
 
 func TestButtonDisabled(t *testing.T) {
-	btn := NewButton("Test", Size{Width: 100, Height: 30})
+	btn := NewButton("Test", Size{Width: 80, Height: 10})
 	clicked := false
 	btn.OnClick(func() {
 		clicked = true
@@ -78,7 +78,7 @@ func TestButtonDisabled(t *testing.T) {
 }
 
 func TestButtonSetLabel(t *testing.T) {
-	btn := NewButton("Initial", Size{Width: 100, Height: 30})
+	btn := NewButton("Initial", Size{Width: 80, Height: 10})
 
 	if btn.Text() != "Initial" {
 		t.Errorf("Expected initial text 'Initial', got '%s'", btn.Text())
@@ -92,7 +92,7 @@ func TestButtonSetLabel(t *testing.T) {
 }
 
 func TestButtonSetText(t *testing.T) {
-	btn := NewButton("Initial", Size{Width: 100, Height: 30})
+	btn := NewButton("Initial", Size{Width: 80, Height: 10})
 
 	btn.SetText("Changed")
 
@@ -102,7 +102,7 @@ func TestButtonSetText(t *testing.T) {
 }
 
 func TestLabelRendering(t *testing.T) {
-	label := NewLabel("Test Label", Size{Width: 200, Height: 40})
+	label := NewLabel("Test Label", Size{Width: 80, Height: 8})
 
 	if label == nil {
 		t.Fatal("NewLabel returned nil")
@@ -114,7 +114,7 @@ func TestLabelRendering(t *testing.T) {
 }
 
 func TestLabelSetText(t *testing.T) {
-	label := NewLabel("Initial", Size{Width: 200, Height: 40})
+	label := NewLabel("Initial", Size{Width: 80, Height: 8})
 
 	label.SetText("Updated")
 
@@ -124,7 +124,7 @@ func TestLabelSetText(t *testing.T) {
 }
 
 func TestLabelSetTheme(t *testing.T) {
-	label := NewLabel("Test", Size{Width: 200, Height: 40})
+	label := NewLabel("Test", Size{Width: 80, Height: 8})
 	customTheme := DefaultLight()
 
 	// Should not panic
@@ -138,7 +138,7 @@ func TestLabelSetTheme(t *testing.T) {
 }
 
 func TestTextInputKeyboardEntry(t *testing.T) {
-	input := NewTextInput("placeholder", Size{Width: 200, Height: 30})
+	input := NewTextInput("placeholder", Size{Width: 80, Height: 10})
 
 	if input == nil {
 		t.Fatal("NewTextInput returned nil")
@@ -169,7 +169,7 @@ func TestTextInputKeyboardEntry(t *testing.T) {
 }
 
 func TestTextInputBackspace(t *testing.T) {
-	input := NewTextInput("", Size{Width: 200, Height: 30})
+	input := NewTextInput("", Size{Width: 80, Height: 10})
 	input.focused = true
 	input.text = "test"
 	input.cursorPos = 4
@@ -183,7 +183,7 @@ func TestTextInputBackspace(t *testing.T) {
 }
 
 func TestTextInputDelete(t *testing.T) {
-	input := NewTextInput("", Size{Width: 200, Height: 30})
+	input := NewTextInput("", Size{Width: 80, Height: 10})
 	input.focused = true
 	input.text = "test"
 	input.cursorPos = 0
@@ -197,7 +197,7 @@ func TestTextInputDelete(t *testing.T) {
 }
 
 func TestTextInputSetText(t *testing.T) {
-	input := NewTextInput("", Size{Width: 200, Height: 30})
+	input := NewTextInput("", Size{Width: 80, Height: 10})
 
 	input.SetText("new value")
 
@@ -207,7 +207,7 @@ func TestTextInputSetText(t *testing.T) {
 }
 
 func TestTextInputPlaceholder(t *testing.T) {
-	input := NewTextInput("Enter text here", Size{Width: 200, Height: 30})
+	input := NewTextInput("Enter text here", Size{Width: 80, Height: 10})
 
 	if input.placeholder != "Enter text here" {
 		t.Errorf("Expected placeholder 'Enter text here', got '%s'", input.placeholder)
@@ -215,13 +215,13 @@ func TestTextInputPlaceholder(t *testing.T) {
 }
 
 func TestImageWidget(t *testing.T) {
-	img := NewImageWidget(Size{Width: 100, Height: 100})
+	img := NewImageWidget(Size{Width: 50, Height: 50})
 
 	if img == nil {
 		t.Fatal("NewImageWidget returned nil")
 	}
 
-	if img.sizeHint().Width != 100 || img.sizeHint().Height != 100 {
+	if img.sizeHint().Width != 50 || img.sizeHint().Height != 50 {
 		t.Error("ImageWidget size mismatch")
 	}
 }
@@ -239,20 +239,20 @@ func TestSpacer(t *testing.T) {
 }
 
 func TestScrollView(t *testing.T) {
-	sv := NewScrollView(Size{Width: 300, Height: 400})
+	sv := NewScrollView(Size{Width: 80, Height: 80})
 
 	if sv == nil {
 		t.Fatal("NewScrollView returned nil")
 	}
 
 	// Just test that it was created
-	if sv.sizeHint().Width != 300 || sv.sizeHint().Height != 400 {
+	if sv.sizeHint().Width != 80 || sv.sizeHint().Height != 80 {
 		t.Error("ScrollView size mismatch")
 	}
 }
 
 func TestScrollViewScrolling(t *testing.T) {
-	sv := NewScrollView(Size{Width: 300, Height: 400})
+	sv := NewScrollView(Size{Width: 80, Height: 80})
 
 	initialScrollY := sv.scrollY
 

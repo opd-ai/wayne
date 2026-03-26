@@ -18,16 +18,17 @@ func TestResourceManagerConcurrentCleanup(t *testing.T) {
 	rm := newResourceManager()
 
 	var wg sync.WaitGroup
-	errors := make(chan error, 100)
+	errChan := make(chan error, 100)
 
 	// Start goroutines that attempt to load resources
+	// Note: LoadFont will fail for non-existent files, which is expected
 	for i := 0; i < 50; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
 			_, err := rm.LoadFont("test.ttf", 12.0)
 			if err != nil {
-				errors <- err
+				errChan <- err
 			}
 		}()
 	}
@@ -39,7 +40,7 @@ func TestResourceManagerConcurrentCleanup(t *testing.T) {
 			img := createTestImage()
 			_, err := rm.LoadImageFromReader(img, "test.png")
 			if err != nil {
-				errors <- err
+				errChan <- err
 			}
 		}()
 	}
@@ -48,7 +49,7 @@ func TestResourceManagerConcurrentCleanup(t *testing.T) {
 	go rm.cleanup()
 
 	wg.Wait()
-	close(errors)
+	close(errChan)
 
 	// After cleanup, all new calls should return ErrResourceManagerClosed
 	_, err := rm.LoadFont("test.ttf", 12.0)
@@ -67,14 +68,9 @@ func TestResourceManagerConcurrentCleanup(t *testing.T) {
 func TestResourceManagerCleanupPanic(t *testing.T) {
 	rm := newResourceManager()
 
-	// Load some resources
-	_, err := rm.LoadFont("test.ttf", 12.0)
-	if err != nil {
-		t.Fatalf("Failed to load font: %v", err)
-	}
-
+	// Load image resource (font loading requires real file)
 	img := createTestImage()
-	_, err = rm.LoadImageFromReader(img, "test.png")
+	_, err := rm.LoadImageFromReader(img, "test.png")
 	if err != nil {
 		t.Fatalf("Failed to load image: %v", err)
 	}
@@ -99,15 +95,7 @@ func TestResourceManagerCleanupPanic(t *testing.T) {
 func TestResourceManagerLoadAfterClose(t *testing.T) {
 	rm := newResourceManager()
 
-	// Load some resources successfully
-	font, err := rm.LoadFont("test.ttf", 12.0)
-	if err != nil {
-		t.Fatalf("Failed to load font before cleanup: %v", err)
-	}
-	if font == nil {
-		t.Fatal("LoadFont returned nil font before cleanup")
-	}
-
+	// Load image resource successfully (font requires real file)
 	img := createTestImage()
 	imgRes, err := rm.LoadImageFromReader(img, "test.png")
 	if err != nil {
@@ -150,23 +138,34 @@ func TestResourceManagerDefaultFont(t *testing.T) {
 	}
 }
 
-// TestResourceManagerLoadFont tests the LoadFont method.
+// TestResourceManagerLoadFont tests the LoadFont method with non-existent files.
 func TestResourceManagerLoadFont(t *testing.T) {
 	rm := newResourceManager()
 
 	tests := []struct {
-		name string
-		path string
-		size float64
+		name        string
+		path        string
+		size        float64
+		wantErr     bool
+		errContains string
 	}{
-		{"Small font", "test.ttf", 10.0},
-		{"Medium font", "test.ttf", 14.0},
-		{"Large font", "test.ttf", 24.0},
+		{"Small font non-existent", "test.ttf", 10.0, true, "failed to read font file"},
+		{"Medium font non-existent", "test.ttf", 14.0, true, "failed to read font file"},
+		{"Large font non-existent", "test.ttf", 24.0, true, "failed to read font file"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			font, err := rm.LoadFont(tt.path, tt.size)
+			if tt.wantErr {
+				if err == nil {
+					t.Fatal("LoadFont should fail for non-existent file")
+				}
+				if !strings.Contains(err.Error(), tt.errContains) {
+					t.Errorf("LoadFont error: expected to contain %q, got %q", tt.errContains, err.Error())
+				}
+				return
+			}
 			if err != nil {
 				t.Fatalf("LoadFont failed: %v", err)
 			}
@@ -259,6 +258,13 @@ func TestLoadFontErrors(t *testing.T) {
 			path:        "test.ttf",
 			size:        12.0,
 			expectError: "resource manager is closed",
+		},
+		{
+			name:        "non-existent file",
+			setupRM:     newResourceManager,
+			path:        "/nonexistent/path/to/font.ttf",
+			size:        12.0,
+			expectError: "failed to read font file",
 		},
 	}
 

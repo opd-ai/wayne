@@ -64,6 +64,10 @@ func resolveTree(w PublicWidget, x, y, pixelW, pixelH int) {
 	}
 
 	switch c := w.(type) {
+	case *Grid:
+		c.resolveChildren(x, y, pixelW, pixelH)
+	case *Stack:
+		c.resolveChildren(x, y, pixelW, pixelH)
 	case *Panel:
 		c.resolveChildren(x, y, pixelW, pixelH)
 	case *Row:
@@ -379,6 +383,45 @@ func NewStack() *Stack {
 	return &Stack{Panel: panel}
 }
 
+// resolveChildren lays out stack children at the same position (z-order stacking).
+func (s *Stack) resolveChildren(parentX, parentY, parentW, parentH int) {
+	padding := s.padding
+
+	contentX := parentX + padding
+	contentY := parentY + padding
+	contentW := parentW - 2*padding
+	contentH := parentH - 2*padding
+	if contentW < 0 {
+		contentW = 0
+	}
+	if contentH < 0 {
+		contentH = 0
+	}
+
+	// All children are placed at the same position with full parent dimensions
+	for _, child := range s.children {
+		childW, childH := computeChildPixelSize(child, contentW, contentH)
+
+		// Apply alignment within the stack area
+		alignedX := contentX
+		alignedY := contentY
+
+		switch s.align {
+		case AlignCenter:
+			alignedX = contentX + (contentW-childW)/2
+			alignedY = contentY + (contentH-childH)/2
+		case AlignEnd:
+			alignedX = contentX + contentW - childW
+			alignedY = contentY + contentH - childH
+		case AlignStretch:
+			childW = contentW
+			childH = contentH
+		}
+
+		resolveTree(child, alignedX, alignedY, childW, childH)
+	}
+}
+
 // Grid is a fixed-column grid container.
 type Grid struct {
 	*Panel
@@ -403,4 +446,71 @@ func (g *Grid) SetColumns(columns int) {
 		columns = 1
 	}
 	g.columns = columns
+}
+
+// resolveChildren lays out grid children in rows and columns.
+func (g *Grid) resolveChildren(parentX, parentY, parentW, parentH int) {
+	padding := g.padding
+	gap := g.gap
+
+	contentX := parentX + padding
+	contentY := parentY + padding
+	contentW := parentW - 2*padding
+	contentH := parentH - 2*padding
+	if contentW < 0 {
+		contentW = 0
+	}
+	if contentH < 0 {
+		contentH = 0
+	}
+
+	numChildren := len(g.children)
+	if numChildren == 0 {
+		return
+	}
+
+	// Calculate number of rows
+	rows := (numChildren + g.columns - 1) / g.columns
+
+	// Calculate cell dimensions (accounting for gaps between cells)
+	totalGapW := gap * (g.columns - 1)
+	totalGapH := gap * (rows - 1)
+	cellW := (contentW - totalGapW) / g.columns
+	cellH := (contentH - totalGapH) / rows
+
+	if cellW < 0 {
+		cellW = 0
+	}
+	if cellH < 0 {
+		cellH = 0
+	}
+
+	for i, child := range g.children {
+		col := i % g.columns
+		row := i / g.columns
+
+		childX := contentX + col*(cellW+gap)
+		childY := contentY + row*(cellH+gap)
+
+		// Compute child's actual size based on its size hint relative to cell
+		childW, childH := computeChildPixelSize(child, cellW, cellH)
+
+		// Apply cross-axis alignment within the cell
+		alignedX := childX
+		alignedY := childY
+
+		switch g.align {
+		case AlignCenter:
+			alignedX = childX + (cellW-childW)/2
+			alignedY = childY + (cellH-childH)/2
+		case AlignEnd:
+			alignedX = childX + cellW - childW
+			alignedY = childY + cellH - childH
+		case AlignStretch:
+			childW = cellW
+			childH = cellH
+		}
+
+		resolveTree(child, alignedX, alignedY, childW, childH)
+	}
 }
