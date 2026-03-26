@@ -145,35 +145,26 @@ func TestAppClose(t *testing.T) {
 	}
 }
 
-func TestAppRunAfterRun(t *testing.T) {
-	// This test verifies ErrAlreadyRunning is defined and accessible
-	// We cannot actually test Run() in unit tests as it blocks indefinitely
-	if ErrAlreadyRunning == nil {
-		t.Error("ErrAlreadyRunning should be defined")
+func TestAppErrors(t *testing.T) {
+	tests := []struct {
+		name     string
+		err      error
+		expected string
+	}{
+		{"ErrAlreadyRunning", ErrAlreadyRunning, "wayne: app already running"},
+		{"ErrNotRunning", ErrNotRunning, "wayne: app not running"},
+		{"ErrInvalidWindowConfig", ErrInvalidWindowConfig, "wayne: invalid window configuration"},
 	}
 
-	if ErrAlreadyRunning.Error() != "wayne: app already running" {
-		t.Errorf("Unexpected error message: %s", ErrAlreadyRunning.Error())
-	}
-}
-
-func TestAppNotRunningError(t *testing.T) {
-	if ErrNotRunning == nil {
-		t.Error("ErrNotRunning should be defined")
-	}
-
-	if ErrNotRunning.Error() != "wayne: app not running" {
-		t.Errorf("Unexpected error message: %s", ErrNotRunning.Error())
-	}
-}
-
-func TestAppInvalidWindowConfigError(t *testing.T) {
-	if ErrInvalidWindowConfig == nil {
-		t.Error("ErrInvalidWindowConfig should be defined")
-	}
-
-	if ErrInvalidWindowConfig.Error() != "wayne: invalid window configuration" {
-		t.Errorf("Unexpected error message: %s", ErrInvalidWindowConfig.Error())
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.err == nil {
+				t.Errorf("%s should be defined", tt.name)
+			}
+			if tt.err.Error() != tt.expected {
+				t.Errorf("Expected %q, got %q", tt.expected, tt.err.Error())
+			}
+		})
 	}
 }
 

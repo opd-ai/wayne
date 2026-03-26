@@ -30,3 +30,13 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+
+# Analysis tool output
+*-baseline.json
+*-cleanup.json
+pre-*.json
+post-*.json
+diff-report*.json
+
+# Test output logs
+test-output.txt
