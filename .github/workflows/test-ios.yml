@@ -30,6 +30,8 @@ jobs:
           # Pin to a specific gomobile version for reproducibility
           go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20250106192035-c31d5b91ecc3
           go install golang.org/x/mobile/cmd/gobind@v0.0.0-20250106192035-c31d5b91ecc3
+          # Ensure the bind package is available for gobind
+          go get golang.org/x/mobile/bind@v0.0.0-20250106192035-c31d5b91ecc3
           gomobile init
 
       - name: Build for iOS (verification)
