@@ -417,6 +417,8 @@ func (t *TextInput) handleKeyEvent(ke *KeyEvent) bool {
 	switch ke.Key() {
 	case KeyBackspace:
 		return t.handleBackspace()
+	case KeyDelete:
+		return t.handleDelete()
 	case KeyLeft, KeyRight, KeyHome, KeyEnd:
 		return t.handleCursorMovement(ke.Key())
 	default:
@@ -432,6 +434,18 @@ func (t *TextInput) handleBackspace() bool {
 	if t.cursorPos > 0 {
 		runes = append(runes[:t.cursorPos-1], runes[t.cursorPos:]...)
 		t.cursorPos--
+		t.text = string(runes)
+		if t.onChange != nil {
+			t.onChange(t.text)
+		}
+	}
+	return true
+}
+
+func (t *TextInput) handleDelete() bool {
+	runes := []rune(t.text)
+	if t.cursorPos < len(runes) {
+		runes = append(runes[:t.cursorPos], runes[t.cursorPos+1:]...)
 		t.text = string(runes)
 		if t.onChange != nil {
 			t.onChange(t.text)

@@ -13,6 +13,9 @@ func TestButtonClick(t *testing.T) {
 		t.Fatal("NewButton returned nil")
 	}
 
+	// Set bounds so hit testing works (simulates layout resolution)
+	btn.SetBounds(0, 0, 100, 30)
+
 	clicked := false
 	btn.OnClick(func() {
 		clicked = true
@@ -253,10 +256,12 @@ func TestScrollView(t *testing.T) {
 
 func TestScrollViewScrolling(t *testing.T) {
 	sv := NewScrollView(Size{Width: 80, Height: 80})
+	// Set bounds so that contains() check passes for event coordinates
+	sv.SetBounds(100, 150, 200, 200)
 
 	initialScrollY := sv.scrollY
 
-	// Simulate scroll down (positive value)
+	// Simulate scroll down (positive value) within the widget's bounds
 	scrollEvt := NewPointerEvent(PointerScroll, 150, 200, 0, ScrollAxisVertical, 10.0)
 	sv.HandleEvent(scrollEvt)
 

@@ -82,7 +82,10 @@ func TestIntegration_FullAppLifecycle(t *testing.T) {
 
 	// Scrollable area
 	scrollView := NewScrollView(Size{Width: 100, Height: 20})
-	scrollContent := NewPanel(Size{Width: 100, Height: 200}) // Content larger than view
+	// Note: Size uses percentages (0-100), so we create a panel that uses
+	// all available width and height inside the scroll view, then manually
+	// set larger bounds after layout to simulate scrollable content
+	scrollContent := NewPanel(Size{Width: 100, Height: 100})
 	for i := 0; i < 10; i++ {
 		scrollContent.Add(NewLabel("Scroll item", Size{Width: 100, Height: 10}))
 	}
