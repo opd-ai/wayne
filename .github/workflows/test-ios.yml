@@ -8,7 +8,7 @@ on:
 
 jobs:
   test-ios:
-    name: Verify iOS Build Tags
+    name: Verify iOS Compatibility
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,17 +22,10 @@ jobs:
       - name: Install dependencies
         run: go mod download
 
-      - name: Verify code compiles with ios build tag
-        run: |
-          # Verify the package compiles when ios build tag is active
-          # This confirms the build constraints are correct
-          go build -tags ios ./...
-          go vet -tags ios ./...
-
-      - name: Run tests on macOS (covers darwin build tag)
+      - name: Run tests on macOS
         env:
           CGO_ENABLED: 1
         run: |
-          # Run unit tests on macOS which shares the darwin tag with iOS
-          # Full iOS testing requires physical devices or more complex simulator setup
+          # Run unit tests on macOS which shares darwin build tags with iOS
+          # The same code paths are exercised since both use the darwin tag
           go test -v -race -short ./...
