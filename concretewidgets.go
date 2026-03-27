@@ -313,9 +313,9 @@ func (b *Button) drawLabel(ctx *drawContext, c Canvas) {
 // adjustColorBrightness modifies color brightness by delta (-255 to +255).
 func adjustColorBrightness(c Color, delta int) Color {
 	return RGB(
-		uint8(max(0, min(255, int(c.R)+delta))),
-		uint8(max(0, min(255, int(c.G)+delta))),
-		uint8(max(0, min(255, int(c.B)+delta))),
+		int32(max(0, min(255, int(c.R)+delta))),
+		int32(max(0, min(255, int(c.G)+delta))),
+		int32(max(0, min(255, int(c.B)+delta))),
 	)
 }
 

@@ -21,7 +21,7 @@ func init() {
 
 // colorToRGBA converts a wayne Color to a standard image/color.RGBA.
 func colorToRGBA(c Color) color.RGBA {
-	return color.RGBA{R: c.R, G: c.G, B: c.B, A: c.A}
+	return color.RGBA{R: uint8(c.R), G: uint8(c.G), B: uint8(c.B), A: uint8(c.A)}
 }
 
 // ebitenCanvas implements the Canvas interface using an *ebiten.Image as the
@@ -334,7 +334,7 @@ func (c *ebitenCanvas) BoxShadow(x, y, width, height, offsetX, offsetY, blur int
 		return
 	}
 	// Draw a semi-transparent shadow rectangle offset from the main rect.
-	shadowCol := col.WithAlpha(uint8(float64(col.A) * 0.5))
+	shadowCol := col.WithAlpha(int32(float64(col.A) * 0.5))
 	shadowX := x + offsetX
 	shadowY := y + offsetY
 	c.FillRoundedRect(shadowX-blur, shadowY-blur, width+2*blur, height+2*blur, blur, shadowCol)

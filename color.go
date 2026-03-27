@@ -7,26 +7,32 @@ package wayne
 // Colors are specified in sRGB color space with separate red, green, blue,
 // and alpha components. Alpha of 255 is fully opaque, 0 is fully transparent.
 //
+// Note: Fields use int32 for gomobile compatibility (uint8 generates invalid
+// Objective-C code). Values should be in range 0-255.
+//
 // Example:
 //
 //	red := wayne.RGB(255, 0, 0)
 //	transparentBlue := wayne.RGBA(0, 0, 255, 128)
 type Color struct {
-	R, G, B, A uint8
+	R, G, B, A int32
 }
 
 // RGB creates an opaque color from red, green, and blue components.
-func RGB(r, g, b uint8) Color {
+// Values should be in range 0-255.
+func RGB(r, g, b int32) Color {
 	return Color{R: r, G: g, B: b, A: 255}
 }
 
 // RGBA creates a color from red, green, blue, and alpha components.
-func RGBA(r, g, b, a uint8) Color {
+// Values should be in range 0-255.
+func RGBA(r, g, b, a int32) Color {
 	return Color{R: r, G: g, B: b, A: a}
 }
 
 // WithAlpha returns a new color with the specified alpha value.
-func (c Color) WithAlpha(a uint8) Color {
+// Alpha should be in range 0-255.
+func (c Color) WithAlpha(a int32) Color {
 	return Color{R: c.R, G: c.G, B: c.B, A: a}
 }
 

@@ -65,7 +65,7 @@ func TestColorConstants(t *testing.T) {
 	tests := []struct {
 		name       string
 		color      Color
-		r, g, b, a uint8
+		r, g, b, a int32
 	}{
 		{"Transparent", Transparent, 0, 0, 0, 0},
 		{"Black", Black, 0, 0, 0, 255},
