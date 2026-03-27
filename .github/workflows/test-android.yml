@@ -38,7 +38,8 @@ jobs:
 
       - name: Install gomobile
         run: |
-          # Use the latest gomobile for best compatibility
+          # Download the mobile module explicitly to ensure bind package is available
+          go mod download golang.org/x/mobile@latest
           go install golang.org/x/mobile/cmd/gomobile@latest
           go install golang.org/x/mobile/cmd/gobind@latest
           gomobile init
