@@ -49,8 +49,11 @@ jobs:
         env:
           CGO_ENABLED: 1
         run: |
-          # Verify the package builds for Android target
-          gomobile bind -target=android -androidapi=21 -o /tmp/wayne.aar .
+          # Verify the package compiles for Android target
+          # Using gomobile build to compile the main example, not gomobile bind
+          # (gomobile bind requires all exported types to be gomobile-compatible,
+          # but this package is meant for Go-only use with Ebitengine)
+          cd examples && gomobile build -target=android -androidapi=21 ./...
 
       - name: Run Android tests on emulator
         uses: reactivecircus/android-emulator-runner@v2
