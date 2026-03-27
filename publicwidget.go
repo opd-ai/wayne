@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios || linux
+//go:build windows || darwin || android || ios
 
 package wayne
 
@@ -9,6 +9,14 @@ package wayne
 type PublicWidget interface {
 	// Bounds returns the current pixel dimensions of the widget.
 	Bounds() (width, height int)
+
+	// Width returns the current width in pixels.
+	// This is a gomobile-compatible accessor; see also Bounds().
+	Width() int
+
+	// Height returns the current height in pixels.
+	// This is a gomobile-compatible accessor; see also Bounds().
+	Height() int
 
 	// HandleEvent processes a user interaction event. Returns true if consumed.
 	HandleEvent(Event) bool
@@ -143,9 +151,33 @@ func (w *BasePublicWidget) Bounds() (width, height int) {
 	return w.width, w.height
 }
 
+// Width returns the current width of the widget in pixels.
+// This is a gomobile-compatible accessor; see also Bounds().
+func (w *BasePublicWidget) Width() int {
+	return w.width
+}
+
+// Height returns the current height of the widget in pixels.
+// This is a gomobile-compatible accessor; see also Bounds().
+func (w *BasePublicWidget) Height() int {
+	return w.height
+}
+
 // Position returns the current position of the widget in pixels.
 func (w *BasePublicWidget) Position() (x, y int) {
 	return w.x, w.y
+}
+
+// X returns the current x-coordinate of the widget in pixels.
+// This is a gomobile-compatible accessor; see also Position().
+func (w *BasePublicWidget) X() int {
+	return w.x
+}
+
+// Y returns the current y-coordinate of the widget in pixels.
+// This is a gomobile-compatible accessor; see also Position().
+func (w *BasePublicWidget) Y() int {
+	return w.y
 }
 
 // HandleEvent processes an event. The default implementation invokes the

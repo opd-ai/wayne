@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios || linux
+//go:build windows || darwin || android || ios
 
 package wayne
 
@@ -227,6 +227,18 @@ func (p *Panel) Bounds() (width, height int) {
 	return p.width, p.height
 }
 
+// Width returns the resolved width in pixels.
+// This is a gomobile-compatible accessor; see also Bounds().
+func (p *Panel) Width() int {
+	return p.width
+}
+
+// Height returns the resolved height in pixels.
+// This is a gomobile-compatible accessor; see also Bounds().
+func (p *Panel) Height() int {
+	return p.height
+}
+
 // HandleEvent passes events to children and returns true if any child consumed it.
 // For pointer and touch events, only forwards to children whose bounds contain the event coordinates.
 func (p *Panel) HandleEvent(evt Event) bool {
@@ -289,12 +301,17 @@ func (p *Panel) Draw(c Canvas) {
 	x, y := p.Position()
 	w, h := p.Bounds()
 	if w > 0 && h > 0 {
-		c.FillRoundedRect(x, y, w, h, effective.BorderRadius, effective.Background)
-		if effective.BorderWidth > 0 {
-			c.DrawLine(x, y, x+w, y, effective.Border, effective.BorderWidth)
-			c.DrawLine(x+w, y, x+w, y+h, effective.Border, effective.BorderWidth)
-			c.DrawLine(x, y+h, x+w, y+h, effective.Border, effective.BorderWidth)
-			c.DrawLine(x, y, x, y+h, effective.Border, effective.BorderWidth)
+		// Apply HiDPI scaling to border radius and width
+		scale := c.Scale()
+		borderRadius := int(float64(effective.BorderRadius) * scale)
+		borderWidth := int(float64(effective.BorderWidth) * scale)
+
+		c.FillRoundedRect(x, y, w, h, borderRadius, effective.Background)
+		if borderWidth > 0 {
+			c.DrawLine(x, y, x+w, y, effective.Border, borderWidth)
+			c.DrawLine(x+w, y, x+w, y+h, effective.Border, borderWidth)
+			c.DrawLine(x, y+h, x+w, y+h, effective.Border, borderWidth)
+			c.DrawLine(x, y, x, y+h, effective.Border, borderWidth)
 		}
 	}
 

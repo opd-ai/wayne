@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios || linux
+//go:build windows || darwin || android || ios
 
 package wayne
 
@@ -55,6 +55,18 @@ func (img *Image) Size() (width, height int) {
 	return img.width, img.height
 }
 
+// Width returns the image width in pixels.
+// This is a gomobile-compatible accessor; see also Size().
+func (img *Image) Width() int {
+	return img.width
+}
+
+// Height returns the image height in pixels.
+// This is a gomobile-compatible accessor; see also Size().
+func (img *Image) Height() int {
+	return img.height
+}
+
 // ResourceManager manages fonts and images for an application.
 type ResourceManager struct {
 	mu     sync.RWMutex
@@ -98,50 +110,65 @@ func (rm *ResourceManager) DefaultFont() *Font {
 //
 // Returns ErrInvalidFontData if the file cannot be parsed as a valid font.
 func (rm *ResourceManager) LoadFont(path string, size float64) (*Font, error) {
+	if err := rm.validateFontParams(path, size); err != nil {
+		return nil, err
+	}
+
+	face, err := rm.loadFontFace(path, size)
+	if err != nil {
+		return nil, err
+	}
+
+	return rm.registerFont(face, size), nil
+}
+
+// validateFontParams checks font loading parameters.
+func (rm *ResourceManager) validateFontParams(path string, size float64) error {
 	if rm.closed.Load() {
-		return nil, ErrResourceManagerClosed
+		return ErrResourceManagerClosed
 	}
-
 	if path == "" {
-		return nil, fmt.Errorf("font path cannot be empty")
+		return fmt.Errorf("font path cannot be empty")
 	}
-
 	if size <= 0 {
-		return nil, fmt.Errorf("font size must be positive, got %f", size)
+		return fmt.Errorf("font size must be positive, got %f", size)
 	}
+	return nil
+}
 
-	// Read the font file
+// loadFontFace reads and parses a font file, returning a ready-to-use face.
+func (rm *ResourceManager) loadFontFace(path string, size float64) (textv2.Face, error) {
 	fontData, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read font file %q: %w", path, err)
 	}
 
-	// Parse the font
 	parsedFont, err := opentype.Parse(fontData)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse font %q: %w", path, ErrInvalidFontData)
 	}
 
-	// Create a face with the requested size (72 DPI is standard for points)
 	face, err := opentype.NewFace(parsedFont, &opentype.FaceOptions{
 		Size:    size,
 		DPI:     72,
-		Hinting: 0, // No hinting for cleaner rendering
+		Hinting: 0,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create font face for %q: %w", path, err)
 	}
 
+	return textv2.NewGoXFace(face), nil
+}
+
+// registerFont adds a font to the manager and returns it.
+func (rm *ResourceManager) registerFont(face textv2.Face, size float64) *Font {
 	rm.mu.Lock()
 	defer rm.mu.Unlock()
 
-	font := &Font{
-		face: textv2.NewGoXFace(face),
-		size: size,
-	}
+	font := &Font{face: face, size: size}
 	rm.fonts[rm.nextFontID] = font
 	rm.nextFontID++
-	return font, nil
+	return font
 }
 
 // LoadImage loads an image from the specified path.
