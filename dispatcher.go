@@ -240,8 +240,8 @@ func (d *EventDispatcher) hitTest(w PublicWidget, x, y int) PublicWidget {
 // widgetContainsPoint checks if a point is within widget bounds.
 func (d *EventDispatcher) widgetContainsPoint(w PublicWidget, x, y int) bool {
 	px, py := 0, 0
-	if positioner, ok := w.(interface{ Position() (int, int) }); ok {
-		px, py = positioner.Position()
+	if positioner, ok := w.(interface{ position() (int, int) }); ok {
+		px, py = positioner.position()
 	}
 	width, height := w.Width(), w.Height()
 	return x >= px && x < px+width && y >= py && y < py+height

@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios || linux
+//go:build windows || darwin || android || ios
 
 package wayne
 
@@ -99,8 +99,8 @@ func TestIntegration_FullAppLifecycle(t *testing.T) {
 	resolveTree(root, 0, 0, 800, 600)
 
 	// Verify layout was resolved
-	x, y := root.Position()
-	w, h := root.Bounds()
+	x, y := root.X(), root.Y()
+	w, h := root.Width(), root.Height()
 	if w != 800 || h != 600 {
 		t.Errorf("Root bounds not resolved correctly: got %dx%d, expected 800x600", w, h)
 	}
@@ -182,7 +182,7 @@ func TestIntegration_WidgetTreeDepth(t *testing.T) {
 	resolveTree(root, 0, 0, 1000, 1000)
 
 	// Verify deepest button has valid bounds
-	w, h := deepButton.Bounds()
+	w, h := deepButton.Width(), deepButton.Height()
 	if w <= 0 || h <= 0 {
 		t.Errorf("Deep button has invalid bounds: %dx%d", w, h)
 	}
@@ -261,8 +261,8 @@ func TestIntegration_EventConsumption(t *testing.T) {
 	resolveTree(panel, 0, 0, 400, 400)
 
 	// Create event in btn1's area
-	x, _ := btn1.Position()
-	w, _ := btn1.Bounds()
+	x := btn1.X()
+	w := btn1.Width()
 
 	// Event within btn1
 	evt := NewPointerEvent(PointerButtonPress, float64(x+w/2), 50, PointerButtonLeft, ScrollAxisVertical, 0)

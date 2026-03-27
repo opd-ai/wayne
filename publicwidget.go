@@ -33,8 +33,8 @@ type PublicWidget interface {
 // boundsProvider is an unexported interface for internal code that needs
 // multi-return bounds/position methods. Not exported to avoid gomobile issues.
 type boundsProvider interface {
-	Bounds() (width, height int)
-	Position() (x, y int)
+	bounds() (width, height int)
+	position() (x, y int)
 }
 
 // Container extends PublicWidget for widgets that can contain child widgets.
@@ -129,9 +129,7 @@ type Canvas interface {
 //	}
 //
 //	func (p *ColoredPanel) Draw(c wayne.Canvas) {
-//	    x, y := p.Position()
-//	    w, h := p.Bounds()
-//	    c.FillRect(x, y, w, h, p.Color)
+//	    c.FillRect(p.X(), p.Y(), p.Width(), p.Height(), p.Color)
 //	}
 type BasePublicWidget struct {
 	x, y          int
@@ -152,10 +150,10 @@ func NewBasePublicWidget(width, height int) BasePublicWidget {
 	}
 }
 
-// Bounds returns the current pixel dimensions of the widget.
-// This method is available on concrete types but not in the PublicWidget interface
-// for gomobile compatibility. Use Width() and Height() for interface-level access.
-func (w *BasePublicWidget) Bounds() (width, height int) {
+// bounds returns the current pixel dimensions of the widget.
+// This method is unexported for gomobile compatibility. For external access,
+// use Width() and Height() which are gomobile-safe single-value accessors.
+func (w *BasePublicWidget) bounds() (width, height int) {
 	return w.width, w.height
 }
 
@@ -169,10 +167,10 @@ func (w *BasePublicWidget) Height() int {
 	return w.height
 }
 
-// Position returns the current position of the widget in pixels.
-// This method is available on concrete types but not in the PublicWidget interface
-// for gomobile compatibility. Use X() and Y() for interface-level access.
-func (w *BasePublicWidget) Position() (x, y int) {
+// position returns the current position of the widget in pixels.
+// This method is unexported for gomobile compatibility. For external access,
+// use X() and Y() which are gomobile-safe single-value accessors.
+func (w *BasePublicWidget) position() (x, y int) {
 	return w.x, w.y
 }
 

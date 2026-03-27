@@ -474,15 +474,15 @@ func TestResolveTreeFlowRow(t *testing.T) {
 	resolveTree(panel, 0, 0, 300, 100)
 
 	// Check panel bounds
-	x, y := panel.Position()
-	w, h := panel.Bounds()
+	x, y := panel.X(), panel.Y()
+	w, h := panel.Width(), panel.Height()
 	if x != 0 || y != 0 || w != 300 || h != 100 {
 		t.Errorf("Panel bounds incorrect: got (%d,%d,%d,%d), want (0,0,300,100)", x, y, w, h)
 	}
 
 	// Check first button position (should be at 0,0 with ~100px width)
-	x1, y1 := btn1.Position()
-	w1, h1 := btn1.Bounds()
+	x1, y1 := btn1.X(), btn1.Y()
+	w1, h1 := btn1.Width(), btn1.Height()
 	if x1 != 0 || y1 != 0 {
 		t.Errorf("Button 1 position incorrect: got (%d,%d), want (0,0)", x1, y1)
 	}
@@ -494,8 +494,8 @@ func TestResolveTreeFlowRow(t *testing.T) {
 	}
 
 	// Check second button position (should be at ~100,0)
-	x2, y2 := btn2.Position()
-	w2, h2 := btn2.Bounds()
+	x2, y2 := btn2.X(), btn2.Y()
+	w2, h2 := btn2.Width(), btn2.Height()
 	if x2 < 99 || x2 > 100 {
 		t.Errorf("Button 2 x position incorrect: got %d, want ~100", x2)
 	}
@@ -511,8 +511,8 @@ func TestResolveTreeFlowRow(t *testing.T) {
 
 	// Check third button position (should be at ~200,0)
 	// Note: With 33.33% width on 300px, each button is ~99px, so x3 = 99+99 = 198
-	x3, y3 := btn3.Position()
-	w3, h3 := btn3.Bounds()
+	x3, y3 := btn3.X(), btn3.Y()
+	w3, h3 := btn3.Width(), btn3.Height()
 	if x3 < 198 || x3 > 201 {
 		t.Errorf("Button 3 x position incorrect: got %d, want ~198-200", x3)
 	}
@@ -548,15 +548,15 @@ func TestResolveTreeFlowColumn(t *testing.T) {
 	resolveTree(panel, 0, 0, 200, 300)
 
 	// Check panel bounds
-	x, y := panel.Position()
-	w, h := panel.Bounds()
+	x, y := panel.X(), panel.Y()
+	w, h := panel.Width(), panel.Height()
 	if x != 0 || y != 0 || w != 200 || h != 300 {
 		t.Errorf("Panel bounds incorrect: got (%d,%d,%d,%d), want (0,0,200,300)", x, y, w, h)
 	}
 
 	// Check first button position (should be at 0,0 with ~100px height)
-	x1, y1 := btn1.Position()
-	w1, h1 := btn1.Bounds()
+	x1, y1 := btn1.X(), btn1.Y()
+	w1, h1 := btn1.Width(), btn1.Height()
 	if x1 != 0 || y1 != 0 {
 		t.Errorf("Button 1 position incorrect: got (%d,%d), want (0,0)", x1, y1)
 	}
@@ -568,8 +568,8 @@ func TestResolveTreeFlowColumn(t *testing.T) {
 	}
 
 	// Check second button position (should be at 0,~100)
-	x2, y2 := btn2.Position()
-	w2, h2 := btn2.Bounds()
+	x2, y2 := btn2.X(), btn2.Y()
+	w2, h2 := btn2.Width(), btn2.Height()
 	if x2 != 0 {
 		t.Errorf("Button 2 x position incorrect: got %d, want 0", x2)
 	}
@@ -585,8 +585,8 @@ func TestResolveTreeFlowColumn(t *testing.T) {
 
 	// Check third button position (should be at 0,~200)
 	// Note: With 33.33% height on 300px, each button is ~99px, so y3 = 99+99 = 198
-	x3, y3 := btn3.Position()
-	w3, h3 := btn3.Bounds()
+	x3, y3 := btn3.X(), btn3.Y()
+	w3, h3 := btn3.Width(), btn3.Height()
 	if x3 != 0 {
 		t.Errorf("Button 3 x position incorrect: got %d, want 0", x3)
 	}
@@ -616,16 +616,16 @@ func TestResolveTreeWithPadding(t *testing.T) {
 	resolveTree(panel, 0, 0, 200, 200)
 
 	// Panel should be 200x200 at (0,0)
-	x, y := panel.Position()
-	w, h := panel.Bounds()
+	x, y := panel.X(), panel.Y()
+	w, h := panel.Width(), panel.Height()
 	if x != 0 || y != 0 || w != 200 || h != 200 {
 		t.Errorf("Panel bounds incorrect: got (%d,%d,%d,%d), want (0,0,200,200)", x, y, w, h)
 	}
 
 	// Button should be inset by padding (20px on all sides)
 	// Content area: 160x160 at (20,20)
-	btnX, btnY := btn.Position()
-	btnW, btnH := btn.Bounds()
+	btnX, btnY := btn.X(), btn.Y()
+	btnW, btnH := btn.Width(), btn.Height()
 	if btnX != 20 || btnY != 20 {
 		t.Errorf("Button position incorrect: got (%d,%d), want (20,20)", btnX, btnY)
 	}
@@ -652,8 +652,8 @@ func TestResolveTreeWithGap(t *testing.T) {
 	resolveTree(panel, 0, 0, 200, 100)
 
 	// First button should be at (0,0) with 100px width
-	x1, y1 := btn1.Position()
-	w1, h1 := btn1.Bounds()
+	x1, y1 := btn1.X(), btn1.Y()
+	w1, h1 := btn1.Width(), btn1.Height()
 	if x1 != 0 || y1 != 0 {
 		t.Errorf("Button 1 position incorrect: got (%d,%d), want (0,0)", x1, y1)
 	}
@@ -665,8 +665,8 @@ func TestResolveTreeWithGap(t *testing.T) {
 	}
 
 	// Second button should be at (110,0) with 100px width (100 + 10 gap)
-	x2, y2 := btn2.Position()
-	w2, h2 := btn2.Bounds()
+	x2, y2 := btn2.X(), btn2.Y()
+	w2, h2 := btn2.Width(), btn2.Height()
 	if x2 != 110 || y2 != 0 {
 		t.Errorf("Button 2 position incorrect: got (%d,%d), want (110,0)", x2, y2)
 	}
@@ -698,8 +698,8 @@ func TestResolveTreeWithPaddingAndGap(t *testing.T) {
 
 	// Content area after padding: 100x100 at (10,10)
 	// First button: 50% of 100 = 50px height, at (10,10)
-	x1, y1 := btn1.Position()
-	w1, h1 := btn1.Bounds()
+	x1, y1 := btn1.X(), btn1.Y()
+	w1, h1 := btn1.Width(), btn1.Height()
 	if x1 != 10 || y1 != 10 {
 		t.Errorf("Button 1 position incorrect: got (%d,%d), want (10,10)", x1, y1)
 	}
@@ -711,8 +711,8 @@ func TestResolveTreeWithPaddingAndGap(t *testing.T) {
 	}
 
 	// Second button: at (10, 10+50+5) = (10,65)
-	x2, y2 := btn2.Position()
-	w2, h2 := btn2.Bounds()
+	x2, y2 := btn2.X(), btn2.Y()
+	w2, h2 := btn2.Width(), btn2.Height()
 	if x2 != 10 || y2 != 65 {
 		t.Errorf("Button 2 position incorrect: got (%d,%d), want (10,65)", x2, y2)
 	}
@@ -743,8 +743,8 @@ func TestResolveTreeAlignCenter(t *testing.T) {
 	// For FlowRow, cross axis is vertical, so button should be vertically centered
 	// Button height: 50% of 200 = 100px
 	// Center position: (200 - 100) / 2 = 50px from top
-	x, y := btn.Position()
-	w, h := btn.Bounds()
+	x, y := btn.X(), btn.Y()
+	w, h := btn.Width(), btn.Height()
 	if x != 0 {
 		t.Errorf("Button x incorrect: got %d, want 0", x)
 	}
@@ -778,8 +778,8 @@ func TestResolveTreeAlignEnd(t *testing.T) {
 	// For FlowColumn, cross axis is horizontal, so button should be right-aligned
 	// Button width: 50% of 200 = 100px
 	// End position: 200 - 100 = 100px from left
-	x, y := btn.Position()
-	w, h := btn.Bounds()
+	x, y := btn.X(), btn.Y()
+	w, h := btn.Width(), btn.Height()
 	if x != 100 {
 		t.Errorf("Button x incorrect: got %d, want 100 (end-aligned)", x)
 	}
@@ -812,8 +812,8 @@ func TestResolveTreeAlignStretch(t *testing.T) {
 
 	// For FlowRow with AlignStretch, button height should be stretched to fill
 	// the full content height (200px), ignoring the 50% size hint
-	x, y := btn.Position()
-	w, h := btn.Bounds()
+	x, y := btn.X(), btn.Y()
+	w, h := btn.Width(), btn.Height()
 	if x != 0 {
 		t.Errorf("Button x incorrect: got %d, want 0", x)
 	}
@@ -856,8 +856,8 @@ func TestResolveTreeNestedPanels(t *testing.T) {
 	resolveTree(outer, 0, 0, 200, 200)
 
 	// Outer panel: 200x200 at (0,0)
-	outerX, outerY := outer.Position()
-	outerW, outerH := outer.Bounds()
+	outerX, outerY := outer.X(), outer.Y()
+	outerW, outerH := outer.Width(), outer.Height()
 	if outerX != 0 || outerY != 0 || outerW != 200 || outerH != 200 {
 		t.Errorf("Outer panel bounds incorrect: got (%d,%d,%d,%d), want (0,0,200,200)",
 			outerX, outerY, outerW, outerH)
@@ -865,8 +865,8 @@ func TestResolveTreeNestedPanels(t *testing.T) {
 
 	// Inner panel: content area of outer is 180x180 at (10,10)
 	// Inner takes 50% height = 90px, positioned at (10,10)
-	innerX, innerY := inner.Position()
-	innerW, innerH := inner.Bounds()
+	innerX, innerY := inner.X(), inner.Y()
+	innerW, innerH := inner.Width(), inner.Height()
 	if innerX != 10 || innerY != 10 {
 		t.Errorf("Inner panel position incorrect: got (%d,%d), want (10,10)", innerX, innerY)
 	}
@@ -876,8 +876,8 @@ func TestResolveTreeNestedPanels(t *testing.T) {
 
 	// Buttons: inner content area is 170x80 at (15,15) [inner pos + 5px padding]
 	// Each button gets 50% width = 85px
-	btn1X, btn1Y := btn1.Position()
-	btn1W, btn1H := btn1.Bounds()
+	btn1X, btn1Y := btn1.X(), btn1.Y()
+	btn1W, btn1H := btn1.Width(), btn1.Height()
 	if btn1X != 15 || btn1Y != 15 {
 		t.Errorf("Button 1 position incorrect: got (%d,%d), want (15,15)", btn1X, btn1Y)
 	}
@@ -885,8 +885,8 @@ func TestResolveTreeNestedPanels(t *testing.T) {
 		t.Errorf("Button 1 size incorrect: got (%d,%d), want (85,80)", btn1W, btn1H)
 	}
 
-	btn2X, btn2Y := btn2.Position()
-	btn2W, btn2H := btn2.Bounds()
+	btn2X, btn2Y := btn2.X(), btn2.Y()
+	btn2W, btn2H := btn2.Width(), btn2.Height()
 	if btn2X != 100 || btn2Y != 15 {
 		t.Errorf("Button 2 position incorrect: got (%d,%d), want (100,15)", btn2X, btn2Y)
 	}
@@ -913,8 +913,8 @@ func TestResolveTreeGrid(t *testing.T) {
 	resolveTree(grid, 0, 0, 200, 200)
 
 	// Grid should be positioned at (0,0) with 200x200 size
-	x, y := grid.Position()
-	w, h := grid.Bounds()
+	x, y := grid.X(), grid.Y()
+	w, h := grid.Width(), grid.Height()
 	if x != 0 || y != 0 || w != 200 || h != 200 {
 		t.Errorf("Grid bounds incorrect: got (%d,%d,%d,%d), want (0,0,200,200)", x, y, w, h)
 	}
@@ -932,7 +932,7 @@ func TestResolveTreeGrid(t *testing.T) {
 	}
 
 	for i, btn := range buttons {
-		bx, by := btn.Position()
+		bx, by := btn.X(), btn.Y()
 		if bx != expected[i][0] || by != expected[i][1] {
 			t.Errorf("Button %d position incorrect: got (%d,%d), want (%d,%d)", i, bx, by, expected[i][0], expected[i][1])
 		}
@@ -969,7 +969,7 @@ func TestResolveTreeGridWithGap(t *testing.T) {
 	}
 
 	for i, btn := range buttons {
-		bx, by := btn.Position()
+		bx, by := btn.X(), btn.Y()
 		if bx != expected[i][0] || by != expected[i][1] {
 			t.Errorf("Button %d position incorrect: got (%d,%d), want (%d,%d)", i, bx, by, expected[i][0], expected[i][1])
 		}
@@ -1008,7 +1008,7 @@ func TestResolveTreeGridIncomplete(t *testing.T) {
 	}
 
 	for i, btn := range buttons {
-		bx, by := btn.Position()
+		bx, by := btn.X(), btn.Y()
 		if bx != expected[i][0] || by != expected[i][1] {
 			t.Errorf("Button %d position incorrect: got (%d,%d), want (%d,%d)", i, bx, by, expected[i][0], expected[i][1])
 		}
@@ -1033,7 +1033,7 @@ func TestResolveTreeStack(t *testing.T) {
 
 	// All children should be at position (0,0)
 	for i, btn := range buttons {
-		bx, by := btn.Position()
+		bx, by := btn.X(), btn.Y()
 		if bx != 0 || by != 0 {
 			t.Errorf("Button %d position incorrect: got (%d,%d), want (0,0)", i, bx, by)
 		}
@@ -1058,7 +1058,7 @@ func TestResolveTreeStackWithPadding(t *testing.T) {
 
 	// All children should be at position (10,10) due to padding
 	for i, btn := range buttons {
-		bx, by := btn.Position()
+		bx, by := btn.X(), btn.Y()
 		if bx != 10 || by != 10 {
 			t.Errorf("Button %d position incorrect: got (%d,%d), want (10,10)", i, bx, by)
 		}
@@ -1079,7 +1079,7 @@ func TestResolveTreeStackAlignCenter(t *testing.T) {
 	resolveTree(stack, 0, 0, 200, 200)
 
 	// Button should be centered: (200-100)/2=50 for both axes
-	bx, by := btn.Position()
+	bx, by := btn.X(), btn.Y()
 	if bx != 50 || by != 50 {
 		t.Errorf("Button position incorrect: got (%d,%d), want (50,50)", bx, by)
 	}

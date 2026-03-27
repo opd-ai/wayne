@@ -222,10 +222,10 @@ func (p *Panel) Children() []PublicWidget {
 	return p.children
 }
 
-// Bounds returns the resolved pixel dimensions.
-// This method is available on concrete types but not in the PublicWidget interface
-// for gomobile compatibility. Use Width() and Height() for interface-level access.
-func (p *Panel) Bounds() (width, height int) {
+// bounds returns the resolved pixel dimensions.
+// This method is unexported for gomobile compatibility.
+// Use Width() and Height() for interface-level access.
+func (p *Panel) bounds() (width, height int) {
 	return p.width, p.height
 }
 
@@ -268,11 +268,11 @@ func (p *Panel) handleSpatialEvent(evt Event, evtX, evtY float64) bool {
 
 // childContainsPoint checks if a child widget contains the given point.
 func (p *Panel) childContainsPoint(child PublicWidget, px, py float64) bool {
-	positioner, ok := child.(interface{ Position() (int, int) })
+	positioner, ok := child.(interface{ position() (int, int) })
 	if !ok {
 		return false
 	}
-	x, y := positioner.Position()
+	x, y := positioner.position()
 	w, h := child.Width(), child.Height()
 	return contains(x, y, w, h, px, py)
 }
@@ -289,35 +289,49 @@ func (p *Panel) broadcastEvent(evt Event) bool {
 
 // Draw renders the panel background and all children.
 func (p *Panel) Draw(c Canvas) {
-	theme := c.Theme()
-	if p.theme != nil {
-		theme = *p.theme
-	}
-	effective := theme
-	if p.styleOverride != nil {
-		effective = p.styleOverride.applyToTheme(theme)
-	}
+	effective := p.resolveEffectiveTheme(c)
+	x, y := p.position()
+	w, h := p.bounds()
 
-	x, y := p.Position()
-	w, h := p.Bounds()
 	if w > 0 && h > 0 {
-		// Apply HiDPI scaling to border radius and width
-		scale := c.Scale()
-		borderRadius := int(float64(effective.BorderRadius) * scale)
-		borderWidth := int(float64(effective.BorderWidth) * scale)
-
-		c.FillRoundedRect(x, y, w, h, borderRadius, effective.Background)
-		if borderWidth > 0 {
-			c.DrawLine(x, y, x+w, y, effective.Border, borderWidth)
-			c.DrawLine(x+w, y, x+w, y+h, effective.Border, borderWidth)
-			c.DrawLine(x, y+h, x+w, y+h, effective.Border, borderWidth)
-			c.DrawLine(x, y, x, y+h, effective.Border, borderWidth)
-		}
+		p.drawBackground(c, x, y, w, h, effective)
 	}
 
 	for _, child := range p.children {
 		child.Draw(c)
 	}
+}
+
+// resolveEffectiveTheme returns the theme to use for rendering.
+func (p *Panel) resolveEffectiveTheme(c Canvas) Theme {
+	theme := c.Theme()
+	if p.theme != nil {
+		theme = *p.theme
+	}
+	if p.styleOverride != nil {
+		return p.styleOverride.applyToTheme(theme)
+	}
+	return theme
+}
+
+// drawBackground renders the panel's background and border.
+func (p *Panel) drawBackground(c Canvas, x, y, w, h int, theme Theme) {
+	scale := c.Scale()
+	borderRadius := int(float64(theme.BorderRadius) * scale)
+	borderWidth := int(float64(theme.BorderWidth) * scale)
+
+	c.FillRoundedRect(x, y, w, h, borderRadius, theme.Background)
+	if borderWidth > 0 {
+		p.drawBorder(c, x, y, w, h, theme.Border, borderWidth)
+	}
+}
+
+// drawBorder renders the panel's border lines.
+func (p *Panel) drawBorder(c Canvas, x, y, w, h int, color Color, width int) {
+	c.DrawLine(x, y, x+w, y, color, width)
+	c.DrawLine(x+w, y, x+w, y+h, color, width)
+	c.DrawLine(x, y+h, x+w, y+h, color, width)
+	c.DrawLine(x, y, x, y+h, color, width)
 }
 
 // SetFlowDirection sets how this panel arranges its children.

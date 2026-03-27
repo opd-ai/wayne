@@ -50,10 +50,10 @@ type Image struct {
 	height int
 }
 
-// Size returns the image dimensions in pixels.
-// This method returns multiple values which is not gomobile-compatible.
+// size returns the image dimensions in pixels.
+// This method is unexported for gomobile compatibility.
 // For gomobile, use Width() and Height() instead.
-func (img *Image) Size() (width, height int) {
+func (img *Image) size() (width, height int) {
 	return img.width, img.height
 }
 
@@ -178,17 +178,8 @@ func (rm *ResourceManager) registerFont(face textv2.Face, size float64) *Font {
 // Returns an error if the file does not exist, is not accessible, or contains
 // unsupported image data. Error messages include the file path for debugging.
 func (rm *ResourceManager) LoadImage(path string) (*Image, error) {
-	if rm.closed.Load() {
-		return nil, ErrResourceManagerClosed
-	}
-
-	if path == "" {
-		return nil, fmt.Errorf("image path cannot be empty")
-	}
-
-	// Validate file accessibility before attempting to load
-	if _, err := os.Stat(path); err != nil {
-		return nil, fmt.Errorf("resource path %q not accessible: %w", path, err)
+	if err := rm.validateImagePath(path); err != nil {
+		return nil, err
 	}
 
 	f, err := os.Open(path)
@@ -197,11 +188,25 @@ func (rm *ResourceManager) LoadImage(path string) (*Image, error) {
 	}
 	defer f.Close()
 
-	img, err := rm.LoadImageFromReader(f, path)
-	if err != nil {
-		return nil, fmt.Errorf("failed to load image %q: %w", path, err)
+	return rm.LoadImageFromReader(f, path)
+}
+
+// validateImagePath checks if an image path is valid and accessible.
+func (rm *ResourceManager) validateImagePath(path string) error {
+	if rm.closed.Load() {
+		return ErrResourceManagerClosed
 	}
-	return img, nil
+	if path == "" {
+		return fmt.Errorf("image path cannot be empty")
+	}
+	info, err := os.Stat(path)
+	if err != nil {
+		return fmt.Errorf("resource path %q not accessible: %w", path, err)
+	}
+	if info.IsDir() {
+		return fmt.Errorf("failed to load image %q: path is a directory, not a file", path)
+	}
+	return nil
 }
 
 // LoadImageFromReader loads an image from an io.Reader.
@@ -218,20 +223,37 @@ func (rm *ResourceManager) LoadImageFromReader(r io.Reader, filenameHint string)
 
 	img, format, err := image.Decode(r)
 	if err != nil {
-		if filenameHint != "" {
-			return nil, fmt.Errorf("failed to decode image from %q: %w", filenameHint, err)
-		}
-		return nil, fmt.Errorf("failed to decode image: %w", err)
+		return nil, rm.formatDecodeError(err, filenameHint)
 	}
 
-	// Check for supported formats
-	if format != "png" && format != "jpeg" && format != "gif" {
-		if filenameHint != "" {
-			return nil, fmt.Errorf("unsupported image format %q in %q: %w", format, filenameHint, ErrUnsupportedImageFormat)
-		}
-		return nil, fmt.Errorf("unsupported image format %q: %w", format, ErrUnsupportedImageFormat)
+	if err := rm.validateImageFormat(format, filenameHint); err != nil {
+		return nil, err
 	}
 
+	return rm.registerImage(img), nil
+}
+
+// formatDecodeError wraps image decode errors with context.
+func (rm *ResourceManager) formatDecodeError(err error, filenameHint string) error {
+	if filenameHint != "" {
+		return fmt.Errorf("failed to decode image from %q: %w", filenameHint, err)
+	}
+	return fmt.Errorf("failed to decode image: %w", err)
+}
+
+// validateImageFormat checks if the format is supported.
+func (rm *ResourceManager) validateImageFormat(format, filenameHint string) error {
+	if format == "png" || format == "jpeg" || format == "gif" {
+		return nil
+	}
+	if filenameHint != "" {
+		return fmt.Errorf("unsupported image format %q in %q: %w", format, filenameHint, ErrUnsupportedImageFormat)
+	}
+	return fmt.Errorf("unsupported image format %q: %w", format, ErrUnsupportedImageFormat)
+}
+
+// registerImage converts and stores an image.Image in the resource manager.
+func (rm *ResourceManager) registerImage(img image.Image) *Image {
 	eimg := ebiten.NewImageFromImage(img)
 	bounds := eimg.Bounds()
 
@@ -245,30 +267,43 @@ func (rm *ResourceManager) LoadImageFromReader(r io.Reader, filenameHint string)
 	}
 	rm.images[rm.nextImageID] = resource
 	rm.nextImageID++
-	return resource, nil
+	return resource
 }
 
 // cleanup releases all loaded resources.
 func (rm *ResourceManager) cleanup() {
-	defer func() {
-		if r := recover(); r != nil {
-			// Ignore panics during cleanup to ensure resources are still marked closed
-		}
-	}()
+	defer rm.recoverFromPanic()
 
 	rm.closed.Store(true)
 
 	rm.mu.Lock()
 	defer rm.mu.Unlock()
 
+	rm.clearFonts()
+	rm.clearImages()
+	rm.defaultFont = nil
+}
+
+// recoverFromPanic silently recovers to ensure cleanup completes.
+func (rm *ResourceManager) recoverFromPanic() {
+	recover()
+}
+
+// clearFonts removes all loaded fonts.
+// Must be called with rm.mu held.
+func (rm *ResourceManager) clearFonts() {
 	for id := range rm.fonts {
 		delete(rm.fonts, id)
 	}
+}
+
+// clearImages deallocates and removes all loaded images.
+// Must be called with rm.mu held.
+func (rm *ResourceManager) clearImages() {
 	for id, img := range rm.images {
 		if img.eimg != nil {
 			img.eimg.Deallocate()
 		}
 		delete(rm.images, id)
 	}
-	rm.defaultFont = nil
 }

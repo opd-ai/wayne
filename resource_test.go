@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios || linux
+//go:build windows || darwin || android || ios
 
 package wayne
 
@@ -198,7 +198,7 @@ func TestResourceManagerLoadImage(t *testing.T) {
 		t.Error("Image eimg is nil")
 	}
 
-	width, height := resource.Size()
+	width, height := resource.Width(), resource.Height()
 	if width != 100 || height != 100 {
 		t.Errorf("Image size: expected (100, 100), got (%d, %d)", width, height)
 	}

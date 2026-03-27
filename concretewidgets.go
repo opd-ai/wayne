@@ -18,12 +18,12 @@ type drawContext struct {
 // prepareDrawContext resolves position, bounds, and theme for a widget with an optional theme override.
 // Returns nil if the widget has zero or negative dimensions (nothing to draw).
 func prepareDrawContext(c Canvas, widget interface {
-	Position() (int, int)
-	Bounds() (int, int)
+	position() (int, int)
+	bounds() (int, int)
 }, themeOverride *Theme,
 ) *drawContext {
-	x, y := widget.Position()
-	w, h := widget.Bounds()
+	x, y := widget.position()
+	w, h := widget.bounds()
 	if w <= 0 || h <= 0 {
 		return nil
 	}
@@ -248,8 +248,8 @@ func (b *Button) handleTouchUp(x, y float64) bool {
 
 // isPointInBounds checks if a point is within the button's bounds.
 func (b *Button) isPointInBounds(px, py float64) bool {
-	x, y := b.Position()
-	w, h := b.Bounds()
+	x, y := b.position()
+	w, h := b.bounds()
 	return contains(x, y, w, h, px, py)
 }
 
@@ -478,8 +478,8 @@ func (t *TextInput) HandleEvent(evt Event) bool {
 
 func (t *TextInput) handlePointerEvent(pe *PointerEvent) bool {
 	if pe.EventType() == PointerButtonPress {
-		x, y := t.Position()
-		w, h := t.Bounds()
+		x, y := t.position()
+		w, h := t.bounds()
 		if contains(x, y, w, h, pe.X(), pe.Y()) {
 			t.SetFocused(true)
 			return true
@@ -691,8 +691,8 @@ func (s *ScrollView) Children() []PublicWidget {
 // HandleEvent processes scroll events.
 func (s *ScrollView) HandleEvent(evt Event) bool {
 	if pe, ok := evt.(*PointerEvent); ok && pe.EventType() == PointerScroll {
-		x, y := s.Position()
-		w, h := s.Bounds()
+		x, y := s.position()
+		w, h := s.bounds()
 		if contains(x, y, w, h, pe.X(), pe.Y()) {
 			s.SetScrollOffset(s.scrollY + int(pe.Value()*20))
 			return true
@@ -755,8 +755,8 @@ func (s *ScrollView) drawChildIfVisible(child PublicWidget, viewportCanvas Canva
 
 // getChildBounds retrieves the position and bounds of a child widget.
 func (s *ScrollView) getChildBounds(child PublicWidget) (x, y, w, h int) {
-	if bp, ok := child.(interface{ Position() (int, int) }); ok {
-		x, y = bp.Position()
+	if bp, ok := child.(interface{ position() (int, int) }); ok {
+		x, y = bp.position()
 	}
 	w, h = child.Width(), child.Height()
 	return x, y, w, h
@@ -842,8 +842,8 @@ func (iw *ImageWidget) Draw(c Canvas) {
 	if iw.img == nil {
 		return
 	}
-	x, y := iw.Position()
-	w, h := iw.Bounds()
+	x, y := iw.position()
+	w, h := iw.bounds()
 	if w > 0 && h > 0 {
 		c.DrawImage(iw.img, x, y, w, h)
 	}
