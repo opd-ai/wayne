@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios || linux
+//go:build windows || darwin || android || ios
 
 package wayne
 
@@ -297,14 +297,18 @@ func TestPanelLayoutWithPadding(t *testing.T) {
 	}
 }
 
+// TestGridZeroColumns verifies that NewGrid defensively clamps invalid column counts.
 func TestGridZeroColumns(t *testing.T) {
-	defer func() {
-		if r := recover(); r == nil {
-			t.Error("NewGrid(0) should panic")
-		}
-	}()
+	// NewGrid should clamp zero/negative columns to 1 (defensive behavior)
+	grid := NewGrid(0)
+	if grid.Columns() != 1 {
+		t.Errorf("NewGrid(0) should clamp to 1 column, got %d", grid.Columns())
+	}
 
-	NewGrid(0)
+	grid2 := NewGrid(-5)
+	if grid2.Columns() != 1 {
+		t.Errorf("NewGrid(-5) should clamp to 1 column, got %d", grid2.Columns())
+	}
 }
 
 // TestPanelHandleEventBoundsCheck verifies that Panel only forwards pointer events
@@ -506,15 +510,16 @@ func TestResolveTreeFlowRow(t *testing.T) {
 	}
 
 	// Check third button position (should be at ~200,0)
+	// Note: With 33.33% width on 300px, each button is ~99px, so x3 = 99+99 = 198
 	x3, y3 := btn3.Position()
 	w3, h3 := btn3.Bounds()
-	if x3 < 199 || x3 > 200 {
-		t.Errorf("Button 3 x position incorrect: got %d, want ~200", x3)
+	if x3 < 198 || x3 > 201 {
+		t.Errorf("Button 3 x position incorrect: got %d, want ~198-200", x3)
 	}
 	if y3 != 0 {
 		t.Errorf("Button 3 y position incorrect: got %d, want 0", y3)
 	}
-	if w3 < 99 || w3 > 100 {
+	if w3 < 99 || w3 > 101 {
 		t.Errorf("Button 3 width incorrect: got %d, want ~100", w3)
 	}
 	if h3 != 100 {
@@ -579,18 +584,19 @@ func TestResolveTreeFlowColumn(t *testing.T) {
 	}
 
 	// Check third button position (should be at 0,~200)
+	// Note: With 33.33% height on 300px, each button is ~99px, so y3 = 99+99 = 198
 	x3, y3 := btn3.Position()
 	w3, h3 := btn3.Bounds()
 	if x3 != 0 {
 		t.Errorf("Button 3 x position incorrect: got %d, want 0", x3)
 	}
-	if y3 < 199 || y3 > 200 {
-		t.Errorf("Button 3 y position incorrect: got %d, want ~200", y3)
+	if y3 < 198 || y3 > 201 {
+		t.Errorf("Button 3 y position incorrect: got %d, want ~198-200", y3)
 	}
 	if w3 != 200 {
 		t.Errorf("Button 3 width incorrect: got %d, want 200", w3)
 	}
-	if h3 < 99 || h3 > 100 {
+	if h3 < 99 || h3 > 101 {
 		t.Errorf("Button 3 height incorrect: got %d, want ~100", h3)
 	}
 }

@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios || linux
+//go:build windows || darwin || android || ios
 
 package wayne
 
@@ -125,13 +125,23 @@ func (b *Button) CanTakeFocus() bool {
 	return b.enabled
 }
 
-// HandleEvent processes pointer and keyboard events for button interaction.
+// HandleEvent processes pointer, touch, and keyboard events for button interaction.
 func (b *Button) HandleEvent(evt Event) bool {
+	// First, give the custom event handler a chance to process the event
+	if b.onEvent != nil {
+		if b.onEvent(evt) {
+			return true
+		}
+	}
+
+	// Then handle built-in behavior
 	switch e := evt.(type) {
 	case *KeyEvent:
 		return b.handleKeyEvent(e)
 	case *PointerEvent:
 		return b.handlePointerEvent(e)
+	case *TouchEvent:
+		return b.handleTouchEvent(e)
 	}
 	return false
 }
@@ -198,6 +208,38 @@ func (b *Button) handleRelease(pe *PointerEvent) bool {
 		b.onClick()
 	}
 	return true
+}
+
+// handleTouchEvent processes touch events for button interaction.
+func (b *Button) handleTouchEvent(te *TouchEvent) bool {
+	switch te.EventType() {
+	case TouchDown:
+		if !b.enabled {
+			return false
+		}
+		if !b.isPointInBounds(te.X(), te.Y()) {
+			return false
+		}
+		b.pressed = true
+		return true
+	case TouchUp:
+		wasPressed := b.pressed
+		b.pressed = false
+		if !wasPressed || !b.enabled {
+			return false
+		}
+		if !b.isPointInBounds(te.X(), te.Y()) {
+			return false
+		}
+		if b.onClick != nil {
+			b.onClick()
+		}
+		return true
+	case TouchCancel:
+		b.pressed = false
+		return false
+	}
+	return false
 }
 
 // isPointInBounds checks if a point is within the button's bounds.
