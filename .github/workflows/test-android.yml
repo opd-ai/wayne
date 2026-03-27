@@ -38,11 +38,11 @@ jobs:
 
       - name: Install gomobile
         run: |
-          # Clone and install gomobile from source to ensure bind package is available
-          git clone --depth=1 https://go.googlesource.com/mobile $HOME/go-mobile
-          cd $HOME/go-mobile
-          go install ./cmd/gomobile
-          go install ./cmd/gobind
+          # Install gomobile and ensure bind package is available in module cache
+          go install golang.org/x/mobile/cmd/gomobile@latest
+          go install golang.org/x/mobile/cmd/gobind@latest
+          # Add mobile module to project's go.mod to make bind package discoverable
+          go get golang.org/x/mobile@latest
           gomobile init
 
       - name: Build for Android (verification)
