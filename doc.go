@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios
+//go:build windows || darwin || android || ios || linux
 
 // Package wayne provides an API-compatible alternative to the opd-ai/wain
 // widget system, targeting Windows, macOS, Android, and iOS.

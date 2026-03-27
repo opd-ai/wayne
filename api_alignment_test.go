@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios
+//go:build windows || darwin || android || ios || linux
 
 package wayne_test
 

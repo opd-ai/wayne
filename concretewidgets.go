@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios
+//go:build windows || darwin || android || ios || linux
 
 package wayne
 
@@ -613,40 +613,66 @@ func (s *ScrollView) Draw(c Canvas) {
 
 	c.FillRect(ctx.x, ctx.y, ctx.w, ctx.h, ctx.theme.Background)
 
-	// Create an offscreen buffer for the viewport to implement clipping
 	viewport := ebiten.NewImage(ctx.w, ctx.h)
 	defer viewport.Deallocate()
 
-	// Render children to the offscreen viewport
 	viewportCanvas := newEbitenCanvas(viewport, ctx.theme)
+	s.drawVisibleChildren(viewportCanvas, ctx.h)
+	s.blitViewport(c, viewport, ctx.x, ctx.y)
+}
+
+// drawVisibleChildren renders children that are visible within the viewport.
+func (s *ScrollView) drawVisibleChildren(viewportCanvas Canvas, viewportH int) {
 	for _, child := range s.children {
-		cx, cy := 0, 0
-		if bp, ok := child.(interface{ Position() (int, int) }); ok {
-			cx, cy = bp.Position()
-		}
-		cw, ch := child.Bounds()
-
-		// Translate child position by scroll offset
-		adjustedY := cy - s.scrollY
-
-		// Only draw children that are visible within the viewport
-		if adjustedY+ch >= 0 && adjustedY < ctx.h {
-			// Temporarily adjust child position for viewport-relative rendering
-			if bp, ok := child.(interface{ SetBounds(int, int, int, int) }); ok {
-				bp.SetBounds(cx, adjustedY, cw, ch)
-				child.Draw(viewportCanvas)
-				// Restore original position
-				bp.SetBounds(cx, cy, cw, ch)
-			}
+		if s.drawChildIfVisible(child, viewportCanvas, viewportH) {
+			continue
 		}
 	}
+}
 
-	// Draw the clipped viewport to the main canvas
-	if ec, ok := c.(*ebitenCanvas); ok {
-		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(ctx.x), float64(ctx.y))
-		ec.dst.DrawImage(viewport, op)
+// drawChildIfVisible renders a child if it's within the visible viewport area.
+func (s *ScrollView) drawChildIfVisible(child PublicWidget, viewportCanvas Canvas, viewportH int) bool {
+	cx, cy, cw, ch := s.getChildBounds(child)
+	adjustedY := cy - s.scrollY
+
+	if !s.isChildVisible(adjustedY, ch, viewportH) {
+		return false
 	}
+
+	bp, ok := child.(interface{ SetBounds(int, int, int, int) })
+	if !ok {
+		return false
+	}
+
+	bp.SetBounds(cx, adjustedY, cw, ch)
+	child.Draw(viewportCanvas)
+	bp.SetBounds(cx, cy, cw, ch)
+	return true
+}
+
+// getChildBounds retrieves the position and bounds of a child widget.
+func (s *ScrollView) getChildBounds(child PublicWidget) (x, y, w, h int) {
+	if bp, ok := child.(interface{ Position() (int, int) }); ok {
+		x, y = bp.Position()
+	}
+	w, h = child.Bounds()
+	return x, y, w, h
+}
+
+// isChildVisible checks if a child at the given Y position is visible in the viewport.
+func (s *ScrollView) isChildVisible(adjustedY, childH, viewportH int) bool {
+	return adjustedY+childH >= 0 && adjustedY < viewportH
+}
+
+// blitViewport copies the viewport buffer to the main canvas.
+func (s *ScrollView) blitViewport(c Canvas, viewport *ebiten.Image, x, y int) {
+	ec, ok := c.(*ebitenCanvas)
+	if !ok {
+		return
+	}
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(float64(x), float64(y))
+	ec.dst.DrawImage(viewport, op)
 }
 
 // SetTheme applies a theme to this scroll view.

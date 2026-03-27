@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios
+//go:build windows || darwin || android || ios || linux
 
 package wayne
 
@@ -127,27 +127,43 @@ func (d *EventDispatcher) dispatchKey(evt *KeyEvent) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	// Handle Tab navigation for focus management
-	if evt.EventType() == KeyPress && evt.Key() == KeyTab {
-		if evt.Modifiers()&ModShift != 0 {
-			d.focusManager.FocusPrev()
-		} else {
-			d.focusManager.FocusNext()
-		}
-		evt.Consume()
+	if d.handleTabNavigation(evt) {
 		return
 	}
-
-	// Dispatch key event to focused widget first
-	if focused := d.focusManager.Focused(); focused != nil {
-		if pw, ok := focused.(PublicWidget); ok {
-			if pw.HandleEvent(evt) {
-				return
-			}
-		}
+	if d.dispatchToFocusedWidget(evt) {
+		return
 	}
+	d.dispatchToKeyHandlers(evt)
+}
 
-	// Then dispatch to registered handlers
+// handleTabNavigation processes Tab key for focus management.
+func (d *EventDispatcher) handleTabNavigation(evt *KeyEvent) bool {
+	if evt.EventType() != KeyPress || evt.Key() != KeyTab {
+		return false
+	}
+	if evt.Modifiers()&ModShift != 0 {
+		d.focusManager.FocusPrev()
+	} else {
+		d.focusManager.FocusNext()
+	}
+	evt.Consume()
+	return true
+}
+
+// dispatchToFocusedWidget sends the key event to the currently focused widget.
+func (d *EventDispatcher) dispatchToFocusedWidget(evt *KeyEvent) bool {
+	focused := d.focusManager.Focused()
+	if focused == nil {
+		return false
+	}
+	if pw, ok := focused.(PublicWidget); ok {
+		return pw.HandleEvent(evt)
+	}
+	return false
+}
+
+// dispatchToKeyHandlers sends the event to registered key handlers.
+func (d *EventDispatcher) dispatchToKeyHandlers(evt *KeyEvent) {
 	for _, h := range d.keyHandlers {
 		if evt.Consumed() {
 			return

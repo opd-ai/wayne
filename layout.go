@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios
+//go:build windows || darwin || android || ios || linux
 
 package wayne
 
@@ -159,7 +159,7 @@ func (p *Panel) computeContentArea(parentX, parentY, parentW, parentH int) (x, y
 	y = parentY + p.padding
 	w = max(0, parentW-2*p.padding)
 	h = max(0, parentH-2*p.padding)
-	return
+	return x, y, w, h
 }
 
 // alignChild applies cross-axis alignment to a child widget.
@@ -173,7 +173,7 @@ func (p *Panel) alignChild(cursorX, cursorY, contentX, contentY, contentW, conte
 		x, y, w = p.alignCrossAxisHorizontal(cursorX, contentX, contentW, childW, p.align)
 		y = cursorY
 	}
-	return
+	return x, y, w, h
 }
 
 // alignCrossAxisVertical computes vertical alignment for horizontal flow.
@@ -459,67 +459,52 @@ func (g *Grid) SetColumns(columns int) {
 
 // resolveChildren lays out grid children in rows and columns.
 func (g *Grid) resolveChildren(parentX, parentY, parentW, parentH int) {
-	padding := g.padding
-	gap := g.gap
-
-	contentX := parentX + padding
-	contentY := parentY + padding
-	contentW := parentW - 2*padding
-	contentH := parentH - 2*padding
-	if contentW < 0 {
-		contentW = 0
-	}
-	if contentH < 0 {
-		contentH = 0
-	}
-
 	numChildren := len(g.children)
 	if numChildren == 0 {
 		return
 	}
 
-	// Calculate number of rows
-	rows := (numChildren + g.columns - 1) / g.columns
-
-	// Calculate cell dimensions (accounting for gaps between cells)
-	totalGapW := gap * (g.columns - 1)
-	totalGapH := gap * (rows - 1)
-	cellW := (contentW - totalGapW) / g.columns
-	cellH := (contentH - totalGapH) / rows
-
-	if cellW < 0 {
-		cellW = 0
-	}
-	if cellH < 0 {
-		cellH = 0
-	}
+	contentX, contentY, contentW, contentH := g.Panel.computeContentArea(parentX, parentY, parentW, parentH)
+	cellW, cellH := g.computeCellDimensions(contentW, contentH, numChildren)
 
 	for i, child := range g.children {
-		col := i % g.columns
-		row := i / g.columns
+		g.layoutGridChild(child, i, contentX, contentY, cellW, cellH)
+	}
+}
 
-		childX := contentX + col*(cellW+gap)
-		childY := contentY + row*(cellH+gap)
+// computeCellDimensions calculates the cell size based on grid dimensions.
+func (g *Grid) computeCellDimensions(contentW, contentH, numChildren int) (cellW, cellH int) {
+	rows := (numChildren + g.columns - 1) / g.columns
+	totalGapW := g.gap * (g.columns - 1)
+	totalGapH := g.gap * (rows - 1)
+	cellW = max(0, (contentW-totalGapW)/g.columns)
+	cellH = max(0, (contentH-totalGapH)/rows)
+	return cellW, cellH
+}
 
-		// Compute child's actual size based on its size hint relative to cell
-		childW, childH := computeChildPixelSize(child, cellW, cellH)
+// layoutGridChild positions and aligns a single grid cell.
+func (g *Grid) layoutGridChild(child PublicWidget, index, contentX, contentY, cellW, cellH int) {
+	col := index % g.columns
+	row := index / g.columns
 
-		// Apply cross-axis alignment within the cell
-		alignedX := childX
-		alignedY := childY
+	childX := contentX + col*(cellW+g.gap)
+	childY := contentY + row*(cellH+g.gap)
+	childW, childH := computeChildPixelSize(child, cellW, cellH)
 
-		switch g.align {
-		case AlignCenter:
-			alignedX = childX + (cellW-childW)/2
-			alignedY = childY + (cellH-childH)/2
-		case AlignEnd:
-			alignedX = childX + cellW - childW
-			alignedY = childY + cellH - childH
-		case AlignStretch:
-			childW = cellW
-			childH = cellH
-		}
+	alignedX, alignedY, alignedW, alignedH := g.alignGridChild(childX, childY, cellW, cellH, childW, childH)
+	resolveTree(child, alignedX, alignedY, alignedW, alignedH)
+}
 
-		resolveTree(child, alignedX, alignedY, childW, childH)
+// alignGridChild applies alignment within a grid cell.
+func (g *Grid) alignGridChild(cellX, cellY, cellW, cellH, childW, childH int) (x, y, w, h int) {
+	switch g.align {
+	case AlignCenter:
+		return cellX + (cellW-childW)/2, cellY + (cellH-childH)/2, childW, childH
+	case AlignEnd:
+		return cellX + cellW - childW, cellY + cellH - childH, childW, childH
+	case AlignStretch:
+		return cellX, cellY, cellW, cellH
+	default:
+		return cellX, cellY, childW, childH
 	}
 }

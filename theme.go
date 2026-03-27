@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios
+//go:build windows || darwin || android || ios || linux
 
 package wayne
 
@@ -156,21 +156,21 @@ func (s StyleOverride) applyToTheme(base Theme) Theme {
 }
 
 // applyColorOverride applies a color override if the source is non-nil.
-func applyColorOverride(target *Color, source *Color) {
+func applyColorOverride(target, source *Color) {
 	if source != nil {
 		*target = *source
 	}
 }
 
 // applyFloat64Override applies a float64 override if the source is non-nil.
-func applyFloat64Override(target *float64, source *float64) {
+func applyFloat64Override(target, source *float64) {
 	if source != nil {
 		*target = *source
 	}
 }
 
 // applyIntOverride applies an int override if the source is non-nil.
-func applyIntOverride(target *int, source *int) {
+func applyIntOverride(target, source *int) {
 	if source != nil {
 		*target = *source
 	}

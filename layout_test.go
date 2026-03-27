@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios
+//go:build windows || darwin || android || ios || linux
 
 package wayne
 
@@ -1011,70 +1011,70 @@ func TestResolveTreeGridIncomplete(t *testing.T) {
 
 // TestResolveTreeStack verifies that Stack layout places all children at the same position.
 func TestResolveTreeStack(t *testing.T) {
-stack := NewStack()
-stack.SetPadding(0)
+	stack := NewStack()
+	stack.SetPadding(0)
 
-// Add 3 buttons
-buttons := make([]*Button, 3)
-for i := 0; i < 3; i++ {
-btn := NewButton("Btn", Size{Width: 100, Height: 100})
-buttons[i] = btn
-stack.Add(btn)
-}
+	// Add 3 buttons
+	buttons := make([]*Button, 3)
+	for i := 0; i < 3; i++ {
+		btn := NewButton("Btn", Size{Width: 100, Height: 100})
+		buttons[i] = btn
+		stack.Add(btn)
+	}
 
-// Resolve with 200x200 pixel bounds
-resolveTree(stack, 0, 0, 200, 200)
+	// Resolve with 200x200 pixel bounds
+	resolveTree(stack, 0, 0, 200, 200)
 
-// All children should be at position (0,0)
-for i, btn := range buttons {
-bx, by := btn.Position()
-if bx != 0 || by != 0 {
-t.Errorf("Button %d position incorrect: got (%d,%d), want (0,0)", i, bx, by)
-}
-}
+	// All children should be at position (0,0)
+	for i, btn := range buttons {
+		bx, by := btn.Position()
+		if bx != 0 || by != 0 {
+			t.Errorf("Button %d position incorrect: got (%d,%d), want (0,0)", i, bx, by)
+		}
+	}
 }
 
 // TestResolveTreeStackWithPadding verifies that Stack layout respects padding.
 func TestResolveTreeStackWithPadding(t *testing.T) {
-stack := NewStack()
-stack.SetPadding(10)
+	stack := NewStack()
+	stack.SetPadding(10)
 
-// Add 2 buttons
-buttons := make([]*Button, 2)
-for i := 0; i < 2; i++ {
-btn := NewButton("Btn", Size{Width: 100, Height: 100})
-buttons[i] = btn
-stack.Add(btn)
-}
+	// Add 2 buttons
+	buttons := make([]*Button, 2)
+	for i := 0; i < 2; i++ {
+		btn := NewButton("Btn", Size{Width: 100, Height: 100})
+		buttons[i] = btn
+		stack.Add(btn)
+	}
 
-// Resolve with 200x200 pixel bounds
-resolveTree(stack, 0, 0, 200, 200)
+	// Resolve with 200x200 pixel bounds
+	resolveTree(stack, 0, 0, 200, 200)
 
-// All children should be at position (10,10) due to padding
-for i, btn := range buttons {
-bx, by := btn.Position()
-if bx != 10 || by != 10 {
-t.Errorf("Button %d position incorrect: got (%d,%d), want (10,10)", i, bx, by)
-}
-}
+	// All children should be at position (10,10) due to padding
+	for i, btn := range buttons {
+		bx, by := btn.Position()
+		if bx != 10 || by != 10 {
+			t.Errorf("Button %d position incorrect: got (%d,%d), want (10,10)", i, bx, by)
+		}
+	}
 }
 
 // TestResolveTreeStackAlignCenter verifies that Stack layout centers children.
 func TestResolveTreeStackAlignCenter(t *testing.T) {
-stack := NewStack()
-stack.SetPadding(0)
-stack.SetAlign(AlignCenter)
+	stack := NewStack()
+	stack.SetPadding(0)
+	stack.SetAlign(AlignCenter)
 
-// Add a 50% x 50% button
-btn := NewButton("Btn", Size{Width: 50, Height: 50})
-stack.Add(btn)
+	// Add a 50% x 50% button
+	btn := NewButton("Btn", Size{Width: 50, Height: 50})
+	stack.Add(btn)
 
-// Resolve with 200x200 pixel bounds
-resolveTree(stack, 0, 0, 200, 200)
+	// Resolve with 200x200 pixel bounds
+	resolveTree(stack, 0, 0, 200, 200)
 
-// Button should be centered: (200-100)/2=50 for both axes
-bx, by := btn.Position()
-if bx != 50 || by != 50 {
-t.Errorf("Button position incorrect: got (%d,%d), want (50,50)", bx, by)
-}
+	// Button should be centered: (200-100)/2=50 for both axes
+	bx, by := btn.Position()
+	if bx != 50 || by != 50 {
+		t.Errorf("Button position incorrect: got (%d,%d), want (50,50)", bx, by)
+	}
 }

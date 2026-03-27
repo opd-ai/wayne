@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios
+//go:build windows || darwin || android || ios || linux
 
 // Package wayne provides cross-platform UI widgets. See doc.go for details.
 package wayne
@@ -134,51 +134,54 @@ func (a *App) Notify(fn func()) {
 // Run starts the main event loop. This blocks until the app is quit or an error occurs.
 // Run must be called from the main goroutine.
 func (a *App) Run() error {
+	a.configureWindow()
+	g := &ebitenGame{app: a}
+	return ebiten.RunGame(g)
+}
+
+// configureWindow applies window settings before starting the game loop.
+func (a *App) configureWindow() {
 	ebiten.SetWindowTitle(a.primaryWindowTitle())
 	ebiten.SetWindowSize(a.width, a.height)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 
-	// Apply primary window configuration
 	a.mu.Lock()
 	cfg := a.primaryConfig
 	a.mu.Unlock()
 
-	// Apply window size limits if specified
-	if cfg.MinWidth > 0 || cfg.MinHeight > 0 || cfg.MaxWidth > 0 || cfg.MaxHeight > 0 {
-		minW := cfg.MinWidth
-		minH := cfg.MinHeight
-		maxW := cfg.MaxWidth
-		maxH := cfg.MaxHeight
+	a.applyWindowSizeLimits(cfg)
+	a.applyWindowDecorations(cfg)
+}
 
-		// Use -1 for unspecified limits (Ebitengine convention)
-		if minW <= 0 {
-			minW = -1
-		}
-		if minH <= 0 {
-			minH = -1
-		}
-		if maxW <= 0 {
-			maxW = -1
-		}
-		if maxH <= 0 {
-			maxH = -1
-		}
-
-		ebiten.SetWindowSizeLimits(minW, minH, maxW, maxH)
+// applyWindowSizeLimits sets window minimum/maximum size constraints.
+func (a *App) applyWindowSizeLimits(cfg WindowConfig) {
+	if cfg.MinWidth <= 0 && cfg.MinHeight <= 0 && cfg.MaxWidth <= 0 && cfg.MaxHeight <= 0 {
+		return
 	}
 
-	// Apply fullscreen setting
+	minW := normalizeLimit(cfg.MinWidth)
+	minH := normalizeLimit(cfg.MinHeight)
+	maxW := normalizeLimit(cfg.MaxWidth)
+	maxH := normalizeLimit(cfg.MaxHeight)
+	ebiten.SetWindowSizeLimits(minW, minH, maxW, maxH)
+}
+
+// normalizeLimit converts zero or negative values to -1 (Ebitengine convention).
+func normalizeLimit(val int) int {
+	if val <= 0 {
+		return -1
+	}
+	return val
+}
+
+// applyWindowDecorations sets fullscreen and decoration options.
+func (a *App) applyWindowDecorations(cfg WindowConfig) {
 	if cfg.Fullscreen {
 		ebiten.SetFullscreen(true)
 	}
-
-	// Apply window decoration setting
 	if cfg.Decorations != nil {
 		ebiten.SetWindowDecorated(*cfg.Decorations)
 	}
-
-	g := &ebitenGame{app: a}
-	return ebiten.RunGame(g)
 }
 
 // Quit signals the application to exit on the next tick.
