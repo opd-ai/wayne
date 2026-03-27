@@ -167,10 +167,10 @@ func (p *Panel) alignChild(cursorX, cursorY, contentX, contentY, contentW, conte
 	x, y, w, h = cursorX, cursorY, childW, childH
 
 	if p.flowDir == FlowRow {
-		x, y, h = p.alignCrossAxisVertical(cursorY, contentY, contentH, childH, p.align)
+		_, y, h = p.alignCrossAxisVertical(cursorY, contentY, contentH, childH, p.align)
 		x = cursorX
 	} else {
-		x, y, w = p.alignCrossAxisHorizontal(cursorX, contentX, contentW, childW, p.align)
+		x, _, w = p.alignCrossAxisHorizontal(cursorX, contentX, contentW, childW, p.align)
 		y = cursorY
 	}
 	return x, y, w, h
@@ -254,16 +254,22 @@ func (p *Panel) HandleEvent(evt Event) bool {
 
 // handleSpatialEvent forwards spatial events to the topmost child containing the coordinates.
 func (p *Panel) handleSpatialEvent(evt Event, evtX, evtY float64) bool {
+	child := p.findChildAtPoint(evtX, evtY)
+	if child == nil {
+		return false
+	}
+	return child.HandleEvent(evt)
+}
+
+// findChildAtPoint returns the topmost child (z-order) containing the given point, or nil.
+func (p *Panel) findChildAtPoint(px, py float64) PublicWidget {
 	for i := len(p.children) - 1; i >= 0; i-- {
 		child := p.children[i]
-		if p.childContainsPoint(child, evtX, evtY) {
-			if child.HandleEvent(evt) {
-				return true
-			}
-			break // Only forward to first matching child (z-order topmost)
+		if p.childContainsPoint(child, px, py) {
+			return child
 		}
 	}
-	return false
+	return nil
 }
 
 // childContainsPoint checks if a child widget contains the given point.
@@ -425,40 +431,26 @@ func NewStack() *Stack {
 
 // resolveChildren lays out stack children at the same position (z-order stacking).
 func (s *Stack) resolveChildren(parentX, parentY, parentW, parentH int) {
-	padding := s.padding
+	contentX, contentY, contentW, contentH := s.Panel.computeContentArea(parentX, parentY, parentW, parentH)
 
-	contentX := parentX + padding
-	contentY := parentY + padding
-	contentW := parentW - 2*padding
-	contentH := parentH - 2*padding
-	if contentW < 0 {
-		contentW = 0
-	}
-	if contentH < 0 {
-		contentH = 0
-	}
-
-	// All children are placed at the same position with full parent dimensions
 	for _, child := range s.children {
 		childW, childH := computeChildPixelSize(child, contentW, contentH)
+		alignedX, alignedY, alignedW, alignedH := s.alignStackChild(contentX, contentY, contentW, contentH, childW, childH)
+		resolveTree(child, alignedX, alignedY, alignedW, alignedH)
+	}
+}
 
-		// Apply alignment within the stack area
-		alignedX := contentX
-		alignedY := contentY
-
-		switch s.align {
-		case AlignCenter:
-			alignedX = contentX + (contentW-childW)/2
-			alignedY = contentY + (contentH-childH)/2
-		case AlignEnd:
-			alignedX = contentX + contentW - childW
-			alignedY = contentY + contentH - childH
-		case AlignStretch:
-			childW = contentW
-			childH = contentH
-		}
-
-		resolveTree(child, alignedX, alignedY, childW, childH)
+// alignStackChild applies alignment within the stack content area.
+func (s *Stack) alignStackChild(contentX, contentY, contentW, contentH, childW, childH int) (x, y, w, h int) {
+	switch s.align {
+	case AlignCenter:
+		return contentX + (contentW-childW)/2, contentY + (contentH-childH)/2, childW, childH
+	case AlignEnd:
+		return contentX + contentW - childW, contentY + contentH - childH, childW, childH
+	case AlignStretch:
+		return contentX, contentY, contentW, contentH
+	default:
+		return contentX, contentY, childW, childH
 	}
 }
 

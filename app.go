@@ -303,13 +303,20 @@ func (a *App) shouldQuit() bool {
 }
 
 func (a *App) drainNotify() {
-	for {
-		select {
-		case fn := <-a.notifyChan:
-			fn()
-		default:
-			return
-		}
+	for a.processNextNotification() {
+		// Continue processing
+	}
+}
+
+// processNextNotification attempts to process a single notification from the channel.
+// Returns true if a notification was processed, false if the channel is empty.
+func (a *App) processNextNotification() bool {
+	select {
+	case fn := <-a.notifyChan:
+		fn()
+		return true
+	default:
+		return false
 	}
 }
 

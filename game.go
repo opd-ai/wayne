@@ -338,20 +338,24 @@ func (g *ebitenGame) getLastTouchPosition(tid ebiten.TouchID) (float64, float64)
 	return 0, 0
 }
 
+// modifierMapping maps pairs of ebiten keys to wayne modifier flags.
+var modifierMapping = []struct {
+	leftKey, rightKey ebiten.Key
+	mod               Modifier
+}{
+	{ebiten.KeyShiftLeft, ebiten.KeyShiftRight, ModShift},
+	{ebiten.KeyControlLeft, ebiten.KeyControlRight, ModControl},
+	{ebiten.KeyAlt, ebiten.KeyAltRight, ModAlt},
+	{ebiten.KeyMetaLeft, ebiten.KeyMetaRight, ModSuper},
+}
+
 // currentModifiers reads the current keyboard modifier state.
 func currentModifiers() Modifier {
 	var mods Modifier
-	if ebiten.IsKeyPressed(ebiten.KeyShiftLeft) || ebiten.IsKeyPressed(ebiten.KeyShiftRight) {
-		mods |= ModShift
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyControlLeft) || ebiten.IsKeyPressed(ebiten.KeyControlRight) {
-		mods |= ModControl
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyAlt) || ebiten.IsKeyPressed(ebiten.KeyAltRight) {
-		mods |= ModAlt
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyMetaLeft) || ebiten.IsKeyPressed(ebiten.KeyMetaRight) {
-		mods |= ModSuper
+	for _, m := range modifierMapping {
+		if ebiten.IsKeyPressed(m.leftKey) || ebiten.IsKeyPressed(m.rightKey) {
+			mods |= m.mod
+		}
 	}
 	return mods
 }

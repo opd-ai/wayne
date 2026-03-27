@@ -168,10 +168,7 @@ func (d *EventDispatcher) dispatchToFocusedWidget(evt *KeyEvent) bool {
 	if focused == nil {
 		return false
 	}
-	if pw, ok := focused.(PublicWidget); ok {
-		return pw.HandleEvent(evt)
-	}
-	return false
+	return focused.HandleEvent(evt)
 }
 
 // dispatchToKeyHandlers sends the event to registered key handlers.
@@ -294,13 +291,26 @@ func (fm *FocusManager) SetChainFromRoot(root PublicWidget) {
 
 // collectFocusable recursively collects focusable widgets.
 func (fm *FocusManager) collectFocusable(w PublicWidget) {
-	if focusable, ok := w.(Focusable); ok && focusable.CanTakeFocus() {
+	fm.addIfFocusable(w)
+	fm.collectChildrenFocusable(w)
+}
+
+// addIfFocusable adds the widget to the focus chain if it can take focus.
+func (fm *FocusManager) addIfFocusable(w PublicWidget) {
+	focusable, ok := w.(Focusable)
+	if ok && focusable.CanTakeFocus() {
 		fm.chain = append(fm.chain, w)
 	}
-	if container, ok := w.(Container); ok {
-		for _, child := range container.Children() {
-			fm.collectFocusable(child)
-		}
+}
+
+// collectChildrenFocusable recursively collects focusable widgets from a container's children.
+func (fm *FocusManager) collectChildrenFocusable(w PublicWidget) {
+	container, ok := w.(Container)
+	if !ok {
+		return
+	}
+	for _, child := range container.Children() {
+		fm.collectFocusable(child)
 	}
 }
 
@@ -308,11 +318,21 @@ func (fm *FocusManager) collectFocusable(w PublicWidget) {
 func (fm *FocusManager) Focus(w PublicWidget) {
 	fm.mu.Lock()
 	defer fm.mu.Unlock()
-	// Clear previous focus
+	fm.clearCurrentFocus()
+	fm.focusWidget(w)
+}
+
+// clearCurrentFocus removes focus from the currently focused widget.
+// Must be called with fm.mu held.
+func (fm *FocusManager) clearCurrentFocus() {
 	if fm.focusedIdx >= 0 && fm.focusedIdx < len(fm.chain) {
 		fm.chain[fm.focusedIdx].SetFocused(false)
 	}
-	// Find and focus the target widget
+}
+
+// focusWidget finds and focuses the target widget in the chain.
+// Must be called with fm.mu held.
+func (fm *FocusManager) focusWidget(w PublicWidget) {
 	for i, widget := range fm.chain {
 		if widget == w {
 			fm.focusedIdx = i

@@ -4,8 +4,6 @@ package wayne
 
 import (
 	"image"
-	"image/color"
-	"math"
 	"testing"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -404,14 +402,4 @@ func BenchmarkBoxShadow(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		canvas.BoxShadow(100, 100, 200, 200, 10, 10, 20, shadowColor)
 	}
-}
-
-// Helper function to compute color distance (for visual comparison)
-func colorDistance(c1, c2 color.Color) float64 {
-	r1, g1, b1, _ := c1.RGBA()
-	r2, g2, b2, _ := c2.RGBA()
-	dr := float64(r1>>8) - float64(r2>>8)
-	dg := float64(g1>>8) - float64(g2>>8)
-	db := float64(b1>>8) - float64(b2>>8)
-	return math.Sqrt(dr*dr + dg*dg + db*db)
 }

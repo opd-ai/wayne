@@ -198,16 +198,18 @@ func (b *Button) handleRelease(pe *PointerEvent) bool {
 	}
 	wasPressed := b.pressed
 	b.pressed = false
-	if !wasPressed || !b.enabled {
-		return false
-	}
-	if !b.isPointInBounds(pe.X(), pe.Y()) {
+	if !b.canTriggerClick(wasPressed, pe.X(), pe.Y()) {
 		return false
 	}
 	if b.onClick != nil {
 		b.onClick()
 	}
 	return true
+}
+
+// canTriggerClick checks if button state and position allow triggering the click.
+func (b *Button) canTriggerClick(wasPressed bool, px, py float64) bool {
+	return wasPressed && b.enabled && b.isPointInBounds(px, py)
 }
 
 // handleTouchEvent processes touch events for button interaction.
@@ -690,15 +692,34 @@ func (s *ScrollView) Children() []PublicWidget {
 
 // HandleEvent processes scroll events.
 func (s *ScrollView) HandleEvent(evt Event) bool {
-	if pe, ok := evt.(*PointerEvent); ok && pe.EventType() == PointerScroll {
-		x, y := s.position()
-		w, h := s.bounds()
-		if contains(x, y, w, h, pe.X(), pe.Y()) {
-			s.SetScrollOffset(s.scrollY + int(pe.Value()*20))
-			return true
-		}
+	if s.handleScrollEvent(evt) {
+		return true
 	}
-	// Propagate to children
+	return s.propagateEventToChildren(evt)
+}
+
+// handleScrollEvent processes pointer scroll events within the scroll view bounds.
+func (s *ScrollView) handleScrollEvent(evt Event) bool {
+	pe, ok := evt.(*PointerEvent)
+	if !ok || pe.EventType() != PointerScroll {
+		return false
+	}
+	if !s.containsPoint(pe.X(), pe.Y()) {
+		return false
+	}
+	s.SetScrollOffset(s.scrollY + int(pe.Value()*20))
+	return true
+}
+
+// containsPoint checks if a point is within the scroll view bounds.
+func (s *ScrollView) containsPoint(px, py float64) bool {
+	x, y := s.position()
+	w, h := s.bounds()
+	return contains(x, y, w, h, px, py)
+}
+
+// propagateEventToChildren forwards an event to children until one consumes it.
+func (s *ScrollView) propagateEventToChildren(evt Event) bool {
 	for _, child := range s.children {
 		if child.HandleEvent(evt) {
 			return true

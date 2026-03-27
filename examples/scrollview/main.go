@@ -28,6 +28,85 @@ import (
 	"github.com/opd-ai/wayne"
 )
 
+// buildScrollViewPanel creates the main panel with scrollable content.
+func buildScrollViewPanel() *wayne.Panel {
+	root := wayne.NewPanel(wayne.Size{Width: 100, Height: 100})
+	root.SetFlowDirection(wayne.FlowColumn)
+	root.SetPadding(10)
+	root.SetGap(5)
+
+	title := wayne.NewLabel("Scrollable Item List", wayne.Size{Width: 100, Height: 8})
+	root.Add(title)
+
+	scrollInfo := wayne.NewLabel("Scroll: 0px", wayne.Size{Width: 100, Height: 5})
+	root.Add(scrollInfo)
+
+	scrollView := buildScrollView(title, scrollInfo)
+	root.Add(scrollView)
+
+	buttonRow := buildScrollButtons(scrollView, scrollInfo)
+	root.Add(buttonRow)
+
+	return root
+}
+
+// buildScrollView creates the scrollable list with items.
+func buildScrollView(title, scrollInfo *wayne.Label) *wayne.ScrollView {
+	scrollView := wayne.NewScrollView(wayne.Size{Width: 100, Height: 75})
+	scrollView.OnScroll(func(offset int) {
+		scrollInfo.SetText(fmt.Sprintf("Scroll: %dpx", offset))
+	})
+
+	itemContainer := buildItemContainer(title)
+	scrollView.Add(itemContainer)
+	return scrollView
+}
+
+// buildItemContainer creates the panel containing all scrollable items.
+func buildItemContainer(title *wayne.Label) *wayne.Panel {
+	container := wayne.NewPanel(wayne.Size{Width: 100, Height: 500})
+	container.SetFlowDirection(wayne.FlowColumn)
+	container.SetGap(2)
+
+	for i := 1; i <= 30; i++ {
+		container.Add(buildItemRow(i, title))
+	}
+	return container
+}
+
+// buildItemRow creates a single item row with label and button.
+func buildItemRow(itemNum int, title *wayne.Label) *wayne.Row {
+	itemRow := wayne.NewRow()
+	itemRow.Add(wayne.NewLabel(fmt.Sprintf("Item #%d", itemNum), wayne.Size{Width: 70, Height: 100}))
+
+	btn := wayne.NewButton("Select", wayne.Size{Width: 30, Height: 100})
+	btn.OnClick(func() {
+		title.SetText(fmt.Sprintf("Selected: Item #%d", itemNum))
+	})
+	itemRow.Add(btn)
+	return itemRow
+}
+
+// buildScrollButtons creates the scroll control buttons.
+func buildScrollButtons(scrollView *wayne.ScrollView, scrollInfo *wayne.Label) *wayne.Row {
+	buttonRow := wayne.NewRow()
+
+	topBtn := wayne.NewButton("Scroll to Top", wayne.Size{Width: 50, Height: 100})
+	topBtn.OnClick(func() {
+		scrollView.SetScrollOffset(0)
+		scrollInfo.SetText("Scroll: 0px")
+	})
+	buttonRow.Add(topBtn)
+
+	bottomBtn := wayne.NewButton("Scroll Down", wayne.Size{Width: 50, Height: 100})
+	bottomBtn.OnClick(func() {
+		scrollView.SetScrollOffset(scrollView.ScrollOffset() + 100)
+	})
+	buttonRow.Add(bottomBtn)
+
+	return buttonRow
+}
+
 func main() {
 	app := wayne.NewApp()
 
@@ -40,75 +119,7 @@ func main() {
 		log.Fatalf("Failed to create window: %v", err)
 	}
 
-	// Root panel.
-	root := wayne.NewPanel(wayne.Size{Width: 100, Height: 100})
-	root.SetFlowDirection(wayne.FlowColumn)
-	root.SetPadding(10)
-	root.SetGap(5)
-
-	// Title.
-	title := wayne.NewLabel("Scrollable Item List", wayne.Size{Width: 100, Height: 8})
-	root.Add(title)
-
-	// Scroll position indicator.
-	scrollInfo := wayne.NewLabel("Scroll: 0px", wayne.Size{Width: 100, Height: 5})
-	root.Add(scrollInfo)
-
-	// ScrollView takes up most of the window.
-	scrollView := wayne.NewScrollView(wayne.Size{Width: 100, Height: 75})
-	scrollView.OnScroll(func(offset int) {
-		scrollInfo.SetText(fmt.Sprintf("Scroll: %dpx", offset))
-	})
-
-	// Create a container panel with many items.
-	// Each item is 5% of parent height, but parent is virtual (larger than view).
-	itemContainer := wayne.NewPanel(wayne.Size{Width: 100, Height: 500}) // 500% = 5x viewport
-	itemContainer.SetFlowDirection(wayne.FlowColumn)
-	itemContainer.SetGap(2)
-
-	// Add 30 items to the scrollable list.
-	for i := 1; i <= 30; i++ {
-		itemRow := wayne.NewRow()
-
-		// Item label.
-		label := wayne.NewLabel(fmt.Sprintf("Item #%d", i), wayne.Size{Width: 70, Height: 100})
-		itemRow.Add(label)
-
-		// Action button for each item.
-		btn := wayne.NewButton("Select", wayne.Size{Width: 30, Height: 100})
-		itemNum := i // Capture for closure.
-		btn.OnClick(func() {
-			title.SetText(fmt.Sprintf("Selected: Item #%d", itemNum))
-		})
-		itemRow.Add(btn)
-
-		itemContainer.Add(itemRow)
-	}
-
-	scrollView.Add(itemContainer)
-	root.Add(scrollView)
-
-	// Button row at bottom.
-	buttonRow := wayne.NewRow()
-
-	topBtn := wayne.NewButton("Scroll to Top", wayne.Size{Width: 50, Height: 100})
-	topBtn.OnClick(func() {
-		scrollView.SetScrollOffset(0)
-		scrollInfo.SetText("Scroll: 0px")
-	})
-	buttonRow.Add(topBtn)
-
-	bottomBtn := wayne.NewButton("Scroll Down", wayne.Size{Width: 50, Height: 100})
-	bottomBtn.OnClick(func() {
-		// Scroll down by 100 pixels.
-		current := scrollView.ScrollOffset()
-		scrollView.SetScrollOffset(current + 100)
-	})
-	buttonRow.Add(bottomBtn)
-
-	root.Add(buttonRow)
-
-	window.SetRoot(root)
+	window.SetRoot(buildScrollViewPanel())
 
 	if err := app.Run(); err != nil {
 		log.Fatalf("Application error: %v", err)

@@ -30,13 +30,6 @@ type PublicWidget interface {
 	IsFocused() bool
 }
 
-// boundsProvider is an unexported interface for internal code that needs
-// multi-return bounds/position methods. Not exported to avoid gomobile issues.
-type boundsProvider interface {
-	bounds() (width, height int)
-	position() (x, y int)
-}
-
 // Container extends PublicWidget for widgets that can contain child widgets.
 type Container interface {
 	PublicWidget

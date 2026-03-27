@@ -50,13 +50,6 @@ type Image struct {
 	height int
 }
 
-// size returns the image dimensions in pixels.
-// This method is unexported for gomobile compatibility.
-// For gomobile, use Width() and Height() instead.
-func (img *Image) size() (width, height int) {
-	return img.width, img.height
-}
-
 // Width returns the image width in pixels.
 func (img *Image) Width() int {
 	return img.width
@@ -199,6 +192,11 @@ func (rm *ResourceManager) validateImagePath(path string) error {
 	if path == "" {
 		return fmt.Errorf("image path cannot be empty")
 	}
+	return rm.checkPathAccessible(path)
+}
+
+// checkPathAccessible verifies the path exists and is a file (not a directory).
+func (rm *ResourceManager) checkPathAccessible(path string) error {
 	info, err := os.Stat(path)
 	if err != nil {
 		return fmt.Errorf("resource path %q not accessible: %w", path, err)

@@ -98,23 +98,32 @@ func (c *ebitenCanvas) DrawText(text string, x, y int, f *Font, col Color) {
 		return
 	}
 
-	face := defaultFontFace
-	scale := c.Scale() // Apply HiDPI scale factor
-	if f != nil && f.face != nil {
-		face = f.face
-		// Scale text based on requested font size relative to default (13pt)
-		if f.size > 0 {
-			scale = (f.size / 13.0) * c.Scale()
-		}
-	}
+	face, scale := c.resolveFontAndScale(f)
+	op := c.buildTextDrawOptions(x, y, scale, col)
+	textv2.Draw(c.dst, text, face, op)
+}
 
+// resolveFontAndScale returns the font face and scale factor to use for text rendering.
+func (c *ebitenCanvas) resolveFontAndScale(f *Font) (textv2.Face, float64) {
+	if f == nil || f.face == nil {
+		return defaultFontFace, c.Scale()
+	}
+	scale := c.Scale()
+	if f.size > 0 {
+		scale = (f.size / 13.0) * c.Scale()
+	}
+	return f.face, scale
+}
+
+// buildTextDrawOptions creates draw options with position, scale, and color.
+func (c *ebitenCanvas) buildTextDrawOptions(x, y int, scale float64, col Color) *textv2.DrawOptions {
 	op := &textv2.DrawOptions{}
 	if scale != 1.0 {
 		op.GeoM.Scale(scale, scale)
 	}
 	op.GeoM.Translate(float64(x), float64(y))
 	op.ColorScale.ScaleWithColor(colorToRGBA(col))
-	textv2.Draw(c.dst, text, face, op)
+	return op
 }
 
 // DrawImage renders an image at the given position and size.
