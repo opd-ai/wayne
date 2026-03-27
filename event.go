@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios || linux
+//go:build windows || darwin || android || ios
 
 package wayne
 
@@ -142,7 +142,9 @@ const (
 // Key represents a keyboard key symbol (compatible with X11 keysyms).
 type Key uint32
 
-// Common key constants.
+// Common key constants. These are exported for use by application code that needs
+// to detect specific key presses in HandleEvent callbacks. Modifier keys are included
+// for completeness even if not directly used by internal widget implementations.
 const (
 	KeyEscape    Key = 0xFF1B
 	KeyReturn    Key = 0xFF0D
@@ -158,14 +160,16 @@ const (
 	KeyPageUp    Key = 0xFF55
 	KeyPageDown  Key = 0xFF56
 	KeySpace     Key = 0x0020
-	KeyShiftL    Key = 0xFFE1
-	KeyShiftR    Key = 0xFFE2
-	KeyControlL  Key = 0xFFE3
-	KeyControlR  Key = 0xFFE4
-	KeyAltL      Key = 0xFFE9
-	KeyAltR      Key = 0xFFEA
-	KeySuperL    Key = 0xFFEB
-	KeySuperR    Key = 0xFFEC
+
+	// Modifier key constants - exported for consumer use in detecting modifier key presses.
+	KeyShiftL   Key = 0xFFE1
+	KeyShiftR   Key = 0xFFE2
+	KeyControlL Key = 0xFFE3
+	KeyControlR Key = 0xFFE4
+	KeyAltL     Key = 0xFFE9
+	KeyAltR     Key = 0xFFEA
+	KeySuperL   Key = 0xFFEB
+	KeySuperR   Key = 0xFFEC
 )
 
 // Modifier represents keyboard modifiers.

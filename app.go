@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios || linux
+//go:build windows || darwin || android || ios
 
 // Package wayne provides cross-platform UI widgets. See doc.go for details.
 package wayne
@@ -149,12 +149,12 @@ func (a *App) configureWindow() {
 	cfg := a.primaryConfig
 	a.mu.Unlock()
 
-	a.applyWindowSizeLimits(cfg)
-	a.applyWindowDecorations(cfg)
+	a.applySizeLimits(cfg)
+	a.applyDecorations(cfg)
 }
 
-// applyWindowSizeLimits sets window minimum/maximum size constraints.
-func (a *App) applyWindowSizeLimits(cfg WindowConfig) {
+// applySizeLimits sets window minimum/maximum size constraints.
+func (a *App) applySizeLimits(cfg WindowConfig) {
 	if cfg.MinWidth <= 0 && cfg.MinHeight <= 0 && cfg.MaxWidth <= 0 && cfg.MaxHeight <= 0 {
 		return
 	}
@@ -174,8 +174,8 @@ func normalizeLimit(val int) int {
 	return val
 }
 
-// applyWindowDecorations sets fullscreen and decoration options.
-func (a *App) applyWindowDecorations(cfg WindowConfig) {
+// applyDecorations sets fullscreen and decoration options.
+func (a *App) applyDecorations(cfg WindowConfig) {
 	if cfg.Fullscreen {
 		ebiten.SetFullscreen(true)
 	}
@@ -204,38 +204,60 @@ func (a *App) Close() {
 // configures the primary window. Subsequent calls create logical windows that
 // are rendered as overlapping root widget subtrees.
 func (a *App) NewWindow(cfg WindowConfig) (*Window, error) {
+	cfg = a.normalizeWindowConfig(cfg)
+	win := a.createWindow(cfg)
+
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
+	a.windows = append(a.windows, win)
+	a.initPrimaryWindowIfNeeded(win, cfg)
+
+	return win, nil
+}
+
+// normalizeWindowConfig applies defaults to a WindowConfig.
+func (a *App) normalizeWindowConfig(cfg WindowConfig) WindowConfig {
 	if cfg.Width <= 0 {
 		cfg.Width = a.width
 	}
 	if cfg.Height <= 0 {
 		cfg.Height = a.height
 	}
+	return cfg
+}
 
-	win := &Window{
+// createWindow constructs a new Window from the given config.
+func (a *App) createWindow(cfg WindowConfig) *Window {
+	return &Window{
 		app:        a,
 		title:      cfg.Title,
 		width:      cfg.Width,
 		height:     cfg.Height,
 		dispatcher: NewEventDispatcher(),
 	}
+}
 
-	a.mu.Lock()
-	defer a.mu.Unlock()
-
-	a.windows = append(a.windows, win)
-	if a.primaryWindow == nil {
-		a.primaryWindow = win
-		a.primaryConfig = cfg
-		// Resize the Ebitengine window for the first window.
-		if cfg.Width > 0 && cfg.Width != a.width {
-			a.width = cfg.Width
-		}
-		if cfg.Height > 0 && cfg.Height != a.height {
-			a.height = cfg.Height
-		}
+// initPrimaryWindowIfNeeded sets this window as primary if none exists.
+// Must be called with a.mu held.
+func (a *App) initPrimaryWindowIfNeeded(win *Window, cfg WindowConfig) {
+	if a.primaryWindow != nil {
+		return
 	}
+	a.primaryWindow = win
+	a.primaryConfig = cfg
+	a.syncAppDimensions(cfg)
+}
 
-	return win, nil
+// syncAppDimensions updates app dimensions to match the window config.
+// Must be called with a.mu held.
+func (a *App) syncAppDimensions(cfg WindowConfig) {
+	if cfg.Width > 0 && cfg.Width != a.width {
+		a.width = cfg.Width
+	}
+	if cfg.Height > 0 && cfg.Height != a.height {
+		a.height = cfg.Height
+	}
 }
 
 // LoadFont loads a font from the specified path at the given size.

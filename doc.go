@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios || linux
+//go:build windows || darwin || android || ios
 
 // Package wayne provides an API-compatible alternative to the opd-ai/wain
 // widget system, targeting Windows, macOS, Android, and iOS.
@@ -27,6 +27,24 @@
 //	win.SetRoot(col)
 //
 //	app.Run()
+//
+// # HiDPI Scaling
+//
+// Wayne supports HiDPI displays (Retina, 4K) through the Theme.Scale property.
+// Set Scale to 2.0 for Retina/HiDPI displays to ensure UI elements render at
+// the correct physical size:
+//
+//	theme := wayne.DefaultDark()
+//	theme.Scale = 2.0  // For HiDPI/Retina displays
+//	app.SetTheme(theme)
+//
+// The scale factor affects:
+//   - Text rendering (font sizes are multiplied by scale)
+//   - Widget borders and padding
+//   - Border radius for rounded corners
+//
+// Widget positions and layout percentages are not affected by scale; only
+// visual rendering is scaled.
 //
 // # Keyboard Focus and Tab Navigation
 //

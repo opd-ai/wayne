@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios || linux
+//go:build windows || darwin || android || ios
 
 package wayne
 
@@ -173,20 +173,28 @@ func (g *ebitenGame) processMouseMovement(a *App, mx, my int, mxf, myf float64) 
 func (g *ebitenGame) updateHoverState(a *App, mx, my int, mxf, myf float64) {
 	currentHovered := g.findHoveredWidget(mx, my)
 	if currentHovered == g.lastHoveredWidget {
-		if g.lastHoveredWidget != nil {
-			g.lastHoverPos = [2]float64{mxf, myf}
-		}
+		g.updateHoverPosition(mxf, myf)
 		return
 	}
 
+	g.emitHoverTransition(a, currentHovered, mxf, myf)
+}
+
+// updateHoverPosition updates the last hover position if we're still over a widget.
+func (g *ebitenGame) updateHoverPosition(mxf, myf float64) {
+	if g.lastHoveredWidget != nil {
+		g.lastHoverPos = [2]float64{mxf, myf}
+	}
+}
+
+// emitHoverTransition dispatches PointerLeave/PointerEnter events on hover change.
+func (g *ebitenGame) emitHoverTransition(a *App, newHovered PublicWidget, mxf, myf float64) {
 	if g.lastHoveredWidget != nil {
 		a.dispatchEvent(NewPointerEvent(PointerLeave, g.lastHoverPos[0], g.lastHoverPos[1], 0, ScrollAxisVertical, 0))
 	}
-	g.lastHoveredWidget = currentHovered
-	if currentHovered != nil {
+	g.lastHoveredWidget = newHovered
+	if newHovered != nil {
 		a.dispatchEvent(NewPointerEvent(PointerEnter, mxf, myf, 0, ScrollAxisVertical, 0))
-	}
-	if g.lastHoveredWidget != nil {
 		g.lastHoverPos = [2]float64{mxf, myf}
 	}
 }
@@ -226,13 +234,15 @@ func (g *ebitenGame) processMouseScroll(a *App, mxf, myf float64) {
 
 // processKeyboardInput handles keyboard key presses, releases, and text input.
 func (g *ebitenGame) processKeyboardInput() {
+	inputChars := ebiten.AppendInputChars(nil)
+	inputChars = g.processKeyPresses(inputChars)
+	g.processRemainingChars(inputChars)
+	g.processKeyReleases()
+}
+
+// processKeyPresses handles just-pressed keys and associates them with input chars.
+func (g *ebitenGame) processKeyPresses(inputChars []rune) []rune {
 	a := g.app
-
-	// Collect text input (printable characters).
-	var inputChars []rune
-	inputChars = ebiten.AppendInputChars(inputChars)
-
-	// Build a map of rune → already handled, to associate with key events.
 	justPressedKeys := inpututil.AppendJustPressedKeys(nil)
 	for _, ebKey := range justPressedKeys {
 		wKey := ebitenKeyToWayne(ebKey)
@@ -244,12 +254,20 @@ func (g *ebitenGame) processKeyboardInput() {
 		}
 		a.dispatchEvent(NewKeyEvent(KeyPress, wKey, mods, inputRune))
 	}
+	return inputChars
+}
 
-	// Any remaining input chars (typed without a direct key mapping).
+// processRemainingChars dispatches events for input chars without direct key mapping.
+func (g *ebitenGame) processRemainingChars(inputChars []rune) {
+	a := g.app
 	for _, r := range inputChars {
 		a.dispatchEvent(NewKeyEvent(KeyPress, 0, currentModifiers(), r))
 	}
+}
 
+// processKeyReleases handles just-released keys.
+func (g *ebitenGame) processKeyReleases() {
+	a := g.app
 	justReleasedKeys := inpututil.AppendJustReleasedKeys(nil)
 	for _, ebKey := range justReleasedKeys {
 		wKey := ebitenKeyToWayne(ebKey)
@@ -260,42 +278,64 @@ func (g *ebitenGame) processKeyboardInput() {
 
 // processTouchInput handles touch events for mobile and touch-enabled devices.
 func (g *ebitenGame) processTouchInput() {
-	a := g.app
+	g.ensureTouchPosMap()
+	g.processTouchDownEvents()
+	g.processTouchMoveEvents()
+	g.processTouchUpEvents()
+}
 
-	// Initialize the touch position map if needed
+// ensureTouchPosMap initializes the touch position map if needed.
+func (g *ebitenGame) ensureTouchPosMap() {
 	if g.lastTouchPos == nil {
 		g.lastTouchPos = make(map[ebiten.TouchID][2]float64)
 	}
+}
 
+// processTouchDownEvents handles new touch press events.
+func (g *ebitenGame) processTouchDownEvents() {
+	a := g.app
 	justPressedTouches := inpututil.AppendJustPressedTouchIDs(nil)
 	for _, tid := range justPressedTouches {
-		tx, ty := ebiten.TouchPosition(tid)
-		txf, tyf := float64(tx), float64(ty)
-		g.lastTouchPos[tid] = [2]float64{txf, tyf}
+		txf, tyf := g.recordTouchPosition(tid)
 		a.dispatchEvent(NewTouchEvent(TouchDown, int32(tid), txf, tyf))
 	}
+}
 
-	var activeTouches []ebiten.TouchID
-	activeTouches = ebiten.AppendTouchIDs(activeTouches)
+// processTouchMoveEvents handles touch motion updates.
+func (g *ebitenGame) processTouchMoveEvents() {
+	a := g.app
+	activeTouches := ebiten.AppendTouchIDs(nil)
 	for _, tid := range activeTouches {
-		tx, ty := ebiten.TouchPosition(tid)
-		txf, tyf := float64(tx), float64(ty)
-		g.lastTouchPos[tid] = [2]float64{txf, tyf}
+		txf, tyf := g.recordTouchPosition(tid)
 		a.dispatchEvent(NewTouchEvent(TouchMotion, int32(tid), txf, tyf))
 	}
+}
 
+// processTouchUpEvents handles touch release events.
+func (g *ebitenGame) processTouchUpEvents() {
+	a := g.app
 	justReleasedTouches := inpututil.AppendJustReleasedTouchIDs(nil)
 	for _, tid := range justReleasedTouches {
-		// Use the last known position for TouchUp events
-		pos, ok := g.lastTouchPos[tid]
-		var txf, tyf float64
-		if ok {
-			txf, tyf = pos[0], pos[1]
-		}
+		txf, tyf := g.getLastTouchPosition(tid)
 		a.dispatchEvent(NewTouchEvent(TouchUp, int32(tid), txf, tyf))
-		// Clean up the position map
 		delete(g.lastTouchPos, tid)
 	}
+}
+
+// recordTouchPosition reads and stores the current touch position.
+func (g *ebitenGame) recordTouchPosition(tid ebiten.TouchID) (float64, float64) {
+	tx, ty := ebiten.TouchPosition(tid)
+	txf, tyf := float64(tx), float64(ty)
+	g.lastTouchPos[tid] = [2]float64{txf, tyf}
+	return txf, tyf
+}
+
+// getLastTouchPosition returns the last known position for a touch ID.
+func (g *ebitenGame) getLastTouchPosition(tid ebiten.TouchID) (float64, float64) {
+	if pos, ok := g.lastTouchPos[tid]; ok {
+		return pos[0], pos[1]
+	}
+	return 0, 0
 }
 
 // currentModifiers reads the current keyboard modifier state.

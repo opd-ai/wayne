@@ -1,8 +1,30 @@
-//go:build windows || darwin || android || ios || linux
+//go:build windows || darwin || android || ios
 
 package wayne
 
-// Widget is the interface that all UI widgets must implement for event handling.
+// Widget is a legacy interface preserved for backwards compatibility.
+//
+// Deprecated: Use PublicWidget instead. This interface predates the unified
+// event handling model. All concrete widget types in wayne implement PublicWidget,
+// which uses a single HandleEvent(Event) method for all input types. This interface
+// is retained for codebases that may have implemented it directly.
+//
+// Migration guide:
+//
+//	// Old pattern (Widget interface):
+//	type MyWidget struct { wayne.BaseWidget }
+//	func (w *MyWidget) HandlePointer(evt *PointerEvent) { ... }
+//	func (w *MyWidget) HandleKey(evt *KeyEvent) { ... }
+//
+//	// New pattern (PublicWidget interface):
+//	type MyWidget struct { wayne.BasePublicWidget }
+//	func (w *MyWidget) HandleEvent(evt Event) bool {
+//	    switch e := evt.(type) {
+//	    case *PointerEvent: ...
+//	    case *KeyEvent: ...
+//	    }
+//	    return false
+//	}
 type Widget interface {
 	// Contains returns true if the point (x, y) is inside the widget's bounds.
 	Contains(x, y float64) bool
@@ -27,6 +49,9 @@ type Widget interface {
 }
 
 // BaseWidget provides default implementations for the Widget interface.
+//
+// Deprecated: Use BasePublicWidget instead. See Widget interface documentation
+// for migration guidance.
 type BaseWidget struct {
 	x, y          float64
 	width, height float64

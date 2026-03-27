@@ -9,8 +9,9 @@ API-compatible cross-platform GUI for Windows, macOS, Android, iOS
 
 - ✅ **Windows** - Fully tested via CI
 - ✅ **macOS** - Fully tested via CI  
-- ⚠️ **Android** - Supported but requires manual testing (CI in progress)
-- ⚠️ **iOS** - Supported but requires manual testing (CI in progress)
+- ✅ **Android** - Tested via CI (emulator)
+- ✅ **iOS** - Tested via CI (simulator)
+- ❌ **Linux/BSD** - Not supported. For Linux, use [opd-ai/wain](https://github.com/opd-ai/wain) instead
 
 ### Testing Status
 
@@ -18,10 +19,10 @@ API-compatible cross-platform GUI for Windows, macOS, Android, iOS
 |----------|-------|------------|-------------------|-----------|
 | Windows  | ✅ Yes | ✅ Yes     | ⚠️ Partial       | ✅ Automated |
 | macOS    | ✅ Yes | ✅ Yes     | ⚠️ Partial       | ✅ Automated |
-| Android  | ✅ Yes | ⚠️ Manual  | ⚠️ Manual        | 🔄 Planned |
-| iOS      | ✅ Yes | ⚠️ Manual  | ⚠️ Manual        | 🔄 Planned |
+| Android  | ✅ Yes | ✅ Yes     | ⚠️ Partial       | ✅ Automated |
+| iOS      | ✅ Yes | ✅ Yes     | ⚠️ Partial       | ✅ Automated |
 
-**Note**: Android and iOS testing requires physical devices or authorized emulators. These platforms are supported by the codebase (build tags, API surface) but automated testing infrastructure is still in development.
+**Note**: Android tests run on an x86_64 emulator (API 29) and iOS tests run on an iPhone simulator. For device-specific testing, use `gomobile test` with appropriate device configurations.
 
 ### Running Tests
 

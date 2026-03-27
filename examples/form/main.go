@@ -29,6 +29,15 @@ import (
 	"github.com/opd-ai/wayne"
 )
 
+// createInputRow creates a row with a label and text input for form fields.
+func createInputRow(label, placeholder string) (*wayne.Row, *wayne.TextInput) {
+	row := wayne.NewRow()
+	row.Add(wayne.NewLabel(label, wayne.Size{Width: 25, Height: 100}))
+	input := wayne.NewTextInput(placeholder, wayne.Size{Width: 75, Height: 100})
+	row.Add(input)
+	return row, input
+}
+
 func main() {
 	app := wayne.NewApp()
 
@@ -51,25 +60,14 @@ func main() {
 	title := wayne.NewLabel("Registration Form", wayne.Size{Width: 100, Height: 10})
 	root.Add(title)
 
-	// Name field row.
-	nameRow := wayne.NewRow()
-	nameRow.Add(wayne.NewLabel("Name:", wayne.Size{Width: 25, Height: 100}))
-	nameInput := wayne.NewTextInput("Enter your name", wayne.Size{Width: 75, Height: 100})
-	nameRow.Add(nameInput)
+	// Form fields using helper function.
+	nameRow, nameInput := createInputRow("Name:", "Enter your name")
 	root.Add(nameRow)
 
-	// Email field row.
-	emailRow := wayne.NewRow()
-	emailRow.Add(wayne.NewLabel("Email:", wayne.Size{Width: 25, Height: 100}))
-	emailInput := wayne.NewTextInput("Enter your email", wayne.Size{Width: 75, Height: 100})
-	emailRow.Add(emailInput)
+	emailRow, emailInput := createInputRow("Email:", "Enter your email")
 	root.Add(emailRow)
 
-	// Message field row.
-	msgRow := wayne.NewRow()
-	msgRow.Add(wayne.NewLabel("Message:", wayne.Size{Width: 25, Height: 100}))
-	msgInput := wayne.NewTextInput("Enter a message", wayne.Size{Width: 75, Height: 100})
-	msgRow.Add(msgInput)
+	msgRow, msgInput := createInputRow("Message:", "Enter a message")
 	root.Add(msgRow)
 
 	// Spacer.

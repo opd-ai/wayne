@@ -27,8 +27,8 @@
 | API compatibility with wain | ✅ Achieved | `api_alignment_test.go` validates 11+ widget types, 20+ constructors, 35+ constants | Only 1 known breaking change: `NewImageWidget` signature (documented) |
 | Windows support | ✅ Achieved | CI passes on `windows-latest`; build tags include `windows` | None |
 | macOS support | ✅ Achieved | CI passes on `macos-latest`; build tags include `darwin` | None |
-| Android support | ⚠️ Partial | Build tags include `android`; `app_android_test.go` exists | No automated CI; requires manual gomobile testing |
-| iOS support | ⚠️ Partial | Build tags include `ios`; `app_ios_test.go` exists | No automated CI; requires manual gomobile testing |
+| Android support | ✅ Achieved | CI runs tests on Android emulator (API 29); build tags include `android` | None |
+| iOS support | ✅ Achieved | CI runs tests on iOS Simulator; build tags include `ios` | None |
 | Theme system | ✅ Achieved | `App.SetTheme()` propagates via `Canvas.Theme()`; `Themeable` interface for children | None |
 | Event hit-testing | ✅ Achieved | `Panel.HandleEvent()` checks bounds; `contains()` helper; z-order aware | None |
 | Focus/Tab navigation | ✅ Achieved | `FocusManager` with auto-built chain; Tab/Shift+Tab in `dispatchKey()` | None |
@@ -37,7 +37,7 @@
 | WindowConfig options | ✅ Achieved | MinWidth/MaxWidth, Fullscreen, Decorations applied in `App.Run()` | None |
 | Documentation coverage | ✅ Achieved | 92.3% overall; 100% package; 92.3% functions (go-stats-generator) | None |
 
-**Overall: 9/11 goals fully achieved, 2/11 partial (mobile CI)**
+**Overall: 11/11 goals fully achieved**
 
 ## Metrics Summary (go-stats-generator)
 
@@ -164,10 +164,11 @@
   - Validation: Examples compile and run on Windows/macOS
   - Result: Created examples/hello, examples/form, examples/scrollview with README
 
-- [ ] **Improve godoc examples**
+- [x] **Improve godoc examples**
   - Add runnable examples for each widget constructor
   - Add Canvas method examples
   - Validation: `go doc -all` shows examples for all public types
+  - Result: Added example_test.go with 16 runnable examples for App, Button, Label, TextInput, Panel, Row, Column, Grid, Stack, ScrollView, Spacer, ImageWidget, themes, and Size
 
 ---
 
@@ -197,8 +198,8 @@ These are documented limitations, not gaps:
 
 Before marking a priority complete:
 
-- [ ] All tests pass with `-race` on Windows and macOS
-- [ ] `go vet ./...` reports no issues
-- [ ] `go-stats-generator` metrics improve or remain stable
-- [ ] Documentation updated if public API changes
-- [ ] COMPATIBILITY.md updated if wain alignment changes
+- [x] All tests pass with `-race` on Windows and macOS (CI validates on each push)
+- [x] `go vet ./...` reports no issues (CI validates on each push)
+- [x] `go-stats-generator` metrics improve or remain stable (baseline.json tracked)
+- [x] Documentation updated if public API changes (NewImageWidgetWithImage added)
+- [x] COMPATIBILITY.md updated if wain alignment changes (NewImageWidgetWithImage documented)

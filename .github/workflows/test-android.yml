@@ -16,7 +16,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.21'
+          go-version: '1.24'
           cache: true
 
       - name: Install dependencies
@@ -38,7 +38,9 @@ jobs:
 
       - name: Install gomobile
         run: |
-          go install golang.org/x/mobile/cmd/gomobile@latest
+          # Pin to a specific gomobile version for reproducibility
+          go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20250106192035-c31d5b91ecc3
+          go install golang.org/x/mobile/cmd/gobind@v0.0.0-20250106192035-c31d5b91ecc3
           gomobile init
 
       - name: Build for Android (verification)
@@ -46,10 +48,16 @@ jobs:
           CGO_ENABLED: 1
         run: |
           # Verify the package builds for Android target
-          # Note: Full test execution requires running emulator which adds significant CI time
           gomobile bind -target=android -androidapi=21 -o /tmp/wayne.aar .
 
-      # Note: Full gomobile test execution on emulator is resource-intensive.
-      # This workflow verifies the build succeeds. For comprehensive Android testing,
-      # use a dedicated mobile CI service or local emulator setup.
-      # See TESTING.md for manual testing instructions.
+      - name: Run Android tests on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          arch: x86_64
+          profile: Nexus 6
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          disable-animations: true
+          script: |
+            # Run gomobile tests on the emulator
+            gomobile test -target=android ./...
