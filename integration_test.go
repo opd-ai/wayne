@@ -285,22 +285,28 @@ func TestIntegration_ResourceManagement(t *testing.T) {
 	// so we test the error handling path
 
 	_, err := app.LoadFont("/nonexistent/font.ttf", 14)
-	// Should return an error for missing file, not panic
+	// Should return an error for missing file - the path doesn't exist
 	if err == nil {
-		t.Log("LoadFont with invalid path should return error (or fallback font)")
+		t.Error("LoadFont with non-existent path should return error")
 	}
 
 	// Close app
 	app.Close()
 
-	// Operations after close should fail gracefully
+	// Operations after close should fail with ErrNotRunning
 	_, err = app.LoadFont("/some/font.ttf", 14)
 	if err == nil {
-		t.Log("LoadFont after Close should return error")
+		t.Error("LoadFont after Close should return error")
+	}
+	if err != ErrNotRunning {
+		t.Errorf("LoadFont after Close: expected ErrNotRunning, got %v", err)
 	}
 
 	_, err = app.LoadImage("/some/image.png")
 	if err == nil {
-		t.Log("LoadImage after Close should return error")
+		t.Error("LoadImage after Close should return error")
+	}
+	if err != ErrNotRunning {
+		t.Errorf("LoadImage after Close: expected ErrNotRunning, got %v", err)
 	}
 }

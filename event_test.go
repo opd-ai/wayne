@@ -117,7 +117,7 @@ func TestPointerEventCreation(t *testing.T) {
 			}
 
 			// Check timestamp is recent
-			if time.Since(evt.Timestamp()) > time.Second {
+			if time.Since(evt.Timestamp()) > 100*time.Millisecond {
 				t.Error("Timestamp is too old")
 			}
 		})
@@ -234,7 +234,7 @@ func TestKeyEventCreation(t *testing.T) {
 			}
 
 			// Check timestamp is recent
-			if time.Since(evt.Timestamp()) > time.Second {
+			if time.Since(evt.Timestamp()) > 100*time.Millisecond {
 				t.Error("Timestamp is too old")
 			}
 		})
@@ -314,7 +314,7 @@ func TestTouchEventCreation(t *testing.T) {
 			}
 
 			// Check timestamp is recent
-			if time.Since(evt.Timestamp()) > time.Second {
+			if time.Since(evt.Timestamp()) > 100*time.Millisecond {
 				t.Error("Timestamp is too old")
 			}
 		})

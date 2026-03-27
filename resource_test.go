@@ -18,6 +18,8 @@ func TestResourceManagerConcurrentCleanup(t *testing.T) {
 	rm := newResourceManager()
 
 	var wg sync.WaitGroup
+	// errChan collects errors from concurrent operations; errors are expected
+	// because test.ttf doesn't exist or cleanup may race with the operation
 	errChan := make(chan error, 100)
 
 	// Start goroutines that attempt to load resources
@@ -50,6 +52,17 @@ func TestResourceManagerConcurrentCleanup(t *testing.T) {
 
 	wg.Wait()
 	close(errChan)
+
+	// Drain error channel - errors during concurrent operations are expected
+	// (file not found or ErrResourceManagerClosed depending on race timing)
+	errorCount := 0
+	for err := range errChan {
+		if err != nil {
+			errorCount++
+		}
+	}
+	// Log for visibility; these errors are expected in the concurrent scenario
+	t.Logf("Collected %d expected errors from concurrent operations", errorCount)
 
 	// After cleanup, all new calls should return ErrResourceManagerClosed
 	_, err := rm.LoadFont("test.ttf", 12.0)
