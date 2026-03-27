@@ -152,41 +152,58 @@ func (g *ebitenGame) processMouseInput() {
 	mx, my := ebiten.CursorPosition()
 	mxf, myf := float64(mx), float64(my)
 
-	// Mouse move
+	g.processMouseMovement(a, mx, my, mxf, myf)
+	g.processMouseButtons(a, mxf, myf)
+	g.processMouseScroll(a, mxf, myf)
+}
+
+// processMouseMovement handles mouse position changes and hover state.
+func (g *ebitenGame) processMouseMovement(a *App, mx, my int, mxf, myf float64) {
 	prev := a.lastMousePos()
-	if prev[0] != mx || prev[1] != my {
-		a.setLastMousePos(mx, my)
+	if prev[0] == mx && prev[1] == my {
+		return
+	}
 
-		// Track hover state and emit PointerEnter/PointerLeave
-		currentHovered := g.findHoveredWidget(mx, my)
-		if currentHovered != g.lastHoveredWidget {
-			if g.lastHoveredWidget != nil {
-				// Use the last known position inside the widget for PointerLeave
-				a.dispatchEvent(NewPointerEvent(PointerLeave, g.lastHoverPos[0], g.lastHoverPos[1], 0, ScrollAxisVertical, 0))
-			}
-			g.lastHoveredWidget = currentHovered
-			if currentHovered != nil {
-				a.dispatchEvent(NewPointerEvent(PointerEnter, mxf, myf, 0, ScrollAxisVertical, 0))
-			}
-		}
+	a.setLastMousePos(mx, my)
+	g.updateHoverState(a, mx, my, mxf, myf)
+	a.dispatchEvent(NewPointerEvent(PointerMove, mxf, myf, 0, ScrollAxisVertical, 0))
+}
 
-		// Update the last hover position when over a widget
+// updateHoverState tracks hover state and emits PointerEnter/PointerLeave events.
+func (g *ebitenGame) updateHoverState(a *App, mx, my int, mxf, myf float64) {
+	currentHovered := g.findHoveredWidget(mx, my)
+	if currentHovered == g.lastHoveredWidget {
 		if g.lastHoveredWidget != nil {
 			g.lastHoverPos = [2]float64{mxf, myf}
 		}
-
-		a.dispatchEvent(NewPointerEvent(PointerMove, mxf, myf, 0, ScrollAxisVertical, 0))
+		return
 	}
 
-	// Mouse button press/release
-	for _, pair := range []struct {
-		ebBtn    ebiten.MouseButton
-		wayneBtn PointerButton
-	}{
-		{ebiten.MouseButtonLeft, PointerButtonLeft},
-		{ebiten.MouseButtonRight, PointerButtonRight},
-		{ebiten.MouseButtonMiddle, PointerButtonMiddle},
-	} {
+	if g.lastHoveredWidget != nil {
+		a.dispatchEvent(NewPointerEvent(PointerLeave, g.lastHoverPos[0], g.lastHoverPos[1], 0, ScrollAxisVertical, 0))
+	}
+	g.lastHoveredWidget = currentHovered
+	if currentHovered != nil {
+		a.dispatchEvent(NewPointerEvent(PointerEnter, mxf, myf, 0, ScrollAxisVertical, 0))
+	}
+	if g.lastHoveredWidget != nil {
+		g.lastHoverPos = [2]float64{mxf, myf}
+	}
+}
+
+// mouseButtonMapping maps Ebitengine mouse buttons to Wayne pointer buttons.
+var mouseButtonMapping = []struct {
+	ebBtn    ebiten.MouseButton
+	wayneBtn PointerButton
+}{
+	{ebiten.MouseButtonLeft, PointerButtonLeft},
+	{ebiten.MouseButtonRight, PointerButtonRight},
+	{ebiten.MouseButtonMiddle, PointerButtonMiddle},
+}
+
+// processMouseButtons handles mouse button presses and releases.
+func (g *ebitenGame) processMouseButtons(a *App, mxf, myf float64) {
+	for _, pair := range mouseButtonMapping {
 		if inpututil.IsMouseButtonJustPressed(pair.ebBtn) {
 			a.dispatchEvent(NewPointerEvent(PointerButtonPress, mxf, myf, pair.wayneBtn, ScrollAxisVertical, 0))
 		}
@@ -194,8 +211,10 @@ func (g *ebitenGame) processMouseInput() {
 			a.dispatchEvent(NewPointerEvent(PointerButtonRelease, mxf, myf, pair.wayneBtn, ScrollAxisVertical, 0))
 		}
 	}
+}
 
-	// Scroll wheel
+// processMouseScroll handles scroll wheel events.
+func (g *ebitenGame) processMouseScroll(a *App, mxf, myf float64) {
 	wx, wy := ebiten.Wheel()
 	if wx != 0 {
 		a.dispatchEvent(NewPointerEvent(PointerScroll, mxf, myf, 0, ScrollAxisHorizontal, wx))

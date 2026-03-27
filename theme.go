@@ -58,10 +58,10 @@ type Theme struct {
 // DefaultDark returns the built-in dark theme.
 func DefaultDark() Theme {
 	return Theme{
-		Background:   RGB(30, 30, 46),
-		Foreground:   RGB(205, 214, 244),
-		Accent:       RGB(137, 180, 250),
-		Border:       RGB(88, 91, 112),
+		Background:   DarkBase,
+		Foreground:   DarkText,
+		Accent:       DarkAccent,
+		Border:       DarkBorder,
 		FontSize:     14.0,
 		Padding:      DefaultPadding,
 		Gap:          DefaultGap,
@@ -74,10 +74,10 @@ func DefaultDark() Theme {
 // DefaultLight returns the built-in light theme.
 func DefaultLight() Theme {
 	return Theme{
-		Background:   RGB(245, 245, 245),
-		Foreground:   RGB(30, 30, 30),
-		Accent:       RGB(74, 144, 226),
-		Border:       RGB(200, 200, 200),
+		Background:   LightBase,
+		Foreground:   LightText,
+		Accent:       LightAccent,
+		Border:       LightBorder,
 		FontSize:     14.0,
 		Padding:      DefaultPadding,
 		Gap:          DefaultGap,
@@ -90,10 +90,10 @@ func DefaultLight() Theme {
 // HighContrast returns a high-contrast theme for accessibility.
 func HighContrast() Theme {
 	return Theme{
-		Background:   RGB(0, 0, 0),
-		Foreground:   RGB(255, 255, 255),
-		Accent:       RGB(255, 255, 0),
-		Border:       RGB(255, 255, 255),
+		Background:   Black,
+		Foreground:   White,
+		Accent:       Yellow,
+		Border:       White,
 		FontSize:     16.0,
 		Padding:      10,
 		Gap:          8,
@@ -143,32 +143,35 @@ type StyleOverride struct {
 // applyToTheme applies the style override to a theme, returning a new merged theme.
 func (s StyleOverride) applyToTheme(base Theme) Theme {
 	result := base
-	if s.Background != nil {
-		result.Background = *s.Background
-	}
-	if s.Foreground != nil {
-		result.Foreground = *s.Foreground
-	}
-	if s.Accent != nil {
-		result.Accent = *s.Accent
-	}
-	if s.Border != nil {
-		result.Border = *s.Border
-	}
-	if s.FontSize != nil {
-		result.FontSize = *s.FontSize
-	}
-	if s.Padding != nil {
-		result.Padding = *s.Padding
-	}
-	if s.Gap != nil {
-		result.Gap = *s.Gap
-	}
-	if s.BorderWidth != nil {
-		result.BorderWidth = *s.BorderWidth
-	}
-	if s.BorderRadius != nil {
-		result.BorderRadius = *s.BorderRadius
-	}
+	applyColorOverride(&result.Background, s.Background)
+	applyColorOverride(&result.Foreground, s.Foreground)
+	applyColorOverride(&result.Accent, s.Accent)
+	applyColorOverride(&result.Border, s.Border)
+	applyFloat64Override(&result.FontSize, s.FontSize)
+	applyIntOverride(&result.Padding, s.Padding)
+	applyIntOverride(&result.Gap, s.Gap)
+	applyIntOverride(&result.BorderWidth, s.BorderWidth)
+	applyIntOverride(&result.BorderRadius, s.BorderRadius)
 	return result
+}
+
+// applyColorOverride applies a color override if the source is non-nil.
+func applyColorOverride(target *Color, source *Color) {
+	if source != nil {
+		*target = *source
+	}
+}
+
+// applyFloat64Override applies a float64 override if the source is non-nil.
+func applyFloat64Override(target *float64, source *float64) {
+	if source != nil {
+		*target = *source
+	}
+}
+
+// applyIntOverride applies an int override if the source is non-nil.
+func applyIntOverride(target *int, source *int) {
+	if source != nil {
+		*target = *source
+	}
 }

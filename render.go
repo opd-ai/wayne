@@ -144,22 +144,57 @@ func (c *ebitenCanvas) LinearGradient(x, y, width, height int, startColor, endCo
 		return
 	}
 
+	params := computeGradientParams(x, y, width, height, angle)
+	if params.gradientLength == 0 {
+		return
+	}
+
+	c.renderGradient(x, y, width, height, startColor, endColor, params)
+}
+
+// gradientParams holds precomputed values for gradient rendering.
+type gradientParams struct {
+	angle          float64
+	dx, dy         float64
+	centerX        float64
+	centerY        float64
+	minProj        float64
+	gradientLength float64
+	sinA, cosA     float64
+}
+
+// computeGradientParams calculates gradient direction and projection bounds.
+func computeGradientParams(x, y, width, height int, angle float64) gradientParams {
 	// Normalize angle to [0, 360)
 	angle = math.Mod(angle, 360)
 	if angle < 0 {
 		angle += 360
 	}
 
-	// Convert angle to radians
 	angleRad := angle * math.Pi / 180.0
 	dx := math.Cos(angleRad)
 	dy := math.Sin(angleRad)
 
-	// Compute rectangle center
 	centerX := float64(x) + float64(width)/2.0
 	centerY := float64(y) + float64(height)/2.0
 
-	// Project rectangle corners onto gradient direction to find extent
+	minProj, maxProj := computeCornerProjections(x, y, width, height, centerX, centerY, dx, dy)
+
+	return gradientParams{
+		angle:          angle,
+		dx:             dx,
+		dy:             dy,
+		centerX:        centerX,
+		centerY:        centerY,
+		minProj:        minProj,
+		gradientLength: maxProj - minProj,
+		sinA:           math.Abs(math.Sin(angleRad)),
+		cosA:           math.Abs(math.Cos(angleRad)),
+	}
+}
+
+// computeCornerProjections projects rectangle corners onto gradient direction.
+func computeCornerProjections(x, y, width, height int, centerX, centerY, dx, dy float64) (minProj, maxProj float64) {
 	corners := [][2]float64{
 		{float64(x), float64(y)},
 		{float64(x + width), float64(y)},
@@ -167,7 +202,7 @@ func (c *ebitenCanvas) LinearGradient(x, y, width, height int, startColor, endCo
 		{float64(x + width), float64(y + height)},
 	}
 
-	minProj, maxProj := math.Inf(1), math.Inf(-1)
+	minProj, maxProj = math.Inf(1), math.Inf(-1)
 	for _, corner := range corners {
 		proj := (corner[0]-centerX)*dx + (corner[1]-centerY)*dy
 		if proj < minProj {
@@ -177,60 +212,68 @@ func (c *ebitenCanvas) LinearGradient(x, y, width, height int, startColor, endCo
 			maxProj = proj
 		}
 	}
+	return minProj, maxProj
+}
 
-	gradientLength := maxProj - minProj
-	if gradientLength == 0 {
-		return
+// renderGradient dispatches to the appropriate rendering strategy.
+func (c *ebitenCanvas) renderGradient(x, y, width, height int, startColor, endColor Color, p gradientParams) {
+	switch {
+	case p.cosA > 0.99:
+		c.renderHorizontalGradient(x, y, width, height, startColor, endColor, p.angle)
+	case p.sinA > 0.99:
+		c.renderVerticalGradient(x, y, width, height, startColor, endColor, p.angle)
+	default:
+		c.renderDiagonalGradient(x, y, width, height, startColor, endColor, p)
 	}
+}
 
-	// Optimize for axis-aligned gradients using band rendering
-	sinA := math.Abs(math.Sin(angleRad))
-	cosA := math.Abs(math.Cos(angleRad))
-
-	if cosA > 0.99 { // Nearly horizontal (0° or 180°)
-		steps := width
-		for i := 0; i < steps; i++ {
-			t := float64(i) / float64(steps)
-			if angle > 90 && angle < 270 {
-				t = 1 - t // Reverse for 180°
-			}
-			clr := interpolateColor(startColor, endColor, t)
-			vector.FillRect(c.dst, float32(x+i), float32(y), 1, float32(height), clr, false)
+// renderHorizontalGradient renders a nearly horizontal gradient (0° or 180°).
+func (c *ebitenCanvas) renderHorizontalGradient(x, y, width, height int, startColor, endColor Color, angle float64) {
+	for i := 0; i < width; i++ {
+		t := float64(i) / float64(width)
+		if angle > 90 && angle < 270 {
+			t = 1 - t
 		}
-	} else if sinA > 0.99 { // Nearly vertical (90° or 270°)
-		steps := height
-		for i := 0; i < steps; i++ {
-			t := float64(i) / float64(steps)
-			if angle > 180 {
-				t = 1 - t // Reverse for 270°
-			}
-			clr := interpolateColor(startColor, endColor, t)
-			vector.FillRect(c.dst, float32(x), float32(y+i), float32(width), 1, clr, false)
+		clr := interpolateColor(startColor, endColor, t)
+		vector.FillRect(c.dst, float32(x+i), float32(y), 1, float32(height), clr, false)
+	}
+}
+
+// renderVerticalGradient renders a nearly vertical gradient (90° or 270°).
+func (c *ebitenCanvas) renderVerticalGradient(x, y, width, height int, startColor, endColor Color, angle float64) {
+	for i := 0; i < height; i++ {
+		t := float64(i) / float64(height)
+		if angle > 180 {
+			t = 1 - t
 		}
-	} else { // Diagonal gradient - use scanline approach
-		// Render row by row for better performance
-		for py := 0; py < height; py++ {
-			wy := float64(y + py)
-			for px := 0; px < width; px++ {
-				wx := float64(x + px)
+		clr := interpolateColor(startColor, endColor, t)
+		vector.FillRect(c.dst, float32(x), float32(y+i), float32(width), 1, clr, false)
+	}
+}
 
-				// Project pixel position onto gradient direction
-				proj := (wx-centerX)*dx + (wy-centerY)*dy
-
-				// Normalize to [0, 1]
-				t := (proj - minProj) / gradientLength
-				if t < 0 {
-					t = 0
-				}
-				if t > 1 {
-					t = 1
-				}
-
-				clr := interpolateColor(startColor, endColor, t)
-				vector.FillRect(c.dst, float32(x+px), float32(y+py), 1, 1, clr, false)
-			}
+// renderDiagonalGradient renders an arbitrary-angle gradient using scanlines.
+func (c *ebitenCanvas) renderDiagonalGradient(x, y, width, height int, startColor, endColor Color, p gradientParams) {
+	for py := 0; py < height; py++ {
+		wy := float64(y + py)
+		for px := 0; px < width; px++ {
+			t := computePixelGradientT(float64(x+px), wy, p)
+			clr := interpolateColor(startColor, endColor, t)
+			vector.FillRect(c.dst, float32(x+px), float32(y+py), 1, 1, clr, false)
 		}
 	}
+}
+
+// computePixelGradientT computes the normalized gradient position for a pixel.
+func computePixelGradientT(wx, wy float64, p gradientParams) float64 {
+	proj := (wx-p.centerX)*p.dx + (wy-p.centerY)*p.dy
+	t := (proj - p.minProj) / p.gradientLength
+	if t < 0 {
+		return 0
+	}
+	if t > 1 {
+		return 1
+	}
+	return t
 }
 
 // interpolateColor interpolates between two colors using parameter t [0, 1]

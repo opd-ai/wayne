@@ -63,9 +63,9 @@ A few constructors have **parameter naming differences** that maintain type comp
 |-------------|------|-------|-------------|
 | `NewButton` | `text string` | `label string` | ✅ Both `string` |
 | `NewTextInput` | `initialText string` | `placeholder string` | ✅ Both `string` |
-| `NewImageWidget` | `img *Image, size Size` | `size Size` | ⚠️ Different signature |
+| `NewImageWidget` | `img *Image, size Size` | `size Size` | ✅ Use `NewImageWidgetWithImage` |
 
-**NewImageWidget incompatibility**: wain requires an `*Image` at construction, while wayne uses `SetImage(*Image)` after construction. This is the **only known breaking change** in constructor signatures.
+**NewImageWidget compatibility**: wain requires an `*Image` at construction, while wayne's `NewImageWidget` takes only size. For drop-in compatibility, use `NewImageWidgetWithImage(img, size)` which matches wain's signature exactly.
 
 **Migration**:
 ```go
@@ -73,7 +73,10 @@ A few constructors have **parameter naming differences** that maintain type comp
 img := loadImage()
 widget := wain.NewImageWidget(img, size)
 
-// wayne
+// wayne (option 1 - drop-in compatible)
+widget := wayne.NewImageWidgetWithImage(img, size)
+
+// wayne (option 2 - set image after construction)
 widget := wayne.NewImageWidget(size)
 widget.SetImage(img)
 ```
@@ -120,14 +123,19 @@ import "github.com/opd-ai/wain"
 import "github.com/opd-ai/wayne"
 ```
 
-### Step 2: Fix NewImageWidget Calls
+### Step 2: Fix NewImageWidget Calls (Optional)
+
+wayne provides both patterns:
 
 ```go
 // wain
 img := loadImage()
 widget := wain.NewImageWidget(img, wain.Size{Width: 100, Height: 100})
 
-// wayne
+// wayne (drop-in compatible)
+widget := wayne.NewImageWidgetWithImage(img, wayne.Size{Width: 100, Height: 100})
+
+// wayne (alternative: set image after)
 widget := wayne.NewImageWidget(wayne.Size{Width: 100, Height: 100})
 widget.SetImage(img)
 ```

@@ -58,4 +58,37 @@ var (
 
 	// DarkGray is opaque dark gray.
 	DarkGray = RGB(64, 64, 64)
+
+	// Yellow is opaque yellow.
+	Yellow = RGB(255, 255, 0)
+)
+
+// Theme color palette constants for dark theme (Catppuccin-inspired).
+var (
+	// DarkBase is the primary background color for dark themes.
+	DarkBase = RGB(30, 30, 46)
+
+	// DarkText is the primary text color for dark themes.
+	DarkText = RGB(205, 214, 244)
+
+	// DarkAccent is the accent/highlight color for dark themes.
+	DarkAccent = RGB(137, 180, 250)
+
+	// DarkBorder is the border color for dark themes.
+	DarkBorder = RGB(88, 91, 112)
+)
+
+// Theme color palette constants for light theme.
+var (
+	// LightBase is the primary background color for light themes.
+	LightBase = RGB(245, 245, 245)
+
+	// LightText is the primary text color for light themes.
+	LightText = RGB(30, 30, 30)
+
+	// LightAccent is the accent/highlight color for light themes.
+	LightAccent = RGB(74, 144, 226)
+
+	// LightBorder is the border color for light themes.
+	LightBorder = RGB(200, 200, 200)
 )

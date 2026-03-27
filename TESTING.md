@@ -126,19 +126,86 @@ Smoke tests verify:
 ### GitHub Actions
 
 Automated testing runs on:
-- **Windows**: `windows-latest` runner
-- **macOS**: `macos-latest` runner
+- **Windows**: `windows-latest` runner - See `.github/workflows/test.yml`
+- **macOS**: `macos-latest` runner - See `.github/workflows/test.yml`
+- **Android**: `macos-latest` with Android SDK - See `.github/workflows/test-android.yml`
+- **iOS**: `macos-latest` with Xcode - See `.github/workflows/test-ios.yml`
 
-See `.github/workflows/test.yml` for configuration.
+### Android CI Details
 
-### Android/iOS CI (Planned)
+The Android CI workflow (`.github/workflows/test-android.yml`):
+1. Installs JDK 17 and Android SDK via `android-actions/setup-android`
+2. Installs Android NDK 25.2.9519653
+3. Installs gomobile and initializes it
+4. Builds a verification AAR using `gomobile bind`
 
-Android and iOS testing in CI requires:
-- Dedicated runners with device emulators
-- Proper code signing for iOS
-- Extended build times for mobile compilation
+**Note**: Full test execution with `gomobile test` requires a running Android emulator, which significantly increases CI time. The current workflow verifies the build succeeds. For comprehensive testing, use local emulators or a dedicated mobile CI service.
 
-These platforms are currently tested manually during development. Automated CI is tracked as a roadmap item.
+### iOS CI Details
+
+The iOS CI workflow (`.github/workflows/test-ios.yml`):
+1. Uses the default Xcode installation on macOS runners
+2. Installs gomobile and initializes it
+3. Builds a verification XCFramework using `gomobile bind`
+
+**Note**: Full test execution with `gomobile test` requires iOS Simulator, which significantly increases CI time. The current workflow verifies the build succeeds. For comprehensive testing, use local simulators or a dedicated mobile CI service.
+
+### Mobile Emulator/Simulator Setup (Local Development)
+
+#### Android Emulator Setup
+
+1. **Install Android Studio** or standalone Android SDK Command-Line Tools
+2. **Install required components**:
+   ```bash
+   sdkmanager "platform-tools" "platforms;android-34" "system-images;android-34;google_apis;arm64-v8a"
+   ```
+3. **Create an AVD (Android Virtual Device)**:
+   ```bash
+   avdmanager create avd -n test_device -k "system-images;android-34;google_apis;arm64-v8a"
+   ```
+4. **Start the emulator**:
+   ```bash
+   emulator -avd test_device -no-window &
+   adb wait-for-device
+   ```
+5. **Run tests**:
+   ```bash
+   gomobile test -target=android ./...
+   ```
+
+#### iOS Simulator Setup (macOS only)
+
+1. **Install Xcode** from the Mac App Store
+2. **Install Xcode Command Line Tools**:
+   ```bash
+   xcode-select --install
+   ```
+3. **List available simulators**:
+   ```bash
+   xcrun simctl list devices
+   ```
+4. **Boot a simulator**:
+   ```bash
+   xcrun simctl boot "iPhone 15 Pro"
+   ```
+5. **Run tests**:
+   ```bash
+   gomobile test -target=ios ./...
+   ```
+
+### Troubleshooting Mobile Testing
+
+#### Android Issues
+
+- **"NDK not found"**: Ensure `ANDROID_NDK_HOME` is set to your NDK installation path
+- **"adb: device not found"**: Run `adb devices` to verify emulator is connected
+- **Build fails with "API level not found"**: Install the required platform with `sdkmanager`
+
+#### iOS Issues
+
+- **"xcode-select: error: no developer tools"**: Install Xcode Command Line Tools
+- **"Simulator not found"**: Verify simulator name with `xcrun simctl list devices`
+- **Code signing errors**: Use simulator target (`-target=ios/simulator`) to avoid signing requirements
 
 ## Known Limitations
 

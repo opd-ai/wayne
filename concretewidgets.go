@@ -115,25 +115,31 @@ func (b *Button) CanTakeFocus() bool {
 
 // HandleEvent processes pointer and keyboard events for button interaction.
 func (b *Button) HandleEvent(evt Event) bool {
-	// Handle keyboard events for focused buttons
-	if ke, ok := evt.(*KeyEvent); ok {
-		if b.IsFocused() && b.enabled && ke.EventType() == KeyPress {
-			if ke.Key() == KeyReturn || ke.Key() == KeySpace {
-				if b.onClick != nil {
-					b.onClick()
-				}
-				return true
-			}
+	switch e := evt.(type) {
+	case *KeyEvent:
+		return b.handleKeyEvent(e)
+	case *PointerEvent:
+		return b.handlePointerEvent(e)
+	}
+	return false
+}
+
+// handleKeyEvent processes keyboard events for focused buttons.
+func (b *Button) handleKeyEvent(ke *KeyEvent) bool {
+	if !b.IsFocused() || !b.enabled || ke.EventType() != KeyPress {
+		return false
+	}
+	if ke.Key() == KeyReturn || ke.Key() == KeySpace {
+		if b.onClick != nil {
+			b.onClick()
 		}
-		return false
+		return true
 	}
+	return false
+}
 
-	// Handle pointer events
-	pe, ok := evt.(*PointerEvent)
-	if !ok {
-		return false
-	}
-
+// handlePointerEvent processes pointer events for button interaction.
+func (b *Button) handlePointerEvent(pe *PointerEvent) bool {
 	switch pe.EventType() {
 	case PointerEnter:
 		b.hovered = true
@@ -143,31 +149,50 @@ func (b *Button) HandleEvent(evt Event) bool {
 		b.pressed = false
 		return true
 	case PointerButtonPress:
-		if pe.Button() == PointerButtonLeft && b.enabled {
-			x, y := b.Position()
-			w, h := b.Bounds()
-			if !contains(x, y, w, h, pe.X(), pe.Y()) {
-				return false
-			}
-			b.pressed = true
-			return true
-		}
+		return b.handlePress(pe)
 	case PointerButtonRelease:
-		if pe.Button() == PointerButtonLeft && b.pressed && b.enabled {
-			x, y := b.Position()
-			w, h := b.Bounds()
-			if !contains(x, y, w, h, pe.X(), pe.Y()) {
-				return false
-			}
-			b.pressed = false
-			if b.onClick != nil {
-				b.onClick()
-			}
-			return true
-		}
-		b.pressed = false
+		return b.handleRelease(pe)
 	}
 	return false
+}
+
+// handlePress handles button press events.
+func (b *Button) handlePress(pe *PointerEvent) bool {
+	if pe.Button() != PointerButtonLeft || !b.enabled {
+		return false
+	}
+	if !b.isPointInBounds(pe.X(), pe.Y()) {
+		return false
+	}
+	b.pressed = true
+	return true
+}
+
+// handleRelease handles button release events.
+func (b *Button) handleRelease(pe *PointerEvent) bool {
+	if pe.Button() != PointerButtonLeft {
+		b.pressed = false
+		return false
+	}
+	wasPressed := b.pressed
+	b.pressed = false
+	if !wasPressed || !b.enabled {
+		return false
+	}
+	if !b.isPointInBounds(pe.X(), pe.Y()) {
+		return false
+	}
+	if b.onClick != nil {
+		b.onClick()
+	}
+	return true
+}
+
+// isPointInBounds checks if a point is within the button's bounds.
+func (b *Button) isPointInBounds(px, py float64) bool {
+	x, y := b.Position()
+	w, h := b.Bounds()
+	return contains(x, y, w, h, px, py)
 }
 
 // Draw renders the button to the canvas.
@@ -653,6 +678,17 @@ func NewImageWidget(size Size) *ImageWidget {
 	validateSize(size)
 	return &ImageWidget{
 		BasePublicWidget: NewBasePublicWidget(0, 0),
+		size:             size,
+	}
+}
+
+// NewImageWidgetWithImage creates a new image display widget with an initial image.
+// This constructor provides compatibility with wain's NewImageWidget(img, size) signature.
+func NewImageWidgetWithImage(img *Image, size Size) *ImageWidget {
+	validateSize(size)
+	return &ImageWidget{
+		BasePublicWidget: NewBasePublicWidget(0, 0),
+		img:              img,
 		size:             size,
 	}
 }

@@ -142,64 +142,74 @@ func (p *Panel) sizeHint() Size { return p.size }
 
 // resolveChildren lays out this panel's children given the panel's pixel bounds.
 func (p *Panel) resolveChildren(parentX, parentY, parentW, parentH int) {
-	padding := p.padding
-	gap := p.gap
-
-	contentX := parentX + padding
-	contentY := parentY + padding
-	contentW := parentW - 2*padding
-	contentH := parentH - 2*padding
-	if contentW < 0 {
-		contentW = 0
-	}
-	if contentH < 0 {
-		contentH = 0
-	}
-
-	cursorX := contentX
-	cursorY := contentY
+	contentX, contentY, contentW, contentH := p.computeContentArea(parentX, parentY, parentW, parentH)
+	cursorX, cursorY := contentX, contentY
 
 	for _, child := range p.children {
 		childW, childH := computeChildPixelSize(child, contentW, contentH)
-
-		// Apply cross-axis alignment
-		alignedX := cursorX
-		alignedY := cursorY
-
-		if p.flowDir == FlowRow {
-			// For horizontal flow, align on the vertical (cross) axis
-			switch p.align {
-			case AlignCenter:
-				alignedY = contentY + (contentH-childH)/2
-			case AlignEnd:
-				alignedY = contentY + contentH - childH
-			case AlignStretch:
-				childH = contentH
-				alignedY = contentY
-				// AlignStart is the default (alignedY already = cursorY = contentY)
-			}
-		} else {
-			// For vertical flow, align on the horizontal (cross) axis
-			switch p.align {
-			case AlignCenter:
-				alignedX = contentX + (contentW-childW)/2
-			case AlignEnd:
-				alignedX = contentX + contentW - childW
-			case AlignStretch:
-				childW = contentW
-				alignedX = contentX
-				// AlignStart is the default (alignedX already = cursorX = contentX)
-			}
-		}
-
-		resolveTree(child, alignedX, alignedY, childW, childH)
-
-		if p.flowDir == FlowRow {
-			cursorX += childW + gap
-		} else {
-			cursorY += childH + gap
-		}
+		alignedX, alignedY, alignedW, alignedH := p.alignChild(cursorX, cursorY, contentX, contentY, contentW, contentH, childW, childH)
+		resolveTree(child, alignedX, alignedY, alignedW, alignedH)
+		cursorX, cursorY = p.advanceCursor(cursorX, cursorY, alignedW, alignedH)
 	}
+}
+
+// computeContentArea calculates the content area after applying padding.
+func (p *Panel) computeContentArea(parentX, parentY, parentW, parentH int) (x, y, w, h int) {
+	x = parentX + p.padding
+	y = parentY + p.padding
+	w = max(0, parentW-2*p.padding)
+	h = max(0, parentH-2*p.padding)
+	return
+}
+
+// alignChild applies cross-axis alignment to a child widget.
+func (p *Panel) alignChild(cursorX, cursorY, contentX, contentY, contentW, contentH, childW, childH int) (x, y, w, h int) {
+	x, y, w, h = cursorX, cursorY, childW, childH
+
+	if p.flowDir == FlowRow {
+		x, y, h = p.alignCrossAxisVertical(cursorY, contentY, contentH, childH, p.align)
+		x = cursorX
+	} else {
+		x, y, w = p.alignCrossAxisHorizontal(cursorX, contentX, contentW, childW, p.align)
+		y = cursorY
+	}
+	return
+}
+
+// alignCrossAxisVertical computes vertical alignment for horizontal flow.
+func (p *Panel) alignCrossAxisVertical(cursorY, contentY, contentH, childH int, align Align) (x, y, h int) {
+	switch align {
+	case AlignCenter:
+		return 0, contentY + (contentH-childH)/2, childH
+	case AlignEnd:
+		return 0, contentY + contentH - childH, childH
+	case AlignStretch:
+		return 0, contentY, contentH
+	default:
+		return 0, cursorY, childH
+	}
+}
+
+// alignCrossAxisHorizontal computes horizontal alignment for vertical flow.
+func (p *Panel) alignCrossAxisHorizontal(cursorX, contentX, contentW, childW int, align Align) (x, y, w int) {
+	switch align {
+	case AlignCenter:
+		return contentX + (contentW-childW)/2, 0, childW
+	case AlignEnd:
+		return contentX + contentW - childW, 0, childW
+	case AlignStretch:
+		return contentX, 0, contentW
+	default:
+		return cursorX, 0, childW
+	}
+}
+
+// advanceCursor moves the layout cursor after placing a child.
+func (p *Panel) advanceCursor(cursorX, cursorY, childW, childH int) (newX, newY int) {
+	if p.flowDir == FlowRow {
+		return cursorX + childW + p.gap, cursorY
+	}
+	return cursorX, cursorY + childH + p.gap
 }
 
 // Add appends a child widget to this panel.
@@ -222,45 +232,44 @@ func (p *Panel) Bounds() (width, height int) {
 func (p *Panel) HandleEvent(evt Event) bool {
 	switch evt.Type() {
 	case EventTypePointer:
-		pe := evt.(*PointerEvent)
-		// For pointer events, check bounds and forward to topmost containing child
-		for i := len(p.children) - 1; i >= 0; i-- {
-			child := p.children[i]
-			if bpw, ok := child.(interface{ Position() (int, int) }); ok {
-				x, y := bpw.Position()
-				w, h := child.Bounds()
-				if contains(x, y, w, h, pe.X(), pe.Y()) {
-					if child.HandleEvent(evt) {
-						return true
-					}
-					// Only forward to first matching child (z-order topmost)
-					break
-				}
-			}
-		}
+		return p.handleSpatialEvent(evt, evt.(*PointerEvent).X(), evt.(*PointerEvent).Y())
 	case EventTypeTouch:
-		te := evt.(*TouchEvent)
-		// For touch events, check bounds and forward to topmost containing child
-		for i := len(p.children) - 1; i >= 0; i-- {
-			child := p.children[i]
-			if bpw, ok := child.(interface{ Position() (int, int) }); ok {
-				x, y := bpw.Position()
-				w, h := child.Bounds()
-				if contains(x, y, w, h, te.X(), te.Y()) {
-					if child.HandleEvent(evt) {
-						return true
-					}
-					// Only forward to first matching child (z-order topmost)
-					break
-				}
-			}
-		}
+		return p.handleSpatialEvent(evt, evt.(*TouchEvent).X(), evt.(*TouchEvent).Y())
 	default:
-		// For non-spatial events (keyboard, window, custom), broadcast to all children
-		for _, child := range p.children {
+		return p.broadcastEvent(evt)
+	}
+}
+
+// handleSpatialEvent forwards spatial events to the topmost child containing the coordinates.
+func (p *Panel) handleSpatialEvent(evt Event, evtX, evtY float64) bool {
+	for i := len(p.children) - 1; i >= 0; i-- {
+		child := p.children[i]
+		if p.childContainsPoint(child, evtX, evtY) {
 			if child.HandleEvent(evt) {
 				return true
 			}
+			break // Only forward to first matching child (z-order topmost)
+		}
+	}
+	return false
+}
+
+// childContainsPoint checks if a child widget contains the given point.
+func (p *Panel) childContainsPoint(child PublicWidget, px, py float64) bool {
+	positioner, ok := child.(interface{ Position() (int, int) })
+	if !ok {
+		return false
+	}
+	x, y := positioner.Position()
+	w, h := child.Bounds()
+	return contains(x, y, w, h, px, py)
+}
+
+// broadcastEvent forwards non-spatial events to all children.
+func (p *Panel) broadcastEvent(evt Event) bool {
+	for _, child := range p.children {
+		if child.HandleEvent(evt) {
+			return true
 		}
 	}
 	return false
