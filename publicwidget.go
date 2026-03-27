@@ -95,6 +95,11 @@ type Canvas interface {
 
 	// Theme returns the application-wide theme for this rendering context.
 	Theme() Theme
+
+	// Scale returns the current HiDPI scale factor from the theme.
+	// A value of 1.0 means standard resolution, 2.0 means retina/HiDPI.
+	// Widgets should use this to scale padding, borders, and other pixel values.
+	Scale() float64
 }
 
 // BasePublicWidget provides default implementations for the PublicWidget interface.

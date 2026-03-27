@@ -12,6 +12,7 @@ type drawContext struct {
 	w, h   int
 	theme  Theme
 	canvas Canvas
+	scale  float64 // HiDPI scale factor
 }
 
 // prepareDrawContext resolves position, bounds, and theme for a widget with an optional theme override.
@@ -32,6 +33,11 @@ func prepareDrawContext(c Canvas, widget interface {
 		theme = *themeOverride
 	}
 
+	scale := c.Scale()
+	if scale <= 0 {
+		scale = 1.0
+	}
+
 	return &drawContext{
 		x:      x,
 		y:      y,
@@ -39,7 +45,13 @@ func prepareDrawContext(c Canvas, widget interface {
 		h:      h,
 		theme:  theme,
 		canvas: c,
+		scale:  scale,
 	}
+}
+
+// scaledInt applies the HiDPI scale factor to an integer value.
+func (ctx *drawContext) scaledInt(val int) int {
+	return int(float64(val) * ctx.scale)
 }
 
 // Button is a clickable button widget with text and onClick callback.
@@ -219,25 +231,28 @@ func (b *Button) Draw(c Canvas) {
 		)
 	}
 
-	c.FillRoundedRect(ctx.x, ctx.y, ctx.w, ctx.h, ctx.theme.BorderRadius, bgColor)
+	borderRadius := ctx.scaledInt(ctx.theme.BorderRadius)
+	c.FillRoundedRect(ctx.x, ctx.y, ctx.w, ctx.h, borderRadius, bgColor)
 
-	// Draw focus indicator (border)
+	// Draw focus indicator (border) with scaled thickness
 	if b.IsFocused() {
 		focusColor := ctx.theme.Accent
-		// Draw a 2-pixel border around the button
-		c.DrawLine(ctx.x, ctx.y, ctx.x+ctx.w, ctx.y, focusColor, 2)             // top
-		c.DrawLine(ctx.x, ctx.y+ctx.h, ctx.x+ctx.w, ctx.y+ctx.h, focusColor, 2) // bottom
-		c.DrawLine(ctx.x, ctx.y, ctx.x, ctx.y+ctx.h, focusColor, 2)             // left
-		c.DrawLine(ctx.x+ctx.w, ctx.y, ctx.x+ctx.w, ctx.y+ctx.h, focusColor, 2) // right
+		borderWidth := ctx.scaledInt(2)
+		c.DrawLine(ctx.x, ctx.y, ctx.x+ctx.w, ctx.y, focusColor, borderWidth)             // top
+		c.DrawLine(ctx.x, ctx.y+ctx.h, ctx.x+ctx.w, ctx.y+ctx.h, focusColor, borderWidth) // bottom
+		c.DrawLine(ctx.x, ctx.y, ctx.x, ctx.y+ctx.h, focusColor, borderWidth)             // left
+		c.DrawLine(ctx.x+ctx.w, ctx.y, ctx.x+ctx.w, ctx.y+ctx.h, focusColor, borderWidth) // right
 	}
 
 	if b.label != "" {
-		// Center text (approximate: basicfont is 7px wide per char, 13px tall)
-		textW := len(b.label) * 7
+		// Center text (approximate: basicfont is 7px wide per char, 13px tall, scaled)
+		charWidth := ctx.scaledInt(7)
+		charHeight := ctx.scaledInt(13)
+		textW := len(b.label) * charWidth
 		textX := ctx.x + (ctx.w-textW)/2
-		textY := ctx.y + (ctx.h-13)/2
+		textY := ctx.y + (ctx.h-charHeight)/2
 		if textY < ctx.y {
-			textY = ctx.y + 2
+			textY = ctx.y + ctx.scaledInt(2)
 		}
 		c.DrawText(b.label, textX, textY, nil, ctx.theme.Foreground)
 	}
@@ -499,19 +514,21 @@ func (t *TextInput) Draw(c Canvas) {
 			uint8(min(255, int(bg.B)+15)),
 		)
 	}
-	c.FillRoundedRect(ctx.x, ctx.y, ctx.w, ctx.h, ctx.theme.BorderRadius, bg)
+	borderRadius := ctx.scaledInt(ctx.theme.BorderRadius)
+	c.FillRoundedRect(ctx.x, ctx.y, ctx.w, ctx.h, borderRadius, bg)
 
-	// Border (brighter when focused)
+	// Border (brighter when focused) with scaled width
 	borderColor := ctx.theme.Border
 	if t.IsFocused() {
 		borderColor = ctx.theme.Accent
 	}
-	c.DrawLine(ctx.x, ctx.y, ctx.x+ctx.w, ctx.y, borderColor, ctx.theme.BorderWidth)
-	c.DrawLine(ctx.x+ctx.w, ctx.y, ctx.x+ctx.w, ctx.y+ctx.h, borderColor, ctx.theme.BorderWidth)
-	c.DrawLine(ctx.x, ctx.y+ctx.h, ctx.x+ctx.w, ctx.y+ctx.h, borderColor, ctx.theme.BorderWidth)
-	c.DrawLine(ctx.x, ctx.y, ctx.x, ctx.y+ctx.h, borderColor, ctx.theme.BorderWidth)
+	borderWidth := ctx.scaledInt(ctx.theme.BorderWidth)
+	c.DrawLine(ctx.x, ctx.y, ctx.x+ctx.w, ctx.y, borderColor, borderWidth)
+	c.DrawLine(ctx.x+ctx.w, ctx.y, ctx.x+ctx.w, ctx.y+ctx.h, borderColor, borderWidth)
+	c.DrawLine(ctx.x, ctx.y+ctx.h, ctx.x+ctx.w, ctx.y+ctx.h, borderColor, borderWidth)
+	c.DrawLine(ctx.x, ctx.y, ctx.x, ctx.y+ctx.h, borderColor, borderWidth)
 
-	// Text
+	// Text with scaled padding
 	displayText := t.text
 	textColor := ctx.theme.Foreground
 	if displayText == "" && t.placeholder != "" {
@@ -519,14 +536,17 @@ func (t *TextInput) Draw(c Canvas) {
 		textColor = ctx.theme.Border
 	}
 
+	textPadding := ctx.scaledInt(4)
+	textTopPadding := ctx.scaledInt(2)
 	if displayText != "" {
-		c.DrawText(displayText, ctx.x+4, ctx.y+2, nil, textColor)
+		c.DrawText(displayText, ctx.x+textPadding, ctx.y+textTopPadding, nil, textColor)
 	}
 
-	// Cursor
+	// Cursor with scaled position and padding
 	if t.IsFocused() {
-		cursorX := ctx.x + 4 + t.cursorPos*7
-		c.DrawLine(cursorX, ctx.y+2, cursorX, ctx.y+ctx.h-2, ctx.theme.Foreground, 1)
+		charWidth := ctx.scaledInt(7)
+		cursorX := ctx.x + textPadding + t.cursorPos*charWidth
+		c.DrawLine(cursorX, ctx.y+textTopPadding, cursorX, ctx.y+ctx.h-textTopPadding, ctx.theme.Foreground, 1)
 	}
 }
 

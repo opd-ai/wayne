@@ -92,18 +92,19 @@ func (c *ebitenCanvas) DrawLine(x1, y1, x2, y2 int, col Color, thickness int) {
 
 // DrawText renders text at (x, y) using the specified font and color.
 // If font is nil, the package default font is used.
+// The text is scaled according to the theme's HiDPI scale factor.
 func (c *ebitenCanvas) DrawText(text string, x, y int, f *Font, col Color) {
 	if text == "" {
 		return
 	}
 
 	face := defaultFontFace
-	scale := 1.0
+	scale := c.Scale() // Apply HiDPI scale factor
 	if f != nil && f.face != nil {
 		face = f.face
 		// Scale text based on requested font size relative to default (13pt)
 		if f.size > 0 {
-			scale = f.size / 13.0
+			scale = (f.size / 13.0) * c.Scale()
 		}
 	}
 
@@ -342,4 +343,13 @@ func (c *ebitenCanvas) BoxShadow(x, y, width, height, offsetX, offsetY, blur int
 // Theme returns the application-wide theme for this rendering context.
 func (c *ebitenCanvas) Theme() Theme {
 	return c.theme
+}
+
+// Scale returns the current HiDPI scale factor from the theme.
+// A value of 1.0 means standard resolution, 2.0 means retina/HiDPI.
+func (c *ebitenCanvas) Scale() float64 {
+	if c.theme.Scale <= 0 {
+		return 1.0
+	}
+	return c.theme.Scale
 }
