@@ -6,16 +6,15 @@ package wayne
 //
 // PublicWidget provides a simplified, stable contract for application developers.
 // All concrete widget types implement this interface.
+//
+// Note: The interface uses single-value accessors (Width, Height) for gomobile
+// compatibility. For Go-only code, concrete types also provide Bounds() (int, int)
+// as a convenience method.
 type PublicWidget interface {
-	// Bounds returns the current pixel dimensions of the widget.
-	Bounds() (width, height int)
-
 	// Width returns the current width in pixels.
-	// This is a gomobile-compatible accessor; see also Bounds().
 	Width() int
 
 	// Height returns the current height in pixels.
-	// This is a gomobile-compatible accessor; see also Bounds().
 	Height() int
 
 	// HandleEvent processes a user interaction event. Returns true if consumed.
@@ -29,6 +28,13 @@ type PublicWidget interface {
 
 	// IsFocused returns true if the widget currently has keyboard focus.
 	IsFocused() bool
+}
+
+// boundsProvider is an unexported interface for internal code that needs
+// multi-return bounds/position methods. Not exported to avoid gomobile issues.
+type boundsProvider interface {
+	Bounds() (width, height int)
+	Position() (x, y int)
 }
 
 // Container extends PublicWidget for widgets that can contain child widgets.
@@ -147,35 +153,35 @@ func NewBasePublicWidget(width, height int) BasePublicWidget {
 }
 
 // Bounds returns the current pixel dimensions of the widget.
+// This method is available on concrete types but not in the PublicWidget interface
+// for gomobile compatibility. Use Width() and Height() for interface-level access.
 func (w *BasePublicWidget) Bounds() (width, height int) {
 	return w.width, w.height
 }
 
 // Width returns the current width of the widget in pixels.
-// This is a gomobile-compatible accessor; see also Bounds().
 func (w *BasePublicWidget) Width() int {
 	return w.width
 }
 
 // Height returns the current height of the widget in pixels.
-// This is a gomobile-compatible accessor; see also Bounds().
 func (w *BasePublicWidget) Height() int {
 	return w.height
 }
 
 // Position returns the current position of the widget in pixels.
+// This method is available on concrete types but not in the PublicWidget interface
+// for gomobile compatibility. Use X() and Y() for interface-level access.
 func (w *BasePublicWidget) Position() (x, y int) {
 	return w.x, w.y
 }
 
 // X returns the current x-coordinate of the widget in pixels.
-// This is a gomobile-compatible accessor; see also Position().
 func (w *BasePublicWidget) X() int {
 	return w.x
 }
 
 // Y returns the current y-coordinate of the widget in pixels.
-// This is a gomobile-compatible accessor; see also Position().
 func (w *BasePublicWidget) Y() int {
 	return w.y
 }

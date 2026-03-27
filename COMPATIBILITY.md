@@ -12,7 +12,9 @@ wayne maintains **public API compatibility** with wain, meaning:
 - ✅ **Constructor compatibility**: Widget constructors have identical signatures (`NewButton`, `NewPanel`, etc.)
 - ✅ **Type compatibility**: Core types (`Color`, `Theme`, `Size`, `AppConfig`) have identical public fields
 - ✅ **Constant compatibility**: All event types, alignment, and layout constants match exactly
-- ✅ **Method compatibility**: Widget methods (`Bounds()`, `HandleEvent()`, `Draw()`) have identical signatures
+- ✅ **Method compatibility**: Widget methods (`Width()`, `Height()`, `HandleEvent()`, `Draw()`) have identical signatures
+
+**Note on gomobile compatibility**: The `PublicWidget` interface uses single-value accessors (`Width()`, `Height()`) instead of multi-return methods (`Bounds()`) for gomobile bind compatibility. Concrete types still provide `Bounds() (int, int)` as a convenience method for Go-only code.
 
 This allows **source code migration** from wain to wayne by changing the import path:
 

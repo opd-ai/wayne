@@ -223,18 +223,18 @@ func (p *Panel) Children() []PublicWidget {
 }
 
 // Bounds returns the resolved pixel dimensions.
+// This method is available on concrete types but not in the PublicWidget interface
+// for gomobile compatibility. Use Width() and Height() for interface-level access.
 func (p *Panel) Bounds() (width, height int) {
 	return p.width, p.height
 }
 
 // Width returns the resolved width in pixels.
-// This is a gomobile-compatible accessor; see also Bounds().
 func (p *Panel) Width() int {
 	return p.width
 }
 
 // Height returns the resolved height in pixels.
-// This is a gomobile-compatible accessor; see also Bounds().
 func (p *Panel) Height() int {
 	return p.height
 }
@@ -273,7 +273,7 @@ func (p *Panel) childContainsPoint(child PublicWidget, px, py float64) bool {
 		return false
 	}
 	x, y := positioner.Position()
-	w, h := child.Bounds()
+	w, h := child.Width(), child.Height()
 	return contains(x, y, w, h, px, py)
 }
 

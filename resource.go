@@ -51,18 +51,18 @@ type Image struct {
 }
 
 // Size returns the image dimensions in pixels.
+// This method returns multiple values which is not gomobile-compatible.
+// For gomobile, use Width() and Height() instead.
 func (img *Image) Size() (width, height int) {
 	return img.width, img.height
 }
 
 // Width returns the image width in pixels.
-// This is a gomobile-compatible accessor; see also Size().
 func (img *Image) Width() int {
 	return img.width
 }
 
 // Height returns the image height in pixels.
-// This is a gomobile-compatible accessor; see also Size().
 func (img *Image) Height() int {
 	return img.height
 }

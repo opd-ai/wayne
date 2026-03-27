@@ -214,32 +214,36 @@ func (b *Button) handleRelease(pe *PointerEvent) bool {
 func (b *Button) handleTouchEvent(te *TouchEvent) bool {
 	switch te.EventType() {
 	case TouchDown:
-		if !b.enabled {
-			return false
-		}
-		if !b.isPointInBounds(te.X(), te.Y()) {
-			return false
-		}
-		b.pressed = true
-		return true
+		return b.handleTouchDown(te.X(), te.Y())
 	case TouchUp:
-		wasPressed := b.pressed
-		b.pressed = false
-		if !wasPressed || !b.enabled {
-			return false
-		}
-		if !b.isPointInBounds(te.X(), te.Y()) {
-			return false
-		}
-		if b.onClick != nil {
-			b.onClick()
-		}
-		return true
+		return b.handleTouchUp(te.X(), te.Y())
 	case TouchCancel:
 		b.pressed = false
 		return false
 	}
 	return false
+}
+
+// handleTouchDown processes touch press events.
+func (b *Button) handleTouchDown(x, y float64) bool {
+	if !b.enabled || !b.isPointInBounds(x, y) {
+		return false
+	}
+	b.pressed = true
+	return true
+}
+
+// handleTouchUp processes touch release events.
+func (b *Button) handleTouchUp(x, y float64) bool {
+	wasPressed := b.pressed
+	b.pressed = false
+	if !wasPressed || !b.enabled || !b.isPointInBounds(x, y) {
+		return false
+	}
+	if b.onClick != nil {
+		b.onClick()
+	}
+	return true
 }
 
 // isPointInBounds checks if a point is within the button's bounds.
@@ -256,48 +260,63 @@ func (b *Button) Draw(c Canvas) {
 		return
 	}
 
-	bgColor := ctx.theme.Accent
-	if !b.enabled {
-		bgColor = ctx.theme.Border
-	} else if b.pressed {
-		bgColor = RGB(
-			uint8(max(0, int(ctx.theme.Accent.R)-20)),
-			uint8(max(0, int(ctx.theme.Accent.G)-20)),
-			uint8(max(0, int(ctx.theme.Accent.B)-20)),
-		)
-	} else if b.hovered {
-		bgColor = RGB(
-			uint8(min(255, int(ctx.theme.Accent.R)+20)),
-			uint8(min(255, int(ctx.theme.Accent.G)+20)),
-			uint8(min(255, int(ctx.theme.Accent.B)+20)),
-		)
-	}
-
+	bgColor := b.computeBackgroundColor(ctx)
 	borderRadius := ctx.scaledInt(ctx.theme.BorderRadius)
 	c.FillRoundedRect(ctx.x, ctx.y, ctx.w, ctx.h, borderRadius, bgColor)
 
-	// Draw focus indicator (border) with scaled thickness
 	if b.IsFocused() {
-		focusColor := ctx.theme.Accent
-		borderWidth := ctx.scaledInt(2)
-		c.DrawLine(ctx.x, ctx.y, ctx.x+ctx.w, ctx.y, focusColor, borderWidth)             // top
-		c.DrawLine(ctx.x, ctx.y+ctx.h, ctx.x+ctx.w, ctx.y+ctx.h, focusColor, borderWidth) // bottom
-		c.DrawLine(ctx.x, ctx.y, ctx.x, ctx.y+ctx.h, focusColor, borderWidth)             // left
-		c.DrawLine(ctx.x+ctx.w, ctx.y, ctx.x+ctx.w, ctx.y+ctx.h, focusColor, borderWidth) // right
+		b.drawFocusBorder(ctx, c)
 	}
 
 	if b.label != "" {
-		// Center text (approximate: basicfont is 7px wide per char, 13px tall, scaled)
-		charWidth := ctx.scaledInt(7)
-		charHeight := ctx.scaledInt(13)
-		textW := len(b.label) * charWidth
-		textX := ctx.x + (ctx.w-textW)/2
-		textY := ctx.y + (ctx.h-charHeight)/2
-		if textY < ctx.y {
-			textY = ctx.y + ctx.scaledInt(2)
-		}
-		c.DrawText(b.label, textX, textY, nil, ctx.theme.Foreground)
+		b.drawLabel(ctx, c)
 	}
+}
+
+// computeBackgroundColor returns the button background based on state.
+func (b *Button) computeBackgroundColor(ctx *drawContext) Color {
+	if !b.enabled {
+		return ctx.theme.Border
+	}
+	if b.pressed {
+		return adjustColorBrightness(ctx.theme.Accent, -20)
+	}
+	if b.hovered {
+		return adjustColorBrightness(ctx.theme.Accent, 20)
+	}
+	return ctx.theme.Accent
+}
+
+// drawFocusBorder renders the focus indicator border.
+func (b *Button) drawFocusBorder(ctx *drawContext, c Canvas) {
+	focusColor := ctx.theme.Accent
+	borderWidth := ctx.scaledInt(2)
+	c.DrawLine(ctx.x, ctx.y, ctx.x+ctx.w, ctx.y, focusColor, borderWidth)             // top
+	c.DrawLine(ctx.x, ctx.y+ctx.h, ctx.x+ctx.w, ctx.y+ctx.h, focusColor, borderWidth) // bottom
+	c.DrawLine(ctx.x, ctx.y, ctx.x, ctx.y+ctx.h, focusColor, borderWidth)             // left
+	c.DrawLine(ctx.x+ctx.w, ctx.y, ctx.x+ctx.w, ctx.y+ctx.h, focusColor, borderWidth) // right
+}
+
+// drawLabel renders centered button text.
+func (b *Button) drawLabel(ctx *drawContext, c Canvas) {
+	charWidth := ctx.scaledInt(7)
+	charHeight := ctx.scaledInt(13)
+	textW := len(b.label) * charWidth
+	textX := ctx.x + (ctx.w-textW)/2
+	textY := ctx.y + (ctx.h-charHeight)/2
+	if textY < ctx.y {
+		textY = ctx.y + ctx.scaledInt(2)
+	}
+	c.DrawText(b.label, textX, textY, nil, ctx.theme.Foreground)
+}
+
+// adjustColorBrightness modifies color brightness by delta (-255 to +255).
+func adjustColorBrightness(c Color, delta int) Color {
+	return RGB(
+		uint8(max(0, min(255, int(c.R)+delta))),
+		uint8(max(0, min(255, int(c.G)+delta))),
+		uint8(max(0, min(255, int(c.B)+delta))),
+	)
 }
 
 // Label is a static text display widget.
@@ -547,19 +566,26 @@ func (t *TextInput) Draw(c Canvas) {
 		return
 	}
 
-	// Background
+	t.drawBackground(ctx, c)
+	t.drawBorder(ctx, c)
+	t.drawText(ctx, c)
+	if t.IsFocused() {
+		t.drawCursor(ctx, c)
+	}
+}
+
+// drawBackground renders the text input background.
+func (t *TextInput) drawBackground(ctx *drawContext, c Canvas) {
 	bg := ctx.theme.Background
 	if t.IsFocused() {
-		bg = RGB(
-			uint8(min(255, int(bg.R)+15)),
-			uint8(min(255, int(bg.G)+15)),
-			uint8(min(255, int(bg.B)+15)),
-		)
+		bg = adjustColorBrightness(bg, 15)
 	}
 	borderRadius := ctx.scaledInt(ctx.theme.BorderRadius)
 	c.FillRoundedRect(ctx.x, ctx.y, ctx.w, ctx.h, borderRadius, bg)
+}
 
-	// Border (brighter when focused) with scaled width
+// drawBorder renders the text input border.
+func (t *TextInput) drawBorder(ctx *drawContext, c Canvas) {
 	borderColor := ctx.theme.Border
 	if t.IsFocused() {
 		borderColor = ctx.theme.Accent
@@ -569,27 +595,28 @@ func (t *TextInput) Draw(c Canvas) {
 	c.DrawLine(ctx.x+ctx.w, ctx.y, ctx.x+ctx.w, ctx.y+ctx.h, borderColor, borderWidth)
 	c.DrawLine(ctx.x, ctx.y+ctx.h, ctx.x+ctx.w, ctx.y+ctx.h, borderColor, borderWidth)
 	c.DrawLine(ctx.x, ctx.y, ctx.x, ctx.y+ctx.h, borderColor, borderWidth)
+}
 
-	// Text with scaled padding
-	displayText := t.text
-	textColor := ctx.theme.Foreground
+// drawText renders the text or placeholder.
+func (t *TextInput) drawText(ctx *drawContext, c Canvas) {
+	displayText, textColor := t.text, ctx.theme.Foreground
 	if displayText == "" && t.placeholder != "" {
-		displayText = t.placeholder
-		textColor = ctx.theme.Border
+		displayText, textColor = t.placeholder, ctx.theme.Border
 	}
-
-	textPadding := ctx.scaledInt(4)
-	textTopPadding := ctx.scaledInt(2)
 	if displayText != "" {
+		textPadding := ctx.scaledInt(4)
+		textTopPadding := ctx.scaledInt(2)
 		c.DrawText(displayText, ctx.x+textPadding, ctx.y+textTopPadding, nil, textColor)
 	}
+}
 
-	// Cursor with scaled position and padding
-	if t.IsFocused() {
-		charWidth := ctx.scaledInt(7)
-		cursorX := ctx.x + textPadding + t.cursorPos*charWidth
-		c.DrawLine(cursorX, ctx.y+textTopPadding, cursorX, ctx.y+ctx.h-textTopPadding, ctx.theme.Foreground, 1)
-	}
+// drawCursor renders the text cursor when focused.
+func (t *TextInput) drawCursor(ctx *drawContext, c Canvas) {
+	textPadding := ctx.scaledInt(4)
+	textTopPadding := ctx.scaledInt(2)
+	charWidth := ctx.scaledInt(7)
+	cursorX := ctx.x + textPadding + t.cursorPos*charWidth
+	c.DrawLine(cursorX, ctx.y+textTopPadding, cursorX, ctx.y+ctx.h-textTopPadding, ctx.theme.Foreground, 1)
 }
 
 // ScrollView is a scrollable container for overflow content.
@@ -731,7 +758,7 @@ func (s *ScrollView) getChildBounds(child PublicWidget) (x, y, w, h int) {
 	if bp, ok := child.(interface{ Position() (int, int) }); ok {
 		x, y = bp.Position()
 	}
-	w, h = child.Bounds()
+	w, h = child.Width(), child.Height()
 	return x, y, w, h
 }
 

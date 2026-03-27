@@ -1,4 +1,4 @@
-//go:build windows || darwin || android || ios || linux
+//go:build windows || darwin || android || ios
 
 package wayne
 
@@ -106,15 +106,27 @@ func (d *EventDispatcher) dispatchPointer(evt *PointerEvent) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	if d.widgetRoot != nil {
-		if target := d.hitTest(d.widgetRoot, int(evt.x), int(evt.y)); target != nil {
-			target.HandleEvent(evt)
-			if evt.Consumed() {
-				return
-			}
-		}
+	if d.dispatchToHitTarget(evt, int(evt.x), int(evt.y)) {
+		return
 	}
+	d.dispatchPointerToHandlers(evt)
+}
 
+// dispatchToHitTarget dispatches an event to the widget under the given coordinates.
+func (d *EventDispatcher) dispatchToHitTarget(evt Event, x, y int) bool {
+	if d.widgetRoot == nil {
+		return false
+	}
+	target := d.hitTest(d.widgetRoot, x, y)
+	if target == nil {
+		return false
+	}
+	target.HandleEvent(evt)
+	return evt.Consumed()
+}
+
+// dispatchPointerToHandlers sends a pointer event to registered handlers.
+func (d *EventDispatcher) dispatchPointerToHandlers(evt *PointerEvent) {
 	for _, h := range d.pointerHandlers {
 		if evt.Consumed() {
 			return
@@ -176,15 +188,14 @@ func (d *EventDispatcher) dispatchTouch(evt *TouchEvent) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	if d.widgetRoot != nil {
-		if target := d.hitTest(d.widgetRoot, int(evt.x), int(evt.y)); target != nil {
-			target.HandleEvent(evt)
-			if evt.Consumed() {
-				return
-			}
-		}
+	if d.dispatchToHitTarget(evt, int(evt.x), int(evt.y)) {
+		return
 	}
+	d.dispatchTouchToHandlers(evt)
+}
 
+// dispatchTouchToHandlers sends a touch event to registered handlers.
+func (d *EventDispatcher) dispatchTouchToHandlers(evt *TouchEvent) {
 	for _, h := range d.touchHandlers {
 		if evt.Consumed() {
 			return
@@ -216,29 +227,39 @@ func (d *EventDispatcher) dispatchCustom(evt *CustomEvent) {
 }
 
 func (d *EventDispatcher) hitTest(w PublicWidget, x, y int) PublicWidget {
-	// Get widget position and bounds
-	var px, py, width, height int
-	if positioner, ok := w.(interface{ Position() (int, int) }); ok {
-		px, py = positioner.Position()
-	}
-	width, height = w.Bounds()
-
-	// Check if point is within widget bounds
-	if x < px || x >= px+width || y < py || y >= py+height {
+	if !d.widgetContainsPoint(w, x, y) {
 		return nil
 	}
 
-	// Check container children (bottom-up, so last child is checked first)
-	if container, ok := w.(Container); ok {
-		children := container.Children()
-		for i := len(children) - 1; i >= 0; i-- {
-			if child := d.hitTest(children[i], x, y); child != nil {
-				return child
-			}
+	if hit := d.hitTestChildren(w, x, y); hit != nil {
+		return hit
+	}
+	return w
+}
+
+// widgetContainsPoint checks if a point is within widget bounds.
+func (d *EventDispatcher) widgetContainsPoint(w PublicWidget, x, y int) bool {
+	px, py := 0, 0
+	if positioner, ok := w.(interface{ Position() (int, int) }); ok {
+		px, py = positioner.Position()
+	}
+	width, height := w.Width(), w.Height()
+	return x >= px && x < px+width && y >= py && y < py+height
+}
+
+// hitTestChildren checks container children in z-order (top to bottom).
+func (d *EventDispatcher) hitTestChildren(w PublicWidget, x, y int) PublicWidget {
+	container, ok := w.(Container)
+	if !ok {
+		return nil
+	}
+	children := container.Children()
+	for i := len(children) - 1; i >= 0; i-- {
+		if child := d.hitTest(children[i], x, y); child != nil {
+			return child
 		}
 	}
-
-	return w
+	return nil
 }
 
 // FocusManager manages keyboard focus and tab order.
