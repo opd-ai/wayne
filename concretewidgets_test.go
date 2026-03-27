@@ -154,8 +154,10 @@ func TestTextInputKeyboardEntry(t *testing.T) {
 	// Focus the input first
 	input.focused = true
 
-	// Simulate typing 'a'
-	keyEvt := NewKeyEvent(KeyPress, KeySpace, 0, 'a')
+	// Simulate typing 'a' - use Key('a') instead of a misleading constant.
+	// Note: TextInput uses ke.Rune() for text insertion, so the key value
+	// should match the character being typed for clarity.
+	keyEvt := NewKeyEvent(KeyPress, Key('a'), 0, 'a')
 	input.HandleEvent(keyEvt)
 
 	if input.Text() != "a" {
@@ -163,7 +165,7 @@ func TestTextInputKeyboardEntry(t *testing.T) {
 	}
 
 	// Simulate typing 'b'
-	keyEvt = NewKeyEvent(KeyPress, KeySpace, 0, 'b')
+	keyEvt = NewKeyEvent(KeyPress, Key('b'), 0, 'b')
 	input.HandleEvent(keyEvt)
 
 	if input.Text() != "ab" {

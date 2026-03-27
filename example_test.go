@@ -161,9 +161,9 @@ func Example_themes() {
 // ExampleSize demonstrates the percentage-based size specification.
 func ExampleSize() {
 	// Sizes are specified as percentages of parent container
-	full := wayne.Size{Width: 100, Height: 100}   // Full width and height
-	half := wayne.Size{Width: 50, Height: 50}     // Half width and height
-	narrow := wayne.Size{Width: 20, Height: 100}  // 20% width, full height
+	full := wayne.Size{Width: 100, Height: 100}  // Full width and height
+	half := wayne.Size{Width: 50, Height: 50}    // Half width and height
+	narrow := wayne.Size{Width: 20, Height: 100} // 20% width, full height
 	fmt.Printf("Sizes: full=%v, half=%v, narrow=%v\n", full, half, narrow)
 	// Output: Sizes: full={100 100}, half={50 50}, narrow={20 100}
 }

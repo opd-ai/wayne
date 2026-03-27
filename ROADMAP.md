@@ -105,11 +105,11 @@
   - Validation: All files have cohesion >0.4
   - Note: File content is logically cohesive; splitting would be organizational preference
 
-- [ ] **Address 18 unreferenced functions** [REVIEWED - intentional exports]
+- [x] **Address 18 unreferenced functions**
   - Audit dead code in `event.go` (many constants may be unused)
   - Either document intentional exports or remove dead code
   - Validation: Dead code percentage <5%
-  - Note: Functions are exported public API for library consumers; documented via godoc
+  - Result: Event constants documented as intentional exports for consumer applications (see event.go:145-147, event.go:164)
 
 ### Priority 3: Feature Parity Verification
 

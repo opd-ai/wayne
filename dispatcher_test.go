@@ -300,12 +300,24 @@ func TestFocusChainAutoBuilding(t *testing.T) {
 	// Set root (should auto-build focus chain)
 	dispatcher.SetWidgetRoot(root)
 
-	// Tab through all buttons
-	for i := 0; i < 4; i++ {
+	// Expected focus order: depth-first traversal
+	expectedOrder := []PublicWidget{btn1, btn2, btn3, btn4}
+
+	// Tab through all buttons and verify focus order
+	for i, expected := range expectedOrder {
 		tabEvent := NewKeyEvent(KeyPress, KeyTab, 0, '\t')
 		dispatcher.Dispatch(tabEvent)
+
+		focused := dispatcher.FocusedWidget()
+		if focused != expected {
+			t.Errorf("After Tab %d: expected focus on button %d, got different widget", i+1, i+1)
+		}
 	}
 
-	// All buttons should have been focused in depth-first order
-	// The implementation should have cycled through btn1, btn2, btn3, btn4
+	// Tab once more should cycle back to first button
+	tabEvent := NewKeyEvent(KeyPress, KeyTab, 0, '\t')
+	dispatcher.Dispatch(tabEvent)
+	if dispatcher.FocusedWidget() != btn1 {
+		t.Error("After cycling through all buttons, focus should return to btn1")
+	}
 }
